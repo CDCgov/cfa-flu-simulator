@@ -7,7 +7,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "cfasim-ui": "^0.3.7",
+    "cfasim-ui": "^0.4.10",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "smol-toml": "^1.6.1",

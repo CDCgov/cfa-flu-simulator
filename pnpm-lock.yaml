@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       cfasim-ui:
-        specifier: ^0.3.7
-        version: 0.3.7(vue@3.5.32(typescript@5.9.3))
+        specifier: ^0.4.10
+        version: 0.4.10(vue@3.5.32(typescript@5.9.3))
       jspdf:
         specifier: ^4.2.1
         version: 4.2.1
@@ -26,13 +26,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.5
-        version: 6.0.6(vite@8.0.8)(vue@3.5.32(typescript@5.9.3))
+        version: 6.0.6(vite@8.0.8(yaml@2.9.0))(vue@3.5.32(typescript@5.9.3))
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       vite:
         specifier: ^8.0.1
-        version: 8.0.8
+        version: 8.0.8(yaml@2.9.0)
 
 packages:
 
@@ -57,33 +57,66 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@cfasim-ui/charts@0.3.7':
-    resolution: {integrity: sha512-fgobTgAB5kZsSeQU18T1RE+CV+M+d+w5M4l2L2kz1LVNT1xlUGY0pywEYSDEYw3Hqi4Rjr/ZQCzAij7yUvNFyg==}
+  '@cfasim-ui/charts@0.4.10':
+    resolution: {integrity: sha512-ZYWwizbi1a7dkKOAUNmhRs+BWcKe/hZYaLaDrXng+XzilxCSJitZNU4bLmBTMwQasl8hxn07I5ul97vC8HswKQ==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/components@0.3.7':
-    resolution: {integrity: sha512-Oz68M11eVzLfvaEfWui+6mp8Ytu7oQb8AJddmIzei2v+uxRkur+27zMUC8JIRQIfp/AodJsuUGtPmmSL+tpcIw==}
+  '@cfasim-ui/components@0.4.10':
+    resolution: {integrity: sha512-pZDIe0ocMse9iw7r7gohA3wVk1TKjlNfLVEGwxOXjCh3FWgZB5qpQiAsmalLX88NJd83hjeb6D/tGQgvVZSQ1Q==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/pyodide@0.3.7':
-    resolution: {integrity: sha512-gMkc6RZJCPeq/Iqjn6CFExyXVkt3MryMwymxmmtmrRtdx7EOyHQJznavWeNKCWQIhyjenO9hoo0gVIIxm0LuvA==}
+  '@cfasim-ui/docs@0.4.10':
+    resolution: {integrity: sha512-VxxwPKW5xYe82wsK+idquBkR/qJvPbNr/NOL8K4Aro1rwAOvG8CdJ1HDffXKE4ZzXyS3M/vFC9h0WWlYF4ABaQ==}
+
+  '@cfasim-ui/pyodide@0.4.10':
+    resolution: {integrity: sha512-/7dLPi8Z1aay9R+V71EPn60owttbh1wLNhxiCn4IFZbmwY5kyTWwPqabgwZarFZQeUFNxzZKZOeMhgP0kWU+aw==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/shared@0.3.7':
-    resolution: {integrity: sha512-TlPxqMo+kTxipiMbTBxIEDGaNf846FatiuetoUa0U/FvIsjYSdbq/2QzRUwM5EjIwuJovOFwk6L2QPXjQ/sONQ==}
+  '@cfasim-ui/shared@0.4.10':
+    resolution: {integrity: sha512-2I9iffE7KptVI856STAT9YpP7rkvNRaUm5p/PZEWwkfqOR0DcKlIjZ27SA/eDeMlqKZ2EAljT2u9QnStq7PecQ==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/theme@0.3.7':
-    resolution: {integrity: sha512-5yRGGdeOMc17Ay0eh3nc7LEiSCZW/t6kPkNl/3ojp9CLDqIYouJuK0m6qtm6oFcyqTvZQHsB9xwtvk92Zeq6Eg==}
+  '@cfasim-ui/theme@0.4.10':
+    resolution: {integrity: sha512-TyYgr6nWpwTqugouKX3UMBtMh2oPsAfzyquG/PPIB67uffem2fm7VxRQNNnVEuVUU/VO0rDLNKG4Lri1/e1fNw==}
 
-  '@cfasim-ui/wasm@0.3.7':
-    resolution: {integrity: sha512-1TgTOUA6wi2sdsSRfCW4b4hEomV2fq6NnSuHa5ppV23u7WmiAY9GARdi19qdRtOlBykhT7mpTO/YFCP/dKuhpQ==}
+  '@cfasim-ui/wasm@0.4.10':
+    resolution: {integrity: sha512-PyYEVh67EBoFsnHnDqX13yHwZ5c4Sn8PlGeD2OhqbDLRfPCQyZnfq3nFyzWNAdEchlxOCPVoj4V/4mlzISSkfQ==}
     peerDependencies:
       vue: ^3.5.0
+
+  '@codemirror/autocomplete@6.20.2':
+    resolution: {integrity: sha512-G5FPkgIiLjOgZMjqVjvuKQ1rGPtHogLldJr33eFJdVLtmwY+giGrlv/ewljLz6b9BSQLkjxuwBc6g6omDM+YxQ==}
+
+  '@codemirror/commands@6.10.3':
+    resolution: {integrity: sha512-JFRiqhKu+bvSkDLI+rUhJwSxQxYb759W5GBezE8Uc8mHLqC9aV/9aTC7yJSqCtB3F00pylrLCwnyS91Ap5ej4Q==}
+
+  '@codemirror/lang-json@6.0.2':
+    resolution: {integrity: sha512-x2OtO+AvwEHrEwR0FyyPtfDUiloG3rnVTSZV1W8UteaLL8/MajQd8DpvUb2YVzC+/T18aSDv0H9mu+xw0EStoQ==}
+
+  '@codemirror/lang-yaml@6.1.3':
+    resolution: {integrity: sha512-AZ8DJBuXGVHybpBQhmZtgew5//4hv3tdkXnr3vDmOUMJRuB6vn/uuwtmTOTlqEaQFg3hQSVeA90NmvIQyUV6FQ==}
+
+  '@codemirror/language@6.12.3':
+    resolution: {integrity: sha512-QwCZW6Tt1siP37Jet9Tb02Zs81TQt6qQrZR2H+eGMcFsL1zMrk2/b9CLC7/9ieP1fjIUMgviLWMmgiHoJrj+ZA==}
+
+  '@codemirror/legacy-modes@6.5.3':
+    resolution: {integrity: sha512-xCsmIzH78MyWkib9jlPaaun57XNkfbMIhagfaZVd0iLTqlpw3jXaIcbZm72MTmmn64eTZpBVNjbyYh+QXnxRsg==}
+
+  '@codemirror/lint@6.9.6':
+    resolution: {integrity: sha512-6Kp7r6XfCi/D/5sdXieMfg9pJU1bUEx96WITuLU6ESaKizCz0QHFMjY/TaFSbigDdEAIgi93itLBIUETP4oK+A==}
+
+  '@codemirror/search@6.7.0':
+    resolution: {integrity: sha512-ZvGm99wc/s2cITtMT15LFdn8aH/aS+V+DqyGq/N5ZlV5vWtH+nILvC2nw0zX7ByNoHHDZ2IxxdW38O0tc5nVHg==}
+
+  '@codemirror/state@6.6.0':
+    resolution: {integrity: sha512-4nbvra5R5EtiCzr9BTHiTLc+MLXK2QGiAVYMyi8PkQd3SR+6ixar/Q/01Fa21TBIDOZXgeWV4WppsQolSreAPQ==}
+
+  '@codemirror/view@6.43.0':
+    resolution: {integrity: sha512-V7ZCLQO3Jus9hzh2jVCCPW3mO4IBMr43O37PqSUYautJSnnJF41YlgLw21x0fLJTYvJ+Vkm6Gp+qKGH9pltgXA==}
 
   '@emnapi/core@1.9.2':
     resolution: {integrity: sha512-UC+ZhH3XtczQYfOlu3lNEkdW/p4dsJ1r/bP7H8+rhao3TTTMO1ATq/4DdIi23XuGoFY+Cz0JmCbdVl0hz9jZcA==}
@@ -114,6 +147,24 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
+
+  '@lezer/common@1.5.2':
+    resolution: {integrity: sha512-sxQE460fPZyU3sdc8lafxiPwJHBzZRy/udNFynGQky1SePYBdhkBl1kOagA9uT3pxR8K09bOrmTUqA9wb/PjSQ==}
+
+  '@lezer/highlight@1.2.3':
+    resolution: {integrity: sha512-qXdH7UqTvGfdVBINrgKhDsVTJTxactNNxLk7+UMwZhU13lMHaOBlJe9Vqp907ya56Y3+ed2tlqzys7jDkTmW0g==}
+
+  '@lezer/json@1.0.3':
+    resolution: {integrity: sha512-BP9KzdF9Y35PDpv04r0VeSTKDeox5vVr3efE7eBbx3r4s3oNLfunchejZhjArmeieBH+nVOpgIiBJpEAv8ilqQ==}
+
+  '@lezer/lr@1.4.10':
+    resolution: {integrity: sha512-rnCpTIBafOx4mRp43xOxDJbFipJm/c0cia/V5TiGlhmMa+wsSdoGmUN3w5Bqrks/09Q/D4tNAmWaT8p6NRi77A==}
+
+  '@lezer/yaml@1.0.4':
+    resolution: {integrity: sha512-2lrrHqxalACEbxIbsjhqGpSW8kWpUKuY6RHgnSAFZa6qK62wvnPxA8hGOwOoDbwHcOFs5M4o27mjGu+P7TvBmw==}
+
+  '@marijn/find-cluster-break@1.0.2':
+    resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
 
   '@napi-rs/wasm-runtime@1.1.3':
     resolution: {integrity: sha512-xK9sGVbJWYb08+mTJt3/YV24WxvxpXcXtP6B172paPZ+Ts69Re9dAr7lKwJoeIx8OoeuimEiRZ7umkiUVClmmQ==}
@@ -248,6 +299,9 @@ packages:
   '@types/raf@3.4.3':
     resolution: {integrity: sha512-c4YAvMedbPZ5tEyxzQdMoOhhJ4RD3rngZIdwC2/qDN3d7JpEhB6fiBRKVY1lg5B7Wk+uPBjn5f39j1/2MY1oOw==}
 
+  '@types/sprintf-js@1.1.4':
+    resolution: {integrity: sha512-aWK1reDYWxcjgcIIPmQi3u+OQDuYa9b+lr6eIsGWrekJ9vr1NSjr4Eab8oQ1iKuH1ltFHpXGyerAv1a3FMKxzQ==}
+
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
@@ -315,16 +369,22 @@ packages:
     resolution: {integrity: sha512-5ON+q7jCTgMp9cjpu4Jo6XbvfYwSB2Ow3kzHKfIyJfaCAOHLbdKPQqGKgfED/R5B+3TFFfe8pegYA+b423SRyA==}
     engines: {node: '>=10.0.0'}
 
-  cfasim-ui@0.3.7:
-    resolution: {integrity: sha512-u9LO6eLeTpojARMmXgenlNSrGQWWs7UFlQcG2ORsNzSAcB+uvM7DzGJDj2eFYD40AUaMcXG92J2mF8IYaiMY+Q==}
+  cfasim-ui@0.4.10:
+    resolution: {integrity: sha512-5I09ZOjoJlGfQRESbS4hXSpilXL1YpINzNdXwX+QzMH9Al1gKR4s7HxxfjsgpfQWyp+k0U66pXPXiD6ZSo69MA==}
     peerDependencies:
       vue: ^3.5.0
+
+  codemirror@6.0.2:
+    resolution: {integrity: sha512-VhydHotNW5w1UGK0Qj96BwSk/Zqbp9WbnyK2W/eVMv4QyF41INRGpjUhFJY7/uDNuudSc33a/PKr4iDqRduvHw==}
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
   core-js@3.49.0:
     resolution: {integrity: sha512-es1U2+YTtzpwkxVLwAFdSpaIMyQaq0PBgm3YD1W3Qpsn1NAmO3KSgZfu+oGSWVu6NvLHoHCV/aYcsE5wiB7ALg==}
+
+  crelt@1.0.6:
+    resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
 
   css-line-break@2.1.0:
     resolution: {integrity: sha512-FHcKFCZcAha3LwfVBhCQbW2nCNbkZXn7KVUJcsT5/P8YmfsVja0FMPJr0B903j/E69HUphKiV9iQArX8SDYA4w==}
@@ -568,9 +628,15 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
+  sprintf-js@1.1.3:
+    resolution: {integrity: sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==}
+
   stackblur-canvas@2.7.0:
     resolution: {integrity: sha512-yf7OENo23AGJhBriGx0QivY5JP6Y1HbrrDI6WLt6C5auYZXlQrheoY8hD4ibekFKz1HOfE48Ww8kMWMnJD/zcQ==}
     engines: {node: '>=0.1.14'}
+
+  style-mod@4.1.3:
+    resolution: {integrity: sha512-i/n8VsZydrugj3Iuzll8+x/00GH2vnYsk1eomD8QiRrSAeW6ItbCQDtfXCeJHd0iwiNagqjQkvpvREEPtW3IoQ==}
 
   svg-pathdata@6.0.3:
     resolution: {integrity: sha512-qsjeeq5YjBZ5eMdFuUa4ZosMLxgr5RZ+F+Y1OrDhuOCEInRMA3x74XdBtggJcj9kOeInz0WE+LgCPDkZFlBYJw==}
@@ -641,6 +707,12 @@ packages:
       yaml:
         optional: true
 
+  vue-codemirror@6.1.1:
+    resolution: {integrity: sha512-rTAYo44owd282yVxKtJtnOi7ERAcXTeviwoPXjIc6K/IQYUsoDkzPvw/JDFtSP6T7Cz/2g3EHaEyeyaQCKoDMg==}
+    peerDependencies:
+      codemirror: 6.x
+      vue: 3.x
+
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
     engines: {node: '>=12'}
@@ -660,6 +732,9 @@ packages:
       typescript:
         optional: true
 
+  w3c-keyname@2.2.8:
+    resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
+
   ws@8.20.0:
     resolution: {integrity: sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA==}
     engines: {node: '>=10.0.0'}
@@ -671,6 +746,11 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  yaml@2.9.0:
+    resolution: {integrity: sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==}
+    engines: {node: '>= 14.6'}
+    hasBin: true
 
 snapshots:
 
@@ -689,11 +769,12 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@cfasim-ui/charts@0.3.7(vue@3.5.32(typescript@5.9.3))':
+  '@cfasim-ui/charts@0.4.10(vue@3.5.32(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.3.7(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.4.10(vue@3.5.32(typescript@5.9.3))
       d3-geo: 3.1.1
       d3-selection: 3.0.0
+      d3-transition: 3.0.1(d3-selection@3.0.0)
       d3-zoom: 3.0.0
       reka-ui: 2.9.6(vue@3.5.32(typescript@5.9.3))
       topojson-client: 3.1.0
@@ -701,38 +782,117 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  '@cfasim-ui/components@0.3.7(vue@3.5.32(typescript@5.9.3))':
+  '@cfasim-ui/components@0.4.10(vue@3.5.32(typescript@5.9.3))':
     dependencies:
+      '@cfasim-ui/shared': 0.4.10(vue@3.5.32(typescript@5.9.3))
+      '@codemirror/lang-json': 6.0.2
+      '@codemirror/lang-yaml': 6.1.3
+      '@codemirror/language': 6.12.3
+      '@codemirror/legacy-modes': 6.5.3
+      '@codemirror/view': 6.43.0
+      codemirror: 6.0.2
       reka-ui: 2.9.6(vue@3.5.32(typescript@5.9.3))
+      smol-toml: 1.6.1
       vue: 3.5.32(typescript@5.9.3)
+      vue-codemirror: 6.1.1(codemirror@6.0.2)(vue@3.5.32(typescript@5.9.3))
+      yaml: 2.9.0
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  '@cfasim-ui/pyodide@0.3.7(vue@3.5.32(typescript@5.9.3))':
+  '@cfasim-ui/docs@0.4.10': {}
+
+  '@cfasim-ui/pyodide@0.4.10(vue@3.5.32(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.3.7(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.4.10(vue@3.5.32(typescript@5.9.3))
       pyodide: 0.29.3
       vue: 3.5.32(typescript@5.9.3)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@cfasim-ui/shared@0.3.7(vue@3.5.32(typescript@5.9.3))':
+  '@cfasim-ui/shared@0.4.10(vue@3.5.32(typescript@5.9.3))':
     dependencies:
+      '@types/sprintf-js': 1.1.4
+      sprintf-js: 1.1.3
       vue: 3.5.32(typescript@5.9.3)
 
-  '@cfasim-ui/theme@0.3.7(vue@3.5.32(typescript@5.9.3))':
+  '@cfasim-ui/theme@0.4.10(vue@3.5.32(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/charts': 0.3.7(vue@3.5.32(typescript@5.9.3))
-      '@cfasim-ui/components': 0.3.7(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/charts': 0.4.10(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/components': 0.4.10(vue@3.5.32(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
-  '@cfasim-ui/wasm@0.3.7(vue@3.5.32(typescript@5.9.3))':
+  '@cfasim-ui/wasm@0.4.10(vue@3.5.32(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.3.7(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.4.10(vue@3.5.32(typescript@5.9.3))
       vue: 3.5.32(typescript@5.9.3)
+
+  '@codemirror/autocomplete@6.20.2':
+    dependencies:
+      '@codemirror/language': 6.12.3
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.0
+      '@lezer/common': 1.5.2
+
+  '@codemirror/commands@6.10.3':
+    dependencies:
+      '@codemirror/language': 6.12.3
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.0
+      '@lezer/common': 1.5.2
+
+  '@codemirror/lang-json@6.0.2':
+    dependencies:
+      '@codemirror/language': 6.12.3
+      '@lezer/json': 1.0.3
+
+  '@codemirror/lang-yaml@6.1.3':
+    dependencies:
+      '@codemirror/autocomplete': 6.20.2
+      '@codemirror/language': 6.12.3
+      '@codemirror/state': 6.6.0
+      '@lezer/common': 1.5.2
+      '@lezer/highlight': 1.2.3
+      '@lezer/lr': 1.4.10
+      '@lezer/yaml': 1.0.4
+
+  '@codemirror/language@6.12.3':
+    dependencies:
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.0
+      '@lezer/common': 1.5.2
+      '@lezer/highlight': 1.2.3
+      '@lezer/lr': 1.4.10
+      style-mod: 4.1.3
+
+  '@codemirror/legacy-modes@6.5.3':
+    dependencies:
+      '@codemirror/language': 6.12.3
+
+  '@codemirror/lint@6.9.6':
+    dependencies:
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.0
+      crelt: 1.0.6
+
+  '@codemirror/search@6.7.0':
+    dependencies:
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.0
+      crelt: 1.0.6
+
+  '@codemirror/state@6.6.0':
+    dependencies:
+      '@marijn/find-cluster-break': 1.0.2
+
+  '@codemirror/view@6.43.0':
+    dependencies:
+      '@codemirror/state': 6.6.0
+      crelt: 1.0.6
+      style-mod: 4.1.3
+      w3c-keyname: 2.2.8
 
   '@emnapi/core@1.9.2':
     dependencies:
@@ -779,6 +939,30 @@ snapshots:
       '@swc/helpers': 0.5.21
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
+
+  '@lezer/common@1.5.2': {}
+
+  '@lezer/highlight@1.2.3':
+    dependencies:
+      '@lezer/common': 1.5.2
+
+  '@lezer/json@1.0.3':
+    dependencies:
+      '@lezer/common': 1.5.2
+      '@lezer/highlight': 1.2.3
+      '@lezer/lr': 1.4.10
+
+  '@lezer/lr@1.4.10':
+    dependencies:
+      '@lezer/common': 1.5.2
+
+  '@lezer/yaml@1.0.4':
+    dependencies:
+      '@lezer/common': 1.5.2
+      '@lezer/highlight': 1.2.3
+      '@lezer/lr': 1.4.10
+
+  '@marijn/find-cluster-break@1.0.2': {}
 
   '@napi-rs/wasm-runtime@1.1.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
     dependencies:
@@ -865,15 +1049,17 @@ snapshots:
   '@types/raf@3.4.3':
     optional: true
 
+  '@types/sprintf-js@1.1.4': {}
+
   '@types/trusted-types@2.0.7':
     optional: true
 
   '@types/web-bluetooth@0.0.21': {}
 
-  '@vitejs/plugin-vue@6.0.6(vite@8.0.8)(vue@3.5.32(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.6(vite@8.0.8(yaml@2.9.0))(vue@3.5.32(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.13
-      vite: 8.0.8
+      vite: 8.0.8(yaml@2.9.0)
       vue: 3.5.32(typescript@5.9.3)
 
   '@vue/compiler-core@3.5.32':
@@ -962,24 +1148,37 @@ snapshots:
       svg-pathdata: 6.0.3
     optional: true
 
-  cfasim-ui@0.3.7(vue@3.5.32(typescript@5.9.3)):
+  cfasim-ui@0.4.10(vue@3.5.32(typescript@5.9.3)):
     dependencies:
-      '@cfasim-ui/charts': 0.3.7(vue@3.5.32(typescript@5.9.3))
-      '@cfasim-ui/components': 0.3.7(vue@3.5.32(typescript@5.9.3))
-      '@cfasim-ui/pyodide': 0.3.7(vue@3.5.32(typescript@5.9.3))
-      '@cfasim-ui/shared': 0.3.7(vue@3.5.32(typescript@5.9.3))
-      '@cfasim-ui/theme': 0.3.7(vue@3.5.32(typescript@5.9.3))
-      '@cfasim-ui/wasm': 0.3.7(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/charts': 0.4.10(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/components': 0.4.10(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/docs': 0.4.10
+      '@cfasim-ui/pyodide': 0.4.10(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.4.10(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/theme': 0.4.10(vue@3.5.32(typescript@5.9.3))
+      '@cfasim-ui/wasm': 0.4.10(vue@3.5.32(typescript@5.9.3))
       vue: 3.5.32(typescript@5.9.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - bufferutil
       - utf-8-validate
 
+  codemirror@6.0.2:
+    dependencies:
+      '@codemirror/autocomplete': 6.20.2
+      '@codemirror/commands': 6.10.3
+      '@codemirror/language': 6.12.3
+      '@codemirror/lint': 6.9.6
+      '@codemirror/search': 6.7.0
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.0
+
   commander@2.20.3: {}
 
   core-js@3.49.0:
     optional: true
+
+  crelt@1.0.6: {}
 
   css-line-break@2.1.0:
     dependencies:
@@ -1217,8 +1416,12 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
+  sprintf-js@1.1.3: {}
+
   stackblur-canvas@2.7.0:
     optional: true
+
+  style-mod@4.1.3: {}
 
   svg-pathdata@6.0.3:
     optional: true
@@ -1246,7 +1449,7 @@ snapshots:
       base64-arraybuffer: 1.0.2
     optional: true
 
-  vite@8.0.8:
+  vite@8.0.8(yaml@2.9.0):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -1255,6 +1458,16 @@ snapshots:
       tinyglobby: 0.2.16
     optionalDependencies:
       fsevents: 2.3.3
+      yaml: 2.9.0
+
+  vue-codemirror@6.1.1(codemirror@6.0.2)(vue@3.5.32(typescript@5.9.3)):
+    dependencies:
+      '@codemirror/commands': 6.10.3
+      '@codemirror/language': 6.12.3
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.0
+      codemirror: 6.0.2
+      vue: 3.5.32(typescript@5.9.3)
 
   vue-demi@0.14.10(vue@3.5.32(typescript@5.9.3)):
     dependencies:
@@ -1270,4 +1483,8 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
+  w3c-keyname@2.2.8: {}
+
   ws@8.20.0: {}
+
+  yaml@2.9.0: {}
