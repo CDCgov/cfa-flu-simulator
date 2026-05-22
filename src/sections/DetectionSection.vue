@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { LineChart, type Series } from "cfasim-ui/charts";
+import { LineChart, type Series, type ChartAnnotation } from "cfasim-ui/charts";
 import ChartTooltipContent from "../components/ChartTooltipContent.vue";
 import ParamField from "../components/ParamField.vue";
 import {
@@ -83,26 +83,29 @@ const pDetectChart = computed(() => {
       legend: "P(detect ≥ 1)",
     },
   ];
-  return { series, xLabels };
+  const annotations: ChartAnnotation[] = [];
+  for (const { threshold, label } of [
+    { threshold: 0.25, label: "≥25%" },
+    { threshold: 0.75, label: "≥75%" },
+  ]) {
+    const idx = trimmed.findIndex((p) => p.value >= threshold);
+    if (idx < 0) continue;
+    annotations.push({
+      x: idx,
+      y: threshold * 100,
+      text: `**${label}** Day ${Math.round(trimmed[idx].time)}`,
+      offset: { x: 8, y: -8 },
+      pointer: "ruleY",
+      lineDash: "4 4",
+      color: "var(--accent)",
+    });
+  }
+  return { series, xLabels, annotations };
 });
 
 function fmtPct(v: number, digits = 1): string {
   return `${(v * 100).toFixed(digits)}%`;
 }
-
-function firstDayAtThreshold(threshold: number): number | null {
-  const r = props.results;
-  if (!r) return null;
-  const pd = r.p_detect.Mitigated ?? r.p_detect.Unmitigated;
-  if (!pd) return null;
-  const hit = pd.find((p) => p.value >= threshold);
-  return hit ? Math.round(hit.time) : null;
-}
-
-const detectionThresholds = computed(() => [
-  { label: "≥25% probability to detect 1+ case", day: firstDayAtThreshold(0.25) },
-  { label: "≥75% probability to detect 1+ case", day: firstDayAtThreshold(0.75) },
-]);
 
 const subtitle = computed(
   () =>
@@ -151,6 +154,7 @@ const subtitle = computed(
             v-if="pDetectChart"
             :series="pDetectChart.series"
             :x-labels="pDetectChart.xLabels"
+            :annotations="pDetectChart.annotations"
             y-label="Probability (%)"
             filename="cumulative-probability-of-detection"
             :height="220"
@@ -169,12 +173,6 @@ const subtitle = computed(
               />
             </template>
           </LineChart>
-          <dl class="detection__thresholds">
-            <template v-for="t in detectionThresholds" :key="t.label">
-              <dt>{{ t.label }}</dt>
-              <dd>{{ t.day !== null ? `Day ${t.day}` : "Not reached" }}</dd>
-            </template>
-          </dl>
         </div>
       </div>
 
@@ -215,20 +213,6 @@ const subtitle = computed(
 }
 .detection__chart h3 {
   margin: 0 0 0.25rem;
-}
-.detection__thresholds {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.25rem 0.75rem;
-  margin: 0.5rem 0 0;
-  font-size: var(--font-size-sm);
-}
-.detection__thresholds dt {
-  opacity: 0.7;
-}
-.detection__thresholds dd {
-  margin: 0;
-  font-variant-numeric: tabular-nums;
 }
 .detection__controls {
   display: flex;
