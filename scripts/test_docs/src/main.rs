@@ -1,11 +1,14 @@
 use anyhow::bail;
 use std::collections::HashMap;
+use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 fn main() -> anyhow::Result<()> {
+    let args: Vec<String> = env::args().collect();
+
     let mut results = Vec::new();
-    for path in vec!["../../model/src", "../../model/tests"] {
+    for path in args.iter().skip(1) {
         let this = extract_test_docstrings_from_dir(Path::new(path))?;
         results.extend(this);
     }
@@ -31,6 +34,7 @@ fn extract_test_docstrings_from_dir(dir: &Path) -> anyhow::Result<Vec<HashMap<&s
 }
 
 #[test]
+// Check the example test file at test_docs/tests/ for number of tests and simple format check
 fn test_extract() {
     let results = extract_test_docstrings_from_dir(Path::new("tests")).unwrap();
     assert!(results.len() == 4);

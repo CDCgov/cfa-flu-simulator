@@ -189,6 +189,7 @@ mod tests {
         Parameters::default().try_into().unwrap()
     }
 
+    /// Models have types, parameterized by the number of populations.
     #[test]
     fn test_select_model() {
         let mut parameters = default_typed();
@@ -197,22 +198,32 @@ mod tests {
         assert_eq!(model.as_ref().type_id(), TypeId::of::<SEIRModel<2>>());
     }
 
+    /// When a model with no mitigations is run, it produces a single output. It is labeled with
+    /// MitigationType::Unmitigated.
     #[test]
     fn test_without_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = false;
-        let model = SEIRModelUnified { parameters, days: 200 };
+        let model = SEIRModelUnified {
+            parameters,
+            days: 200,
+        };
         let run = model.run();
         assert!(!run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));
         assert_eq!(run.mitigation_types.len(), 1);
     }
 
+    /// When a model with mitigations is run, it produces two outputs, one with mitigations and
+    /// one without, keyed by MitigationType::Mitigated and MitigationType::Unmitigated.
     #[test]
     fn test_with_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = true;
-        let model = SEIRModelUnified { parameters, days: 200 };
+        let model = SEIRModelUnified {
+            parameters,
+            days: 200,
+        };
         let run = model.run();
         assert!(run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));

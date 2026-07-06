@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "collect-test-docstrings": "cargo run -q --manifest-path=scripts/test_docs/Cargo.toml -- model/src/ model/test/"
   },
   "dependencies": {
     "cfasim-ui": "^0.4.10",

@@ -112,10 +112,7 @@ macro_rules! make_state {
 }
 
 make_state!(
-    s, e, i, r,
-    sv, ev, iv, rv,
-    s2v, e2v, i2v, r2v,
-    y_cum, pre_h, h_cum, pre_d, d_cum
+    s, e, i, r, sv, ev, iv, rv, s2v, e2v, i2v, r2v, y_cum, pre_h, h_cum, pre_d, d_cum
 );
 
 impl<const N: usize> SEIRModel<N> {
@@ -189,8 +186,16 @@ fn vaccine_rates_by_dose(
     let rate2 = max_rate - rate1;
 
     (
-        if t_start1 <= t && t < t_end1 { rate1 } else { 0.0 },
-        if t_start2 <= t && t < t_end2 { rate2 } else { 0.0 },
+        if t_start1 <= t && t < t_end1 {
+            rate1
+        } else {
+            0.0
+        },
+        if t_start2 <= t && t < t_end2 {
+            rate2
+        } else {
+            0.0
+        },
     )
 }
 
@@ -439,7 +444,9 @@ fn get_dominant_eigendata<const N: usize, S: Storage<f64, Const<N>, Const<N>>>(
 #[cfg(test)]
 mod test {
     use super::SEIRModel;
-    use super::{_distribute_initials1, distribute_initials, get_dominant_eigendata, vaccine_rates_by_dose};
+    use super::{
+        _distribute_initials1, distribute_initials, get_dominant_eigendata, vaccine_rates_by_dose,
+    };
     use crate::mitigations::{AntiviralsParams, MitigationParamsTyped, TTIQParams, VaccineParams};
     use crate::model_unified::{DynodeModel, ModelOutput, OutputType};
     use crate::parameters::{Parameters, ParametersTyped};
@@ -494,6 +501,8 @@ mod test {
         Parameters::default().try_into().unwrap()
     }
 
+    /// For given initial state (total, no. infected, no. removed), check that derived initial
+    /// value (no. susceptible) is correct.
     #[test]
     fn test_distribute_initials() {
         let n = Vector2::new(100.0, 200.0);
@@ -704,12 +713,10 @@ mod test {
             .map(|x| DVector::from_vec(x.grouped_values.clone()))
             .reduce(|acc, elem| acc + elem)
             .unwrap();
-        let attack_rate_by_group = incidence_by_group
-            .component_div(&DVector::from_iterator(
-                model.parameters.population_fractions.len(),
-                model.parameters.population_fractions.iter().copied(),
-            ))
-            / model.parameters.population;
+        let attack_rate_by_group = incidence_by_group.component_div(&DVector::from_iterator(
+            model.parameters.population_fractions.len(),
+            model.parameters.population_fractions.iter().copied(),
+        )) / model.parameters.population;
 
         let hospitalizations_by_group = output
             .get_output(&OutputType::HospitalIncidence)
