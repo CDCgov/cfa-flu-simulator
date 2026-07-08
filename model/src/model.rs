@@ -133,6 +133,14 @@ pub fn p_detect1(n: f64, p: f64) -> f64 {
     1.0 - (1.0 - p).powf(n)
 }
 
+/// For `n` people (in each of `N`) populations, try to distribute `i0` initial
+/// infected and `r0` initial removed. If `r0` is less than `n`, but `i0` plus
+/// `r0` is great than `n`, then assign the `r0` and only whatever number are
+/// left to initial infected.
+///
+/// # Panics
+///
+/// if`r0` is greater than `n`
 fn distribute_initials<const N: usize>(
     n: SVector<f64, N>,
     i0: SVector<f64, N>,
@@ -162,6 +170,16 @@ fn _distribute_initials1(n: f64, i0: f64, r0: f64) -> (f64, f64, f64) {
     }
 }
 
+/// Calculate per-time rate of vaccination
+///
+/// - `t`: time at which to calculate the rate
+/// - `max_rate`: maximum vaccination rate (of first and second doses combined)
+/// - `t_start`: start of vaccination campaign
+/// - `dose2_delay`: time between a person's first and second dose
+/// - `p_get_2_doses`: of people who get a first dose, proportion who get a second
+/// - `doses_available`: total number of doses (of first and second combined)
+///
+/// Returns the rate at which first doses and second doses are administered.
 fn vaccine_rates_by_dose(
     t: f64,
     max_rate: f64,
@@ -515,6 +533,8 @@ mod test {
         assert_float_eq!(r0_out[0], 5.0, abs <= 1e-5);
     }
 
+    /// When the initial number of people to be distributed to the I and R groups is more than
+    /// the number of people in the population, R takes precedence, then I, then S.
     #[test]
     fn test_distribute_initials_precedence() {
         let (s, i, r) = _distribute_initials1(100.0, 75.0, 75.0);
@@ -523,6 +543,12 @@ mod test {
         assert_float_eq!(r, 75.0, abs <= 1e-5);
     }
 
+    /// For a particular (arbitrary) parameterization, run a simulation with a nonzero
+    /// fraction initially immune (fii) and get the attack rate (proportional incidence)
+    /// over time. Assert that that is the same as the attack rate, from the a sister
+    /// simulation, reduced by a factor of fii, with:
+    /// - R0 reduced by fii
+    /// - population size reduced by fii
     #[test]
     fn test_seir_immune_equivalent() {
         let fii = 0.25;
@@ -565,6 +591,8 @@ mod test {
         );
     }
 
+    /// Spot/snapshot test: for a particular paramterization, without mitigations,
+    /// check that the overall attack rate is some anticipated value.
     #[test]
     fn test_seir_unmitigated() {
         let model = SEIRModel::new(ParametersTyped {
@@ -591,6 +619,8 @@ mod test {
         assert_float_eq!(results.attack_rate, 0.796814, abs <= 1e-5);
     }
 
+    /// Spot/snapshot test: For a simulation with vaccination, no TTIQ, no AV, check
+    /// that the overall attack rate is some anticipated value.
     #[test]
     fn test_seir_vaccine() {
         let vaccine_params = VaccineParams {
@@ -651,6 +681,7 @@ mod test {
         assert_float_eq!(results.attack_rate, expected, abs <= 1e-5);
     }
 
+    /// Symmetry test: In the presence of perfect isolation, the attack rate is exactly zero.
     #[test]
     fn test_seir_perfect_isolation() {
         let mut parameters = default_typed2();
@@ -669,6 +700,7 @@ mod test {
         assert_float_eq!(results.attack_rate, 0.0, abs <= 1e-10);
     }
 
+    /// Symmetry test: In the presence of perfect quarantine, the attack rate is exactly zero.
     #[test]
     fn test_seir_perfect_quarantine() {
         let mut parameters = default_typed2();
@@ -687,6 +719,8 @@ mod test {
         assert_float_eq!(results.attack_rate, 0.0, abs <= 1e-10);
     }
 
+    /// For some particular parameterization, with two groups, check that the IHR
+    /// and IFR from the simulation output match the input, parameter IHR and IFR.
     #[test]
     fn final_size_relation_with_groups() {
         let mut params = default_typed2();
@@ -751,6 +785,8 @@ mod test {
         assert!((model.parameters.fraction_dead[1] - ifr[1]).abs() < 1e-5);
     }
 
+    /// Spot/snapshot test: Run a simulation with antivirals. Get some anticipated,
+    /// overall attack rate.
     #[test]
     fn test_antiviral() {
         let mut params = ParametersTyped {
@@ -790,6 +826,8 @@ mod test {
         assert_float_eq!(results.attack_rate, 0.77889514, abs <= 1e-5);
     }
 
+    /// Snapshot/spot test: Run a simulation with two-dose vaccination. Get some
+    /// anticipated overall attack rate.
     #[test]
     fn test_2dose_vaccine() {
         let mut params = ParametersTyped {
@@ -835,6 +873,10 @@ mod test {
         assert_float_eq!(results.attack_rate, 0.7672022, abs <= 1e-5);
     }
 
+    /// Symmetry test: Run one simulation with 2 doses, but zero probability of getting the
+    /// second dose. Run another with 1 dose, but the parameter for probability of getting
+    /// the second dose set to a nonzero value. These two simulations give the same attack
+    /// rate vector.
     #[test]
     fn test_2dose_vaccine_ignore_dose1() {
         let mut params1 = ParametersTyped {
@@ -891,6 +933,8 @@ mod test {
         assert_float_eq!(results1.attack_rate, results2.attack_rate, abs <= 1e-10);
     }
 
+    /// Snapshot test: Get the correct dominant eigenvector and eigenvalue from a
+    /// well-behaved 2x2 matrix (all entries > 0).
     #[test]
     fn test_eigen() {
         let x = matrix![1.0, 3.0; 2.0, 4.0];
@@ -900,29 +944,56 @@ mod test {
         assert!((evec[1] - 0.5930703).abs() < 1e-6);
     }
 
+    /// Multiple tests of the vaccination rate computations
     #[test]
     fn test_vax_rate_by_dose() {
+        // Before the campaign start, rates are zero
         let (rate1, rate2) = vaccine_rates_by_dose(0.0, 1.0, 1.0, 0.0, 1.0, 10.0);
         assert_float_eq!(rate1, 0.0, abs <= 1e-6);
         assert_float_eq!(rate2, 0.0, abs <= 1e-6);
 
+        // At the start of the campaign, if no one will get a second dose, first doses
+        // go out at the maximum rate
         let (rate1, rate2) = vaccine_rates_by_dose(0.0, 1.0, 0.0, 1.0, 0.0, 10.0);
         assert_float_eq!(rate1, 1.0, abs <= 1e-6);
         assert_float_eq!(rate2, 0.0, abs <= 1e-6);
 
+        // At the start of the campaign, if everyone will get a second dose, and second
+        // doses are administered immediately (with no delay), then first and second
+        // doses are administered at half the total rate
         let (rate1, rate2) = vaccine_rates_by_dose(0.0, 1.0, 0.0, 0.0, 1.0, 10.0);
         assert_float_eq!(rate1, 0.5, abs <= 1e-6);
         assert_float_eq!(rate2, 0.5, abs <= 1e-6);
 
+        // At the start of the campaign, if everyone will get a second dose, and there
+        // is a nonzero delay, then first doses are going at half the max rate, and
+        // no second doses are going.
+        let (rate1, rate2) = vaccine_rates_by_dose(0.0, 1.0, 0.0, 5.0, 1.0, 10.0);
+        assert_float_eq!(rate1, 0.5, abs <= 1e-6);
+        assert_float_eq!(rate2, 0.0, abs <= 1e-6);
+
+        // If only some proportion of people will get the second dose, then expect a
+        // certain split between the first and second dose rates
         let (rate1, rate2) = vaccine_rates_by_dose(0.1, 1.0, 0.0, 0.0, 0.9, 10.0);
         assert_float_eq!(rate1, 1.0 / 1.9, abs <= 1e-6);
         assert_float_eq!(rate2, 0.9 * 1.0 / 1.9, abs <= 1e-6);
 
+        // After the delay has passed, but before first doses are depleted, we should be
+        // at equal rates.
         let (rate1, rate2) = vaccine_rates_by_dose(7.5, 1.0, 0.0, 5.0, 1.0, 10.0);
         assert_float_eq!(rate1, 0.5, abs <= 1e-6);
         assert_float_eq!(rate2, 0.5, abs <= 1e-6);
+
+        // If there is a really long delay between first and second doses, then first
+        // doses are depleted, and no one gets anything, until the second doses start.
+        let (rate1, rate2) = vaccine_rates_by_dose(99.9, 1.0, 0.0, 100.0, 1.0, 10.0);
+        assert_float_eq!(rate1, 0.0, abs <= 1e-6);
+        assert_float_eq!(rate2, 0.0, abs <= 1e-6);
     }
 
+    /// Symmetry test: if it takes some time for a vaccine to ramp up immunity, then that's equivalent
+    /// to a simulation with a vaccine with no ramp-up, but where the vaccine campaign starts at
+    /// after a time equal to that ramp-up
     #[test]
     fn test_ramp_up() {
         let mut params1 = default_typed2();
