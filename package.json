@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "collect-test-docstrings": "cargo run -q --manifest-path=scripts/test_docs/Cargo.toml -- model/src/ model/test/"
+    "collect-test-docs": "cd model && cargo run --bin collect_test_docs -F collect_test_docs -- src/ test/"
   },
   "dependencies": {
     "cfasim-ui": "^0.4.10",

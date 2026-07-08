@@ -6,6 +6,10 @@ edition = "2024"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[[bin]]
+name = "collect_test_docs"
+path = "src/bin/collect_test_docs.rs"
+
 [dependencies]
 wasm-bindgen = "0.2.63"
 console_error_panic_hook = { version = "0.1.6", optional = true }
@@ -20,13 +24,16 @@ strum_macros = "0.27.1"
 float_eq = "1.0.1"
 toml = "0.8"
 cfasim-model = "0.3.6"
+serde_json = { version = "1.0", optional = true }
+anyhow = { version = "1.0.103", optional = true }
+syn = { version = "2.0.118", features = ["full"], optional = true }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"
-serde_json = "1.0"
 
 [profile.release]
 opt-level = "s"
 
 [features]
 default = ["console_error_panic_hook"]
+collect_test_docs = ["serde_json", "anyhow", "syn"]
