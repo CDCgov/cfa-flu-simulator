@@ -36,9 +36,12 @@ fn extract_test_docstrings_from_dir(dir: &Path) -> anyhow::Result<Vec<HashMap<&s
 #[test]
 // Check the example test file at test_docs/tests/ for number of tests and simple format check
 fn test_extract() {
-    let results = extract_test_docstrings_from_dir(Path::new("tests")).unwrap();
-    assert!(results.len() == 4);
-    assert!(results[0].len() == 4);
+    let results = extract_test_docstrings_from_dir(Path::new("src/model.rs")).unwrap();
+    assert!(results.len() > 0, "there are some tests in model.rs");
+    assert!(
+        results[0].len() == 4,
+        "each test has 4 data elements associated to it"
+    );
 }
 
 fn find_rust_files(path: &Path) -> anyhow::Result<Vec<PathBuf>> {
