@@ -15,7 +15,7 @@ static DEFAULT_TOML: &str = include_str!("../default-params.toml");
 // community_, ttiq_) so the full schema can round-trip through URL query
 // strings and flat forms. Solver code works on `ParametersTyped<N>`, which
 // keeps the mitigation grouping for readability.
-#[derive(Tsify, Debug, Clone, Serialize, Deserialize)]
+#[derive(Tsify, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct Parameters {
     pub n: usize,
@@ -99,8 +99,23 @@ impl Parameters {
         params
     }
 
-    // Validate that all n-sized fields match `n`. Called once at construction.
+    // Validate the structural and scientific domains required by the solver.
     pub fn validate(&self) -> Result<(), &'static str> {
+        fn finite_nonnegative(values: &[f64]) -> bool {
+            values.iter().all(|x| x.is_finite() && *x >= 0.0)
+        }
+        fn probabilities(values: &[f64]) -> bool {
+            values
+                .iter()
+                .all(|x| x.is_finite() && (0.0..=1.0).contains(x))
+        }
+
+        if self.n == 0 {
+            return Err("n must be positive");
+        }
+        if self.days == 0 {
+            return Err("days must be positive");
+        }
         if self.population_fractions.len() != self.n {
             return Err("population_fractions length != n");
         }
@@ -116,11 +131,126 @@ impl Parameters {
         if self.fraction_dead.len() != self.n {
             return Err("fraction_dead length != n");
         }
-        if self.contact_matrix.len() != self.n * self.n {
+        let matrix_len = self.n.checked_mul(self.n).ok_or("n*n overflows")?;
+        if self.contact_matrix.len() != matrix_len {
             return Err("contact_matrix length != n*n");
         }
-        if self.community_effectiveness.len() != self.n * self.n {
+        if self.community_effectiveness.len() != matrix_len {
             return Err("community effectiveness length != n*n");
+        }
+        if !self.population.is_finite() || self.population <= 0.0 {
+            return Err("population must be finite and positive");
+        }
+        if !self.initial_infections.is_finite() || self.initial_infections < 0.0 {
+            return Err("initial_infections must be finite and nonnegative");
+        }
+        if !self.r0.is_finite() || self.r0 < 0.0 {
+            return Err("r0 must be finite and nonnegative");
+        }
+        for (value, name) in [
+            (
+                self.latent_period,
+                "latent_period must be finite and positive",
+            ),
+            (
+                self.infectious_period,
+                "infectious_period must be finite and positive",
+            ),
+            (
+                self.hospitalization_delay,
+                "hospitalization_delay must be finite and positive",
+            ),
+            (self.death_delay, "death_delay must be finite and positive"),
+        ] {
+            if !value.is_finite() || value <= 0.0 {
+                return Err(name);
+            }
+        }
+        if !probabilities(&[self.fraction_initial_immune]) {
+            return Err("fraction_initial_immune must be between 0 and 1");
+        }
+        if self.initial_infections > self.population * (1.0 - self.fraction_initial_immune) + 1e-12
+        {
+            return Err("initial infections exceed the non-immune population");
+        }
+        if !finite_nonnegative(&self.population_fractions)
+            || (self.population_fractions.iter().sum::<f64>() - 1.0).abs() > 1e-9
+        {
+            return Err("population_fractions must be nonnegative and sum to 1");
+        }
+        if !finite_nonnegative(&self.contact_matrix)
+            || self.contact_matrix.iter().all(|x| *x == 0.0)
+        {
+            return Err("contact_matrix must be finite, nonnegative, and nonzero");
+        }
+        if !probabilities(&self.fraction_symptomatic)
+            || !probabilities(&self.fraction_hospitalized)
+            || !probabilities(&self.fraction_dead)
+        {
+            return Err("outcome fractions must be between 0 and 1");
+        }
+        if !probabilities(&[
+            self.p_test_sympto,
+            self.test_sensitivity,
+            self.p_test_forward,
+        ]) {
+            return Err("detection probabilities must be between 0 and 1");
+        }
+        if !matches!(self.vaccine_doses, 1 | 2) {
+            return Err("vaccine_doses must be 1 or 2");
+        }
+        if !finite_nonnegative(&[
+            self.vaccine_start,
+            self.vaccine_dose2_delay,
+            self.vaccine_administration_rate,
+            self.vaccine_doses_available,
+            self.vaccine_ramp_up,
+        ]) {
+            return Err("vaccine times, rates, and supply must be finite and nonnegative");
+        }
+        if !probabilities(&[
+            self.vaccine_p_get_2_doses,
+            self.vaccine_ve_s,
+            self.vaccine_ve_i,
+            self.vaccine_ve_p,
+            self.vaccine_ve_2s,
+            self.vaccine_ve_2i,
+            self.vaccine_ve_2p,
+        ]) {
+            return Err("vaccine probabilities and efficacies must be between 0 and 1");
+        }
+        if !probabilities(&[
+            self.antivirals_fraction_adhere,
+            self.antivirals_fraction_diagnosed_prescribed_inpatient,
+            self.antivirals_fraction_diagnosed_prescribed_outpatient,
+            self.antivirals_fraction_seek_care,
+            self.antivirals_ave_i,
+            self.antivirals_ave_p_hosp,
+            self.antivirals_ave_p_death,
+        ]) {
+            return Err("antiviral probabilities and efficacies must be between 0 and 1");
+        }
+        if !self.community_start.is_finite() || self.community_start < 0.0 {
+            return Err("community_start must be finite and nonnegative");
+        }
+        if !self.community_duration.is_finite() || self.community_duration <= 0.0 {
+            return Err("community_duration must be finite and positive");
+        }
+        if !self
+            .community_effectiveness
+            .iter()
+            .all(|x| x.is_finite() && (-1.0..=1.0).contains(x))
+        {
+            return Err("community effectiveness must be between -1 and 1");
+        }
+        if !probabilities(&[
+            self.ttiq_p_id_infectious,
+            self.ttiq_p_infectious_isolates,
+            self.ttiq_isolation_reduction,
+            self.ttiq_p_contact_trace,
+            self.ttiq_p_traced_quarantines,
+        ]) {
+            return Err("TTIQ probabilities must be between 0 and 1");
         }
         Ok(())
     }
@@ -344,7 +474,7 @@ mod tests {
         let params = Parameters::default();
         assert_eq!(params.n, 2);
         assert_eq!(params.population, 330_000_000.0);
-        params.validate().expect("default params must validate");
+        let _: ParametersTyped<2> = params.try_into().expect("default params must parse");
     }
 
     #[test]
@@ -382,13 +512,7 @@ mod tests {
         let params = Parameters::default();
         let typed: ParametersTyped<2> = params.clone().try_into().unwrap();
         let roundtrip: Parameters = typed.into();
-        assert_eq!(params.n, roundtrip.n);
-        assert_eq!(params.population_fractions, roundtrip.population_fractions);
-        assert_eq!(params.contact_matrix, roundtrip.contact_matrix);
-        assert_eq!(
-            params.community_effectiveness,
-            roundtrip.community_effectiveness
-        );
+        assert_eq!(params, roundtrip);
     }
 
     #[test]
@@ -406,5 +530,33 @@ mod tests {
         let params = Parameters::default();
         let r: Result<ParametersTyped<3>, _> = params.try_into();
         assert!(r.is_err());
+    }
+
+    #[test]
+    fn test_invalid_numeric_domains_rejected() {
+        fn rejected(mutator: impl FnOnce(&mut Parameters)) {
+            let mut params = Parameters::default();
+            mutator(&mut params);
+            let parsed: Result<ParametersTyped<2>, _> = params.try_into();
+            assert!(parsed.is_err());
+        }
+
+        rejected(|p| p.population = 0.0);
+        rejected(|p| p.population = f64::NAN);
+        rejected(|p| p.latent_period = 0.0);
+        rejected(|p| p.infectious_period = f64::INFINITY);
+        rejected(|p| p.fraction_initial_immune = 1.1);
+        rejected(|p| p.initial_infections = p.population + 1.0);
+        rejected(|p| p.population_fractions = vec![0.2, 0.2]);
+        rejected(|p| p.contact_matrix[0] = -1.0);
+        rejected(|p| p.fraction_dead[0] = -0.1);
+        rejected(|p| p.p_test_sympto = 1.1);
+        rejected(|p| p.vaccine_doses = 3);
+        rejected(|p| p.vaccine_administration_rate = -1.0);
+        rejected(|p| p.vaccine_ve_s = f64::NAN);
+        rejected(|p| p.antivirals_fraction_adhere = -0.1);
+        rejected(|p| p.community_duration = 0.0);
+        rejected(|p| p.community_effectiveness[0] = 1.1);
+        rejected(|p| p.ttiq_p_contact_trace = 2.0);
     }
 }

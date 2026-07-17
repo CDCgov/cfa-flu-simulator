@@ -71,6 +71,7 @@ dependencies = [
  "serde_json",
  "strum",
  "strum_macros",
+ "syn",
  "toml",
  "tsify",
  "wasm-bindgen",

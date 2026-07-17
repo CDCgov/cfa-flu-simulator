@@ -2,12 +2,14 @@
 #![feature(generic_const_exprs)]
 #![feature(macro_metavar_expr)]
 
+#[cfg(test)]
+mod aspr_reference;
 pub mod mitigations;
 mod model;
 mod model_unified;
 pub mod parameters;
 #[cfg(test)]
-mod reference_compat;
+mod snapshot_tests;
 mod utils;
 
 // Temporary legacy stubs — consumed by src/App.vue via the vite wasm-pack plugin.

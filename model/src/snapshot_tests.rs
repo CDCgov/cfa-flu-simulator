@@ -1,22 +1,19 @@
-// Equivalence test against the upstream dynode-web reference model.
+// Snapshot tests for established model behavior.
 //
-// Fixtures under `model/tests/reference-data/` are produced by
-// `scripts/gen_reference/` running the upstream model. Each fixture pins
-// a single mitigation scenario (no_mitigations / vaccine_only /
-// antivirals_only / community_only / ttiq_only) at the shared default
-// parameter set. This test runs the local model with the same parameters
-// and asserts the time-series outputs match within a tight tolerance.
+// Each fixture under `model/tests/snapshot-data/` captures the output of one
+// mitigation scenario at the shared default parameter set. These tests guard
+// against unintended changes to the existing time series.
 
 #![cfg(test)]
 
 use crate::model::SEIRModel;
-use crate::model_unified::{DynodeModel, OutputItemGrouped, OutputType};
+use crate::model_unified::{EpidemicModel, OutputItemGrouped, OutputType};
 use crate::parameters::{Parameters, ParametersTyped};
 use serde::Deserialize;
 use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
-struct RefItem {
+struct SnapshotItem {
     time: f64,
     grouped_values: Vec<f64>,
 }
@@ -26,25 +23,23 @@ struct Fixture {
     #[allow(dead_code)]
     scenario: String,
     days: usize,
-    infection_incidence: Vec<RefItem>,
-    symptomatic_incidence: Vec<RefItem>,
-    hospital_incidence: Vec<RefItem>,
-    death_incidence: Vec<RefItem>,
+    infection_incidence: Vec<SnapshotItem>,
+    symptomatic_incidence: Vec<SnapshotItem>,
+    hospital_incidence: Vec<SnapshotItem>,
+    death_incidence: Vec<SnapshotItem>,
 }
 
 fn load_fixture(name: &str) -> Fixture {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/reference-data")
+        .join("tests/snapshot-data")
         .join(format!("{name}.json"));
     let raw = std::fs::read_to_string(&path)
         .unwrap_or_else(|e| panic!("failed to read fixture {}: {e}", path.display()));
     serde_json::from_str(&raw).expect("fixture parses")
 }
 
-// Build params matching the reference's Parameters::<2>::default() with
-// exactly one mitigation enabled (or none for "no_mitigations"). The TOML
-// defaults already line up with the reference except for p_test_sympto
-// (0.001 vs 0.0) and vaccine_enabled (true vs false), so we override those.
+// Build the parameter scenarios captured by the stored snapshots. Each has
+// exactly one mitigation enabled, or none for `no_mitigations`.
 fn make_params(scenario: &str) -> Parameters {
     let mut p = Parameters::default();
     p.p_test_sympto = 0.0;
@@ -63,7 +58,7 @@ fn make_params(scenario: &str) -> Parameters {
     p
 }
 
-fn assert_series_close(actual: &[OutputItemGrouped], expected: &[RefItem], label: &str) {
+fn assert_series_close(actual: &[OutputItemGrouped], expected: &[SnapshotItem], label: &str) {
     assert_eq!(
         actual.len(),
         expected.len(),
@@ -75,7 +70,8 @@ fn assert_series_close(actual: &[OutputItemGrouped], expected: &[RefItem], label
         assert!(
             (a.time - e.time).abs() < 1e-9,
             "{label}: time[{i}] differs: actual {} vs expected {}",
-            a.time, e.time,
+            a.time,
+            e.time,
         );
         assert_eq!(
             a.grouped_values.len(),
@@ -135,26 +131,26 @@ fn check_scenario(scenario: &str) {
 }
 
 #[test]
-fn reference_no_mitigations() {
+fn snapshot_no_mitigations() {
     check_scenario("no_mitigations");
 }
 
 #[test]
-fn reference_vaccine_only() {
+fn snapshot_vaccine_only() {
     check_scenario("vaccine_only");
 }
 
 #[test]
-fn reference_antivirals_only() {
+fn snapshot_antivirals_only() {
     check_scenario("antivirals_only");
 }
 
 #[test]
-fn reference_community_only() {
+fn snapshot_community_only() {
     check_scenario("community_only");
 }
 
 #[test]
-fn reference_ttiq_only() {
+fn snapshot_ttiq_only() {
     check_scenario("ttiq_only");
 }

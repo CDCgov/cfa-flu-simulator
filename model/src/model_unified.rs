@@ -129,11 +129,11 @@ impl ModelOutputExport {
     }
 }
 
-pub trait DynodeModel: Any {
+pub trait EpidemicModel: Any {
     fn integrate(&self, days: usize) -> ModelOutput;
 }
 
-fn select_model(parameters: ParametersTyped<2>) -> Box<dyn DynodeModel> {
+fn select_model(parameters: ParametersTyped<2>) -> Box<dyn EpidemicModel> {
     // TODO maybe we'll have other models to choose from
     Box::new(SEIRModel::new(parameters))
 }
@@ -201,7 +201,10 @@ mod tests {
     fn test_without_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = false;
-        let model = SEIRModelUnified { parameters, days: 200 };
+        let model = SEIRModelUnified {
+            parameters,
+            days: 200,
+        };
         let run = model.run();
         assert!(!run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));
@@ -212,7 +215,10 @@ mod tests {
     fn test_with_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = true;
-        let model = SEIRModelUnified { parameters, days: 200 };
+        let model = SEIRModelUnified {
+            parameters,
+            days: 200,
+        };
         let run = model.run();
         assert!(run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));
