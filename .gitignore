@@ -5,3 +5,5 @@ target/
 dist/
 CLAUDE.md
 CHANGELOG.md
+docs/.vitepress/cache/
+docs/.vitepress/dist/

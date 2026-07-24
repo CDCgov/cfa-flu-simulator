@@ -33,6 +33,10 @@ jobs:
       - run: pnpm build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+      - run: pnpm docs:build
+        env:
+          DOCS_BASE_PATH: /${{ github.event.repository.name }}/docs/
+      - run: mv docs/.vitepress/dist dist/docs
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
