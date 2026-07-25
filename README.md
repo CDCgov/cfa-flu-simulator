@@ -2,6 +2,14 @@
 
 **This project is currently in the early stages of development and not ready for use in production.**
 
+## Model verification
+
+_Model verification_ asks whether software code faithfully represents the intended mathematical model. (This is separate from _validation_, comparing a model's predictions with real-life data.)
+
+The [verification inventory](model-verification.toml) lists scientific claims about model behavior and the software tests that substantiate them. (Straightforward unit tests without specific scientific content are not included.)
+
+`cargo test` runs the full test suite, including the verification tests. `cargo run --bin check_model_verification` validates the verification inventory, ensuring that the listed tests are actually present in the codebase.
+
 ## General disclaimer
 
 This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm). GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.

@@ -1,0 +1,223 @@
+# Model verification inventory. See README.md#model-verification
+
+[[item]]
+category = "logic edge"
+claim = "Initial infections and immunity are distributed without losing population"
+oracle = "Hand calculation; absolute error at most 1e-5"
+test_name = "model::test::test_distribute_initials"
+
+[[item]]
+category = "logic edge"
+claim = "Removed people take precedence when requested initial states exceed a group population"
+oracle = "Exact branch result within absolute 1e-5"
+test_name = "model::test::test_distribute_initials_precedence"
+
+[[item]]
+category = "logic symmetry"
+claim = "Prior immunity is equivalent to the corresponding susceptible-population and effective-R0 reduction"
+oracle = "Attack rates agree within absolute 1e-10"
+test_name = "model::test::test_seir_immune_equivalent"
+
+[[item]]
+category = "snapshot"
+claim = "The unmitigated baseline does not change silently"
+oracle = "Stored attack rate within absolute 1e-5"
+test_name = "model::test::test_seir_unmitigated"
+
+[[item]]
+category = "snapshot"
+claim = "The one-dose vaccination baseline does not change silently"
+oracle = "Stored attack rate within absolute 1e-5"
+test_name = "model::test::test_seir_vaccine"
+
+[[item]]
+category = "logic edge"
+claim = "Perfect isolation prevents secondary infections"
+oracle = "Attack rate equals zero within absolute 1e-10"
+test_name = "model::test::test_seir_perfect_isolation"
+
+[[item]]
+category = "logic edge"
+claim = "Perfect quarantine prevents secondary infections"
+oracle = "Attack rate equals zero within absolute 1e-10"
+test_name = "model::test::test_seir_perfect_quarantine"
+
+[[item]]
+category = "ground truth"
+claim = "Group infection, hospitalization, and fatality totals follow their defining ratios"
+oracle = "Rates agree with inputs within absolute 1e-5"
+test_name = "model::test::final_size_relation_with_groups"
+
+[[item]]
+category = "snapshot"
+claim = "The antiviral baseline does not change silently"
+oracle = "Stored attack rate within absolute 1e-5"
+test_name = "model::test::test_antiviral"
+
+[[item]]
+category = "snapshot"
+claim = "The two-dose vaccination baseline does not change silently"
+oracle = "Stored attack rate within absolute 1e-5"
+test_name = "model::test::test_2dose_vaccine"
+
+[[item]]
+category = "logic symmetry"
+claim = "A two-dose campaign with no second-dose recipients is equivalent to a one-dose campaign"
+oracle = "Attack rates agree within absolute 1e-10"
+test_name = "model::test::test_2dose_vaccine_ignore_dose1"
+
+[[item]]
+category = "ground truth"
+claim = "Dominant eigendata are correct for a known positive matrix"
+oracle = "Eigenvalue and vector agree within absolute 1e-6"
+test_name = "model::test::test_eigen"
+
+[[item]]
+category = "logic edge"
+claim = "Vaccination is zero before campaign start"
+oracle = "Hand calculation within absolute 1e-6"
+test_name = "model::test::test_vax_rate_before_campaign"
+
+[[item]]
+category = "logic edge"
+claim = "A one-dose campaign assigns the full administration rate to dose one"
+oracle = "Hand calculation within absolute 1e-6"
+test_name = "model::test::test_vax_rate_one_dose"
+
+[[item]]
+category = "logic edge"
+claim = "Simultaneous first and second doses split capacity equally at complete uptake"
+oracle = "Hand calculation within absolute 1e-6"
+test_name = "model::test::test_vax_rate_simultaneous_doses"
+
+[[item]]
+category = "logic edge"
+claim = "Partial second-dose uptake splits administration capacity proportionally"
+oracle = "Hand calculation within absolute 1e-6"
+test_name = "model::test::test_vax_rate_partial_second_dose_uptake"
+
+[[item]]
+category = "logic edge"
+claim = "Second-dose administration begins after its specified delay"
+oracle = "Hand calculation within absolute 1e-6"
+test_name = "model::test::test_vax_rate_after_second_dose_delay"
+
+[[item]]
+category = "logic edge"
+claim = "No doses are administered in the depletion gap before delayed second doses"
+oracle = "Exact zero within absolute 1e-12"
+test_name = "model::test::test_vax_rate_depletion_gap"
+
+[[item]]
+category = "logic symmetry"
+claim = "Vaccine protection delay is equivalent to an equal campaign-start delay"
+oracle = "Attack rates agree within absolute 1e-10"
+test_name = "model::test::test_ramp_up"
+
+[[item]]
+category = "snapshot"
+claim = "The no-mitigation daily output baseline does not change silently"
+oracle = "Stored time series satisfy absolute 1e-6 or relative 1e-9"
+test_name = "snapshot_tests::snapshot_no_mitigations"
+
+[[item]]
+category = "snapshot"
+claim = "The vaccine-only daily output baseline does not change silently"
+oracle = "Stored time series satisfy absolute 1e-6 or relative 1e-9"
+test_name = "snapshot_tests::snapshot_vaccine_only"
+
+[[item]]
+category = "snapshot"
+claim = "The antiviral-only daily output baseline does not change silently"
+oracle = "Stored time series satisfy absolute 1e-6 or relative 1e-9"
+test_name = "snapshot_tests::snapshot_antivirals_only"
+
+[[item]]
+category = "snapshot"
+claim = "The community-only daily output baseline does not change silently"
+oracle = "Stored time series satisfy absolute 1e-6 or relative 1e-9"
+test_name = "snapshot_tests::snapshot_community_only"
+
+[[item]]
+category = "snapshot"
+claim = "The TTIQ-only daily output baseline does not change silently"
+oracle = "Stored time series satisfy absolute 1e-6 or relative 1e-9"
+test_name = "snapshot_tests::snapshot_ttiq_only"
+
+[[item]]
+category = "ground truth"
+claim = "Homogeneous unmitigated final size satisfies the analytic SEIR final-size relation"
+oracle = "Residual at most 1e-12; attack-rate error at most 1e-5"
+test_name = "model::test::test_unmitigated_final_size_equation"
+
+[[item]]
+category = "logic invariant"
+claim = "Living compartments conserve population and remain nonnegative"
+oracle = "Normalized conservation and lower-bound error at most 1e-7"
+test_name = "model::test::test_population_conservation_and_nonnegative_states"
+
+[[item]]
+category = "logic symmetry"
+claim = "Permuting population groups only permutes outputs"
+oracle = "Normalized absolute 1e-8 or relative 1e-6"
+test_name = "model::test::test_population_group_permutation"
+
+[[item]]
+category = "logic symmetry"
+claim = "Scaling population, state, and capacity inputs scales compartment derivatives proportionally"
+oracle = "Absolute 2e-12 or relative 1e-10 after removing the scale factor"
+test_name = "model::test::test_population_scale_invariance"
+
+[[item]]
+category = "logic trend"
+claim = "Increasing R0 increases infection burden in a controlled scenario"
+oracle = "Strict increase exceeding 1e-6"
+test_name = "model::test::test_r0_increases_infection_burden"
+
+[[item]]
+category = "logic edge"
+claim = "With no initial infection, all disease and outcome outputs remain zero under all mitigations"
+oracle = "Absolute total at most 1e-12"
+test_name = "model::test::test_zero_initial_infections_zero_outputs"
+
+[[item]]
+category = "ground truth"
+claim = "Detection probability matches hand calculations, boundaries, and monotonic relationships"
+oracle = "Absolute error at most 1e-12; strict monotonic inequalities"
+test_name = "model::test::test_detection_probability"
+
+[[item]]
+category = "logic symmetry"
+claim = "Disabled and zero-effect mitigations reproduce unmitigated dynamics"
+oracle = "Normalized absolute 2e-7 or relative 1e-6"
+test_name = "model::test::test_zero_effect_mitigations_equivalent"
+
+[[item]]
+category = "logic trend"
+claim = "Stronger mitigations reduce their directly targeted burden in controlled scenarios"
+oracle = "Strict reduction exceeding 1e-6"
+test_name = "model::test::test_stronger_mitigations_reduce_targeted_burden"
+
+[[item]]
+category = "logic symmetry"
+claim = "TTIQ equals the consistently rescaled no-TTIQ parameterization"
+oracle = "Absolute 1e-8 or relative 1e-6"
+test_name = "model::test::test_ttiq_equivalent_parameterization"
+
+[[item]]
+category = "logic invariant"
+claim = "Outcome delays change timing but not final totals"
+oracle = "Absolute 1e-8 or relative 1e-6"
+test_name = "model::test::test_outcome_delays_preserve_totals"
+
+[[item]]
+category = "reference implementation"
+claim = "Shared SEIR derivatives agree with ASPR-flumodels from aligned states across the 12-scenario factorial"
+oracle = "Normalized absolute 1e-10 or relative 1e-8"
+test_name = "aspr_reference::reference_derivatives_match_aspr"
+
+[[item]]
+category = "reference implementation"
+claim = "Shared continuous trajectory segments agree for aligned ASPR scenarios"
+oracle = "Normalized absolute 5e-6 or relative 1e-5; comparison boundaries are documented in README"
+test_name = "aspr_reference::reference_trajectories_match_aspr"
