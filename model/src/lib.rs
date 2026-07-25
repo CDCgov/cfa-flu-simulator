@@ -7,6 +7,8 @@ mod model;
 mod model_unified;
 pub mod parameters;
 #[cfg(test)]
+mod reference_aspr;
+#[cfg(test)]
 mod reference_compat;
 mod utils;
 
