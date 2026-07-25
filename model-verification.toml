@@ -1,115 +1,81 @@
 # Model verification inventory. See README.md#model-verification
 
 [[item]]
-category = "logic edge"
-claim = "Initial susceptible, infected, and immune counts for a representative population group are allocated from the requested initial conditions"
-oracle = "Hand-calculated counts agree within absolute 1e-5"
-test_name = "model::test::test_distribute_initials"
-
-[[item]]
-category = "logic edge"
-claim = "Initial immunity takes precedence over initial infection when their requested counts exceed a group population"
-oracle = "Hand-calculated boundary allocation agrees within absolute 1e-5"
-test_name = "model::test::test_distribute_initials_precedence"
-
-[[item]]
-category = "logic symmetry"
+category = "symmetry"
 claim = "Prior immunity is equivalent to reducing both the susceptible population and effective R0 by the nonimmune fraction"
-oracle = "Population-adjusted attack rates agree within absolute 1e-10"
 test_name = "model::test::test_seir_immune_equivalent"
 
 [[item]]
 category = "snapshot"
 claim = "The homogeneous unmitigated 300-day attack rate remains at its stored baseline"
-oracle = "Attack rate 0.796814 within absolute 1e-5"
 test_name = "model::test::test_seir_unmitigated"
 
 [[item]]
 category = "snapshot"
 claim = "The homogeneous one-dose-vaccine 300-day attack rate remains at its stored baseline"
-oracle = "Attack rate 0.7583813 within absolute 1e-5"
 test_name = "model::test::test_seir_vaccine"
 
 [[item]]
-category = "logic edge"
-claim = "Perfect identification, isolation, and isolation effectiveness prevent secondary infections"
-oracle = "Attack rate equals zero within absolute 1e-10"
+category = "edge case"
+claim = "Perfect identification, isolation, and isolation effectiveness prevent all secondary infections"
 test_name = "model::test::test_seir_perfect_isolation"
 
 [[item]]
-category = "logic edge"
-claim = "Perfect contact tracing and quarantine prevent secondary infections"
-oracle = "Attack rate equals zero within absolute 1e-10"
+category = "edge case"
+claim = "Perfect contact tracing and quarantine prevent all secondary infections"
 test_name = "model::test::test_seir_perfect_quarantine"
 
 [[item]]
-category = "ground truth"
-claim = "Two-group final attack rates match their expected values, and group hospitalization and fatality ratios equal their input probabilities"
-oracle = "Overall and group attack rates, infection-hospitalization ratios, and infection-fatality ratios agree within absolute 1e-5"
+category = "snapshot"
+claim = "Two-group final attack rates match their expected values"
+test_name = "model::test::final_size_relation_with_groups"
+
+[[item]]
+category = "symmetry"
+claim = "Two-group IHR and IFRs equal their input values"
 test_name = "model::test::final_size_relation_with_groups"
 
 [[item]]
 category = "snapshot"
 claim = "The homogeneous antiviral 300-day attack rate remains at its stored baseline"
-oracle = "Attack rate 0.77889514 within absolute 1e-5"
 test_name = "model::test::test_antiviral"
 
 [[item]]
 category = "snapshot"
 claim = "The homogeneous two-dose-vaccine 300-day attack rate remains at its stored baseline"
-oracle = "Attack rate 0.7672022 within absolute 1e-5"
 test_name = "model::test::test_2dose_vaccine"
 
 [[item]]
-category = "logic symmetry"
+category = "symmetry"
 claim = "A two-dose campaign with zero second-dose uptake is equivalent to the corresponding one-dose campaign"
-oracle = "Attack rates agree within absolute 1e-10"
 test_name = "model::test::test_2dose_vaccine_ignore_dose1"
 
 [[item]]
-category = "ground truth"
-claim = "The dominant eigenvalue and normalized eigenvector are correct for a matrix with a known eigendecomposition"
-oracle = "Eigenvalue and eigenvector components agree with hand-calculated values within absolute 1e-6"
-test_name = "model::test::test_eigen"
-
-[[item]]
-category = "logic edge"
-claim = "Dose-specific vaccination rates follow the campaign-capacity rules for a depletion gap, a one-dose campaign, simultaneous doses, partial second-dose uptake, and the post-delay period"
-oracle = "Five hand-calculated dose-one and dose-two rate pairs agree within absolute 1e-6"
-test_name = "model::test::test_vax_rate_by_dose"
-
-[[item]]
-category = "logic symmetry"
+category = "symmetry"
 claim = "A vaccine-effectiveness ramp-up delay is equivalent to an equal delay in campaign start"
-oracle = "Attack rates agree within absolute 1e-10"
 test_name = "model::test::test_ramp_up"
 
 [[item]]
-category = "reference implementation"
+category = "reference"
 claim = "Unmitigated infection, symptomatic, hospitalization, and death incidence time series agree with the pinned dynode-web implementation"
-oracle = "Series and group counts agree exactly; times differ by less than 1e-9; values differ by at most max(1e-6, 1e-9 * |reference value|)"
 test_name = "reference_compat::reference_no_mitigations"
 
 [[item]]
-category = "reference implementation"
+category = "reference"
 claim = "Vaccine-only infection, symptomatic, hospitalization, and death incidence time series agree with the pinned dynode-web implementation"
-oracle = "Series and group counts agree exactly; times differ by less than 1e-9; values differ by at most max(1e-6, 1e-9 * |reference value|)"
 test_name = "reference_compat::reference_vaccine_only"
 
 [[item]]
-category = "reference implementation"
+category = "reference"
 claim = "Antiviral-only infection, symptomatic, hospitalization, and death incidence time series agree with the pinned dynode-web implementation"
-oracle = "Series and group counts agree exactly; times differ by less than 1e-9; values differ by at most max(1e-6, 1e-9 * |reference value|)"
 test_name = "reference_compat::reference_antivirals_only"
 
 [[item]]
-category = "reference implementation"
+category = "reference"
 claim = "Community-mitigation-only infection, symptomatic, hospitalization, and death incidence time series agree with the pinned dynode-web implementation"
-oracle = "Series and group counts agree exactly; times differ by less than 1e-9; values differ by at most max(1e-6, 1e-9 * |reference value|)"
 test_name = "reference_compat::reference_community_only"
 
 [[item]]
 category = "reference implementation"
 claim = "TTIQ-only infection, symptomatic, hospitalization, and death incidence time series agree with the pinned dynode-web implementation"
-oracle = "Series and group counts agree exactly; times differ by less than 1e-9; values differ by at most max(1e-6, 1e-9 * |reference value|)"
 test_name = "reference_compat::reference_ttiq_only"
