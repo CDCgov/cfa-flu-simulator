@@ -58,7 +58,7 @@ fn collect_test_items(
 }
 
 /// Returns the test functions declared in the model crate's source and test files.
-fn source_test_inventory(manifest_dir: &Path) -> HashSet<String> {
+fn discover_source_tests(manifest_dir: &Path) -> HashSet<String> {
     let src_dir = manifest_dir.join("src");
     let bin_dir = src_dir.join("bin");
 
@@ -88,14 +88,14 @@ fn source_test_inventory(manifest_dir: &Path) -> HashSet<String> {
     tests
 }
 
-/// Checks that every verification inventory entry refers to an existing Rust test.
+/// Checks that every verification inventory item refers to an existing Rust test.
 ///
 /// Duplicate references are allowed, but produce a warning because they may be
 /// accidental.
 ///
-/// Return a tuple of verification plan elements, tests references by those elements,
-/// and total number of unit tests discovered
-fn check_verification_plan() -> (usize, usize, usize) {
+/// Returns the number of verification inventory items, the number of tests referenced
+/// by those items, and the total number of unit tests discovered.
+fn check_model_verification() -> (usize, usize, usize) {
     let filename = "model-verification.toml";
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let repository = manifest_dir.parent().expect("model has repository parent");
@@ -104,7 +104,7 @@ fn check_verification_plan() -> (usize, usize, usize) {
         toml::from_str(&fs::read_to_string(&inventory_path).expect("read verification inventory"))
             .expect("parse verification inventory");
 
-    let source_tests = source_test_inventory(&manifest_dir);
+    let source_tests = discover_source_tests(&manifest_dir);
     let mut referenced_tests = HashSet::new();
     let mut duplicate_tests = HashSet::new();
     for item in &inventory.item {
@@ -121,7 +121,9 @@ fn check_verification_plan() -> (usize, usize, usize) {
     let mut duplicate_tests: Vec<_> = duplicate_tests.into_iter().collect();
     duplicate_tests.sort();
     for test_name in duplicate_tests {
-        eprintln!("warning: verification test is referenced more than once: {test_name}");
+        eprintln!(
+            "warning: test is referenced by more than one verification inventory item: {test_name}"
+        );
     }
 
     (
@@ -133,9 +135,9 @@ fn check_verification_plan() -> (usize, usize, usize) {
 
 /// Runs the verification inventory check and reports its coverage counts.
 fn main() {
-    let (items, referenced, total) = check_verification_plan();
+    let (items, referenced, total) = check_model_verification();
     println!(
-        "verification plan OK: {items} verification items referenced {referenced} tests, of {total} total unit tests"
+        "model verification inventory OK: {items} items referenced {referenced} tests, of {total} total unit tests"
     );
 }
 
@@ -143,7 +145,7 @@ fn main() {
 mod tests {
     /// Confirms that the checked-in verification inventory references real tests.
     #[test]
-    fn verification_plan_references_existing_tests() {
-        super::check_verification_plan();
+    fn model_verification_inventory_references_existing_tests() {
+        super::check_model_verification();
     }
 }

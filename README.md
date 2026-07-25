@@ -10,9 +10,9 @@ The [verification inventory](model-verification.toml) lists scientific claims ab
 
 Where possible, ground-truth, invariant, edge, symmetry, and trend tests check the behavior of the model, covering all combinations of interventions. Reference implementation tests compare this implementation against results from [reference implementation](https://github.com/HHS/ASPR-flumodels), covering the model features that were present in the reference implementation. Snapshot (regression) tests detect changes in model output but are not independent scientific evidence.
 
-`cargo test` runs the full test suite, including the verification tests. `cargo run --bin check_verification_plan` validates the verification plan, ensuring that the listed tests are actually present in the codebase.
+`cargo test` runs the full test suite, including the verification tests. `cargo run --bin check_model_verification` validates the verification inventory, ensuring that the listed tests are actually present in the codebase.
 
-The verification plan does not include:
+The verification inventory does not include:
 
 - solver configuration (tolerances, step sizes, convergence tests)
 - intervention discontinuities
