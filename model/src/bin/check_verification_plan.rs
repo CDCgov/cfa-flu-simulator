@@ -1,17 +1,17 @@
 //! Check the machine-readable verification inventory against the Rust sources.
-
 use serde::Deserialize;
 use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+// Structs for TOML parsing.
 #[derive(Deserialize)]
 struct Inventory {
-    requirement: Vec<Requirement>,
+    item: Vec<Item>,
 }
 
 #[derive(Deserialize)]
-struct Requirement {
+struct Item {
     test_name: String,
 }
 
@@ -44,6 +44,7 @@ fn collect_test_items(
                 path.push(function.sig.ident.to_string());
                 output.insert(path.join("::"));
             }
+            // recurse through modules, keeping track of the path of nested module names
             syn::Item::Mod(module) => {
                 if let Some((_, items)) = &module.content {
                     modules.push(module.ident.to_string());
@@ -60,9 +61,11 @@ fn collect_test_items(
 fn source_test_inventory(manifest_dir: &Path) -> HashSet<String> {
     let src_dir = manifest_dir.join("src");
     let bin_dir = src_dir.join("bin");
+
     let mut files = Vec::new();
     rust_files(&src_dir, &mut files);
     rust_files(&manifest_dir.join("tests"), &mut files);
+
     let mut tests = HashSet::new();
 
     for file in files {
@@ -89,19 +92,23 @@ fn source_test_inventory(manifest_dir: &Path) -> HashSet<String> {
 ///
 /// Duplicate references are allowed, but produce a warning because they may be
 /// accidental.
+///
+/// Return a tuple of verification plan elements, tests references by those elements,
+/// and total number of unit tests discovered
 fn check_verification_plan() -> (usize, usize, usize) {
+    let filename = "model-verification.toml";
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let repository = manifest_dir.parent().expect("model has repository parent");
-    let inventory_path = repository.join("model-verification.toml");
+    let inventory_path = repository.join(filename);
     let inventory: Inventory =
-        toml::from_str(&fs::read_to_string(&inventory_path).expect("read model-verification.toml"))
-            .expect("parse model-verification.toml");
+        toml::from_str(&fs::read_to_string(&inventory_path).expect("read verification inventory"))
+            .expect("parse verification inventory");
 
     let source_tests = source_test_inventory(&manifest_dir);
     let mut referenced_tests = HashSet::new();
     let mut duplicate_tests = HashSet::new();
-    for requirement in &inventory.requirement {
-        let test_name = &requirement.test_name;
+    for item in &inventory.item {
+        let test_name = &item.test_name;
         assert!(
             source_tests.contains(test_name),
             "referenced test does not exist: {test_name}"
@@ -118,7 +125,7 @@ fn check_verification_plan() -> (usize, usize, usize) {
     }
 
     (
-        inventory.requirement.len(),
+        inventory.item.len(),
         referenced_tests.len(),
         source_tests.len(),
     )
@@ -126,9 +133,9 @@ fn check_verification_plan() -> (usize, usize, usize) {
 
 /// Runs the verification inventory check and reports its coverage counts.
 fn main() {
-    let (requirements, referenced, total) = check_verification_plan();
+    let (items, referenced, total) = check_verification_plan();
     println!(
-        "verification plan OK: {requirements} requirements, {referenced} referenced tests, {total} Rust tests total"
+        "verification plan OK: {items} verification items referenced {referenced} tests, of {total} total unit tests"
     );
 }
 
