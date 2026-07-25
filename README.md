@@ -8,7 +8,7 @@ _Model verification_ asks whether software code faithfully represents the intend
 
 The [verification inventory](model-verification.toml) lists scientific claims about model behavior and the software tests that substantiate them. (Straightforward unit tests without specific scientific content are not included.)
 
-`cargo test` runs the full test suite, including the verification tests. `cargo run --bin check_model_verification` validates the verification inventory, ensuring that the listed tests are actually present in the codebase.
+`cargo test` runs the full test suite, which includes the verification tests and a check that the verification inventory is well-formed (via the `check_model_verification` bin).
 
 ## General disclaimer
 
