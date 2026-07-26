@@ -112,10 +112,7 @@ macro_rules! make_state {
 }
 
 make_state!(
-    s, e, i, r,
-    sv, ev, iv, rv,
-    s2v, e2v, i2v, r2v,
-    y_cum, pre_h, h_cum, pre_d, d_cum
+    s, e, i, r, sv, ev, iv, rv, s2v, e2v, i2v, r2v, y_cum, pre_h, h_cum, pre_d, d_cum
 );
 
 impl<const N: usize> SEIRModel<N> {
@@ -165,6 +162,31 @@ fn _distribute_initials1(n: f64, i0: f64, r0: f64) -> (f64, f64, f64) {
     }
 }
 
+/// Contribution of one vaccination stratum to the effective number of
+/// infectious people, discounting transmission averted by the vaccine itself
+/// and by outpatient antivirals.
+///
+/// `ve_i` is effectiveness against onward transmission; `ve_p` is
+/// effectiveness against symptoms. Outpatient antivirals only reach
+/// symptomatic people, so the antiviral discount applies to the `1 - ve_p`
+/// share of the stratum that still develops symptoms. Unvaccinated people are
+/// the `ve_i = ve_p = 0` case of the same formula.
+fn stratum_effective_infectious<const N: usize, S>(
+    infectious: &Matrix<f64, Const<N>, Const<1>, S>,
+    ve_i: f64,
+    ve_p: f64,
+    fraction_symptomatic: &SVector<f64, N>,
+    antiviral_reduction_given_symp: &SVector<f64, N>,
+) -> SVector<f64, N>
+where
+    S: Storage<f64, Const<N>, Const<1>>,
+{
+    let ones = SVector::<f64, N>::from_element(1.0);
+    (infectious * (1.0 - ve_i)).component_mul(
+        &(ones - (1.0 - ve_p) * fraction_symptomatic.component_mul(antiviral_reduction_given_symp)),
+    )
+}
+
 fn vaccine_rates_by_dose(
     t: f64,
     max_rate: f64,
@@ -189,8 +211,16 @@ fn vaccine_rates_by_dose(
     let rate2 = max_rate - rate1;
 
     (
-        if t_start1 <= t && t < t_end1 { rate1 } else { 0.0 },
-        if t_start2 <= t && t < t_end2 { rate2 } else { 0.0 },
+        if t_start1 <= t && t < t_end1 {
+            rate1
+        } else {
+            0.0
+        },
+        if t_start2 <= t && t < t_end2 {
+            rate2
+        } else {
+            0.0
+        },
     )
 }
 
@@ -314,27 +344,24 @@ impl<const N: usize> System<f64, State<N>> for &SEIRModel<N> {
 
         let beta = self.parameters.r0 / self.parameters.infectious_period;
         let ones = SVector::<f64, N>::from_element(1.0);
-        let i_effective = i.component_mul(
-            &(ones
-                - self
-                    .parameters
-                    .fraction_symptomatic
-                    .component_mul(&self.ave.pop_eff_i_given_symp)),
-        ) + (iv * (1.0 - vax_params.ve_i)).component_mul(
-            &(ones
-                - vax_params.ve_p
-                    * self
-                        .parameters
-                        .fraction_symptomatic
-                        .component_mul(&self.ave.pop_eff_i_given_symp)),
-        ) + (i2v * (1.0 - vax_params.ve_2i)).component_mul(
-            &(ones
-                - vax_params.ve_2p
-                    * self
-                        .parameters
-                        .fraction_symptomatic
-                        .component_mul(&self.ave.pop_eff_i_given_symp)),
-        );
+        let fraction_symptomatic = &self.parameters.fraction_symptomatic;
+        let antiviral_reduction = &self.ave.pop_eff_i_given_symp;
+        let i_effective =
+            stratum_effective_infectious(&i, 0.0, 0.0, fraction_symptomatic, antiviral_reduction)
+                + stratum_effective_infectious(
+                    &iv,
+                    vax_params.ve_i,
+                    vax_params.ve_p,
+                    fraction_symptomatic,
+                    antiviral_reduction,
+                )
+                + stratum_effective_infectious(
+                    &i2v,
+                    vax_params.ve_2i,
+                    vax_params.ve_2p,
+                    fraction_symptomatic,
+                    antiviral_reduction,
+                );
 
         let infection_rate = (beta / self.parameters.population)
             * (contact_matrix * i_effective).component_div(&self.parameters.population_fractions);
@@ -439,7 +466,10 @@ fn get_dominant_eigendata<const N: usize, S: Storage<f64, Const<N>, Const<N>>>(
 #[cfg(test)]
 mod test {
     use super::SEIRModel;
-    use super::{_distribute_initials1, distribute_initials, get_dominant_eigendata, vaccine_rates_by_dose};
+    use super::{
+        _distribute_initials1, distribute_initials, get_dominant_eigendata,
+        stratum_effective_infectious, vaccine_rates_by_dose,
+    };
     use crate::mitigations::{AntiviralsParams, MitigationParamsTyped, TTIQParams, VaccineParams};
     use crate::model_unified::{DynodeModel, ModelOutput, OutputType};
     use crate::parameters::{Parameters, ParametersTyped};
@@ -704,12 +734,10 @@ mod test {
             .map(|x| DVector::from_vec(x.grouped_values.clone()))
             .reduce(|acc, elem| acc + elem)
             .unwrap();
-        let attack_rate_by_group = incidence_by_group
-            .component_div(&DVector::from_iterator(
-                model.parameters.population_fractions.len(),
-                model.parameters.population_fractions.iter().copied(),
-            ))
-            / model.parameters.population;
+        let attack_rate_by_group = incidence_by_group.component_div(&DVector::from_iterator(
+            model.parameters.population_fractions.len(),
+            model.parameters.population_fractions.iter().copied(),
+        )) / model.parameters.population;
 
         let hospitalizations_by_group = output
             .get_output(&OutputType::HospitalIncidence)
@@ -781,6 +809,88 @@ mod test {
         let model = SEIRModel::new(params);
         let results = TestResults::new(&model.parameters, &model.integrate(300));
         assert_float_eq!(results.attack_rate, 0.77889514, abs <= 1e-5);
+    }
+
+    // 100 infectious people, half of whom would be symptomatic, and an
+    // outpatient antiviral programme that averts 40% of transmission from
+    // those it reaches.
+    fn stratum_fixture() -> (Vector1<f64>, Vector1<f64>, Vector1<f64>) {
+        (Vector1::new(100.0), Vector1::new(0.5), Vector1::new(0.4))
+    }
+
+    #[test]
+    fn test_stratum_unvaccinated_gets_full_antiviral_discount() {
+        // Every symptomatic person is reachable: 100 * (1 - 0.5 * 0.4) = 80.
+        let (infectious, fs, av) = stratum_fixture();
+        let eff = stratum_effective_infectious(&infectious, 0.0, 0.0, &fs, &av);
+        assert_eq!(eff[0], 80.0);
+    }
+
+    #[test]
+    fn test_stratum_full_symptom_protection_forgoes_antivirals() {
+        // ve_p = 1: nobody here develops symptoms, so no outpatient antiviral
+        // reaches them and the discount vanishes entirely.
+        let (infectious, fs, av) = stratum_fixture();
+        let eff = stratum_effective_infectious(&infectious, 0.0, 1.0, &fs, &av);
+        assert_eq!(eff[0], 100.0);
+    }
+
+    #[test]
+    fn test_stratum_effective_infectious_increases_with_ve_p() {
+        // Symptom protection trades away antiviral coverage, so effective
+        // infectiousness rises with ve_p rather than falling.
+        let (infectious, fs, av) = stratum_fixture();
+        let effs: Vec<f64> = [0.0, 0.25, 0.5, 0.75, 1.0]
+            .iter()
+            .map(|ve_p| stratum_effective_infectious(&infectious, 0.0, *ve_p, &fs, &av)[0])
+            .collect();
+
+        for pair in effs.windows(2) {
+            assert!(
+                pair[1] > pair[0],
+                "effective infectiousness must increase with ve_p \
+                 (antivirals cannot reach asymptomatic people), got {effs:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_stratum_transmission_protection_scales_linearly() {
+        // ve_i applies to the whole stratum, independently of the antiviral
+        // discount: 100 * 0.25 * (1 - 0.5 * 0.4) = 20.
+        let (infectious, fs, av) = stratum_fixture();
+        let eff = stratum_effective_infectious(&infectious, 0.75, 0.0, &fs, &av);
+        assert_eq!(eff[0], 20.0);
+    }
+
+    #[test]
+    fn test_symptom_protection_forgoes_outpatient_antivirals() {
+        // End-to-end guard that the stratum formula is wired into the solver:
+        // at the shared TOML defaults, varying only ve_p, the attack rate must
+        // rise with ve_p once antivirals are on.
+        let attack_rate_at_ve_p = |ve_p: f64| {
+            let p = Parameters {
+                vaccine_enabled: true,
+                antivirals_enabled: true,
+                vaccine_ve_p: ve_p,
+                ..Default::default()
+            };
+
+            let params: ParametersTyped<2> = p.try_into().unwrap();
+            let model = SEIRModel::new(params);
+            TestResults::new(&model.parameters, &model.integrate(300)).attack_rate
+        };
+
+        let rates: Vec<f64> = [0.0, 0.5, 1.0]
+            .iter()
+            .map(|v| attack_rate_at_ve_p(*v))
+            .collect();
+        for pair in rates.windows(2) {
+            assert!(
+                pair[1] > pair[0],
+                "attack rate must increase with ve_p when antivirals are on, got {rates:?}"
+            );
+        }
     }
 
     #[test]
