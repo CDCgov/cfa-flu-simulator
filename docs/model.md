@@ -139,7 +139,7 @@ Let $f(t, A, B)$ be the flux from compartment $A$ to $B$ at time $t$.
 
 Assume that first dose vaccination begins at some rate, continues at that rate, then stops. Second dose vaccinations occur in a similar block, delayed in time. Rates of first and second dose administration are such that, if the two vaccination blocks overlapped, they would hit the maximum rate.
 
-First derive the duration $T = \dot{V}_\mathrm{max} / V_\mathrm{tot}$ of each vaccination block.
+First derive the duration $T = V_\mathrm{tot} / \dot{V}_\mathrm{max}$ of each vaccination block, i.e., the total doses available divided by the maximum rate at which they can be administered.
 
 $$
 \dot{V}_1(t) = \begin{cases}
