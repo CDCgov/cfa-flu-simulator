@@ -162,16 +162,16 @@ fn _distribute_initials1(n: f64, i0: f64, r0: f64) -> (f64, f64, f64) {
     }
 }
 
-/// Contribution of one vaccination stratum to the effective number of
+/// Contribution of one vaccination group to the effective number of
 /// infectious people, discounting transmission averted by the vaccine itself
 /// and by outpatient antivirals.
 ///
 /// `ve_i` is effectiveness against onward transmission; `ve_p` is
 /// effectiveness against symptoms. Outpatient antivirals only reach
 /// symptomatic people, so the antiviral discount applies to the `1 - ve_p`
-/// share of the stratum that still develops symptoms. Unvaccinated people are
+/// share of the group that still develops symptoms. Unvaccinated people are
 /// the `ve_i = ve_p = 0` case of the same formula.
-fn stratum_effective_infectious<const N: usize, S>(
+fn effective_infectious<const N: usize, S>(
     infectious: &Matrix<f64, Const<N>, Const<1>, S>,
     ve_i: f64,
     ve_p: f64,
@@ -347,15 +347,15 @@ impl<const N: usize> System<f64, State<N>> for &SEIRModel<N> {
         let fraction_symptomatic = &self.parameters.fraction_symptomatic;
         let antiviral_reduction = &self.ave.pop_eff_i_given_symp;
         let i_effective =
-            stratum_effective_infectious(&i, 0.0, 0.0, fraction_symptomatic, antiviral_reduction)
-                + stratum_effective_infectious(
+            effective_infectious(&i, 0.0, 0.0, fraction_symptomatic, antiviral_reduction)
+                + effective_infectious(
                     &iv,
                     vax_params.ve_i,
                     vax_params.ve_p,
                     fraction_symptomatic,
                     antiviral_reduction,
                 )
-                + stratum_effective_infectious(
+                + effective_infectious(
                     &i2v,
                     vax_params.ve_2i,
                     vax_params.ve_2p,
@@ -468,7 +468,7 @@ mod test {
     use super::SEIRModel;
     use super::{
         _distribute_initials1, distribute_initials, get_dominant_eigendata,
-        stratum_effective_infectious, vaccine_rates_by_dose,
+        effective_infectious, vaccine_rates_by_dose,
     };
     use crate::mitigations::{AntiviralsParams, MitigationParamsTyped, TTIQParams, VaccineParams};
     use crate::model_unified::{DynodeModel, ModelOutput, OutputType};
@@ -811,38 +811,39 @@ mod test {
         assert_float_eq!(results.attack_rate, 0.77889514, abs <= 1e-5);
     }
 
-    // 100 infectious people, half of whom would be symptomatic, and an
-    // outpatient antiviral programme that averts 40% of transmission from
-    // those it reaches.
-    fn stratum_fixture() -> (Vector1<f64>, Vector1<f64>, Vector1<f64>) {
-        (Vector1::new(100.0), Vector1::new(0.5), Vector1::new(0.4))
+    /// One vaccination group against a fixed backdrop: half of it would be
+    /// symptomatic, and an outpatient antiviral programme averts 40% of
+    /// transmission from those it reaches.
+    fn test_effective_infectious(infectious: f64, ve_i: f64, ve_p: f64) -> f64 {
+        effective_infectious(
+            &Vector1::new(infectious),
+            ve_i,
+            ve_p,
+            &Vector1::new(0.5),
+            &Vector1::new(0.4),
+        )[0]
     }
 
     #[test]
-    fn test_stratum_unvaccinated_gets_full_antiviral_discount() {
+    fn test_unvaccinated_gets_full_antiviral_discount() {
         // Every symptomatic person is reachable: 100 * (1 - 0.5 * 0.4) = 80.
-        let (infectious, fs, av) = stratum_fixture();
-        let eff = stratum_effective_infectious(&infectious, 0.0, 0.0, &fs, &av);
-        assert_eq!(eff[0], 80.0);
+        assert_eq!(test_effective_infectious(100.0, 0.0, 0.0), 80.0);
     }
 
     #[test]
-    fn test_stratum_full_symptom_protection_forgoes_antivirals() {
+    fn test_full_symptom_protection_forgoes_antivirals() {
         // ve_p = 1: nobody here develops symptoms, so no outpatient antiviral
         // reaches them and the discount vanishes entirely.
-        let (infectious, fs, av) = stratum_fixture();
-        let eff = stratum_effective_infectious(&infectious, 0.0, 1.0, &fs, &av);
-        assert_eq!(eff[0], 100.0);
+        assert_eq!(test_effective_infectious(100.0, 0.0, 1.0), 100.0);
     }
 
     #[test]
-    fn test_stratum_effective_infectious_increases_with_ve_p() {
+    fn test_effective_infectious_increases_with_ve_p() {
         // Symptom protection trades away antiviral coverage, so effective
         // infectiousness rises with ve_p rather than falling.
-        let (infectious, fs, av) = stratum_fixture();
         let effs: Vec<f64> = [0.0, 0.25, 0.5, 0.75, 1.0]
             .iter()
-            .map(|ve_p| stratum_effective_infectious(&infectious, 0.0, *ve_p, &fs, &av)[0])
+            .map(|ve_p| test_effective_infectious(100.0, 0.0, *ve_p))
             .collect();
 
         for pair in effs.windows(2) {
@@ -855,17 +856,15 @@ mod test {
     }
 
     #[test]
-    fn test_stratum_transmission_protection_scales_linearly() {
-        // ve_i applies to the whole stratum, independently of the antiviral
+    fn test_transmission_protection_scales_linearly() {
+        // ve_i applies to the whole group, independently of the antiviral
         // discount: 100 * 0.25 * (1 - 0.5 * 0.4) = 20.
-        let (infectious, fs, av) = stratum_fixture();
-        let eff = stratum_effective_infectious(&infectious, 0.75, 0.0, &fs, &av);
-        assert_eq!(eff[0], 20.0);
+        assert_eq!(test_effective_infectious(100.0, 0.75, 0.0), 20.0);
     }
 
     #[test]
     fn test_symptom_protection_forgoes_outpatient_antivirals() {
-        // End-to-end guard that the stratum formula is wired into the solver:
+        // End-to-end guard that the per-group formula is wired into the solver:
         // at the shared TOML defaults, varying only ve_p, the attack rate must
         // rise with ve_p once antivirals are on.
         let attack_rate_at_ve_p = |ve_p: f64| {
