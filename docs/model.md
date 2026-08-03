@@ -122,7 +122,9 @@ These compartments currently represent the proportion of the total population $N
     - $\mathrm{FS}_i$: fraction symptomatic, i.e., proportion of infections that are symptomatic
         - Symptomatic and asymptomatic cases are assumed otherwise equal (e.g., equally infectious) so that this fraction does not affect transmission (except via mitigations that depend on symptoms)
     - $\mathrm{IHR}_i$: proportion of infections that result in hospitalization
-    - $\mathrm{IFR}_i$: proportion of infections that result in death ("F" is for "fatality")
+        - This is a proportion of _infections_, so the symptomatic fraction is already incorporated. If a case is defined as a symptomatic infection, then the case-hospitalization ratio (i.e., proportion of cases that are hospitalized) is $\mathrm{IHR}_i / \mathrm{FS}_i$
+    - $\mathrm{IFR}_i$: proportion of infections that result in death ("F" is for "fatality").
+        - Similarly to the relationship of $\mathrm{IHR_i}$ to the case-hospitalization rate, the case-fatality ratio (where a case is defined as a symptomatic infection) is $\mathrm{IFR}_i / \mathrm{FS}_i$.
 
 ### Model initialization
 
@@ -225,8 +227,8 @@ The numbers of health outcomes (symptomatic infections, hospitalizations, and de
 $$
 \begin{align*}
 \dot{Y}^\mathrm{cum}_i(t) &= \mathrm{FS}_i \times \dot{X}_i(t) \\
-\dot{H}^\mathrm{pre}_i(t) &= \mathrm{IHR}_i \times (1 - \mathrm{FS}_i A_\mathrm{op} \mathrm{AVE}_H) \times \dot{X}_i(t) \\
-\dot{H}^\mathrm{cum}_i(t) &= \dot{H}^\mathrm{pre}(t) \times \frac{1}{T_H^\mathrm{pre}} \\
+\dot{H}^\mathrm{pre}_i(t) &= \mathrm{IHR}_i \times (1 - A_\mathrm{op} \mathrm{AVE}_H) \times \dot{X}_i(t) \\
+\dot{H}^\mathrm{cum}_i(t) &= H^\mathrm{pre}_i(t) \times \frac{1}{T_H^\mathrm{pre}} \\
 \dot{D}^\mathrm{pre}_i(t) &= \mathrm{IFR}_i \times (1 - A_\mathrm{ip} \mathrm{AVE}_H) \times (1 - \mathrm{FS}_i A_\mathrm{op} \mathrm{AVE}_D) \times \dot{X}_i(t) \\
 \dot{D}^\mathrm{cum}_i(t) &= \dot{H}^\mathrm{pre}(t) \times \frac{1}{T_D^\mathrm{pre}}
 \end{align*}
