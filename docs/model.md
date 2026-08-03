@@ -229,8 +229,8 @@ $$
 \dot{Y}^\mathrm{cum}_i(t) &= \mathrm{FS}_i \times \dot{X}_i(t) \\
 \dot{H}^\mathrm{pre}_i(t) &= \mathrm{IHR}_i \times (1 - A_\mathrm{op} \mathrm{AVE}_H) \times \dot{X}_i(t) \\
 \dot{H}^\mathrm{cum}_i(t) &= H^\mathrm{pre}_i(t) \times \frac{1}{T_H^\mathrm{pre}} \\
-\dot{D}^\mathrm{pre}_i(t) &= \mathrm{IFR}_i \times (1 - A_\mathrm{ip} \mathrm{AVE}_H) \times (1 - \mathrm{FS}_i A_\mathrm{op} \mathrm{AVE}_D) \times \dot{X}_i(t) \\
-\dot{D}^\mathrm{cum}_i(t) &= \dot{H}^\mathrm{pre}(t) \times \frac{1}{T_D^\mathrm{pre}}
+\dot{D}^\mathrm{pre}_i(t) &= \mathrm{IFR}_i \times (1 - A_\mathrm{op} \mathrm{AVE}_H) \times (1 - A_\mathrm{ip} \mathrm{AVE}_D) \times \dot{X}_i(t) \\
+\dot{D}^\mathrm{cum}_i(t) &= D^\mathrm{pre}_i(t) \times \frac{1}{T_D^\mathrm{pre}}
 \end{align*}
 $$
 
