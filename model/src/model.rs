@@ -4,6 +4,8 @@ use nalgebra::{Const, Matrix, MatrixView, SMatrix, SVector, Storage, StorageMut}
 use ode_solvers::{Dopri5, System};
 use paste::paste;
 
+// `AVE` is the domain acronym used throughout the model docs.
+#[allow(clippy::upper_case_acronyms)]
 pub struct AVE<const N: usize> {
     pub pop_eff_i_given_symp: SVector<f64, N>,
     pub pop_eff_p_hosp_given_symp: SVector<f64, N>,
@@ -467,8 +469,8 @@ fn get_dominant_eigendata<const N: usize, S: Storage<f64, Const<N>, Const<N>>>(
 mod test {
     use super::SEIRModel;
     use super::{
-        _distribute_initials1, distribute_initials, get_dominant_eigendata,
-        effective_infectious, vaccine_rates_by_dose,
+        _distribute_initials1, distribute_initials, effective_infectious, get_dominant_eigendata,
+        vaccine_rates_by_dose,
     };
     use crate::mitigations::{AntiviralsParams, MitigationParamsTyped, TTIQParams, VaccineParams};
     use crate::model_unified::{DynodeModel, ModelOutput, OutputType};

@@ -37,15 +37,17 @@ cfa-simulator frontend.
 
 ## Running it locally
 
+Tasks are run with [plz](https://plzplz.org):
+
 ```sh
 pnpm install
-pnpm dev
+plz dev
 ```
 
 To work on these docs instead:
 
 ```sh
-pnpm docs:dev
+plz docs dev
 ```
 
 ## Notices

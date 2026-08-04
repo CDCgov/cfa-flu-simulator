@@ -46,12 +46,14 @@ fn load_fixture(name: &str) -> Fixture {
 // defaults already line up with the reference except for p_test_sympto
 // (0.001 vs 0.0) and vaccine_enabled (true vs false), so we override those.
 fn make_params(scenario: &str) -> Parameters {
-    let mut p = Parameters::default();
-    p.p_test_sympto = 0.0;
-    p.vaccine_enabled = false;
-    p.antivirals_enabled = false;
-    p.community_enabled = false;
-    p.ttiq_enabled = false;
+    let mut p = Parameters {
+        p_test_sympto: 0.0,
+        vaccine_enabled: false,
+        antivirals_enabled: false,
+        community_enabled: false,
+        ttiq_enabled: false,
+        ..Default::default()
+    };
     match scenario {
         "no_mitigations" => {}
         "vaccine_only" => p.vaccine_enabled = true,
@@ -75,7 +77,8 @@ fn assert_series_close(actual: &[OutputItemGrouped], expected: &[RefItem], label
         assert!(
             (a.time - e.time).abs() < 1e-9,
             "{label}: time[{i}] differs: actual {} vs expected {}",
-            a.time, e.time,
+            a.time,
+            e.time,
         );
         assert_eq!(
             a.grouped_values.len(),

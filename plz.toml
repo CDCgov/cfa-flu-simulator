@@ -1,0 +1,50 @@
+# Task runner config — https://plzplz.org
+# run `plz hooks install` once per clone.
+
+# Start the dev server
+[tasks.dev]
+run = "vite"
+env = "pnpm"
+
+# Production build of the app
+[tasks.build]
+run = "vite build"
+env = "pnpm"
+
+[taskgroup.docs]
+extends = { env = "pnpm" }
+
+# Develop the docs site
+[taskgroup.docs.dev]
+description = "Start the VitePress dev server"
+run = "vitepress dev docs"
+
+# Build the docs site
+[taskgroup.docs.build]
+run = "vitepress build docs"
+
+# Format the Rust sources
+[tasks.format]
+dir = "model"
+run = "cargo fmt"
+
+# Verify formatting without rewriting files
+[tasks.format-check]
+dir = "model"
+run = "cargo fmt --check"
+fail_hook = { suggest_command = "plz format" }
+
+# Lint, treating every warning as an error
+[tasks.clippy]
+dir = "model"
+run = "cargo clippy --all-targets -- -D warnings"
+
+# Run the model test suite
+[tasks.test]
+dir = "model"
+run = "cargo test"
+
+# Checks run before each commit
+[tasks.precommit]
+run_serial = ["plz:format-check", "plz:clippy", "plz:test"]
+git_hook = "pre-commit"
