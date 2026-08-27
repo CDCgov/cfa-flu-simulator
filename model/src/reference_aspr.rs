@@ -16,7 +16,8 @@ type Fixture = Vec<Simulation>;
 
 #[derive(Debug, Deserialize)]
 struct Simulation {
-    parameters: Parameters,
+    #[serde(alias = "parameters")]
+    rust_parameters: Parameters,
     output: Output,
 }
 
@@ -76,7 +77,7 @@ fn check_reference_totals(
 ) {
     let fixture = load_fixture();
     for (simulation_index, simulation) in fixture.iter().enumerate() {
-        let n = simulation.parameters.n;
+        let n = simulation.rust_parameters.n;
         assert_eq!(n, 2, "fixture must use n=2");
         let expected = expected(&simulation.output);
         assert_eq!(
@@ -86,9 +87,10 @@ fn check_reference_totals(
         );
 
         let parameters: ParametersTyped<2> =
-            ParametersTyped::try_from(simulation.parameters.clone()).expect("parameters parse");
+            ParametersTyped::try_from(simulation.rust_parameters.clone())
+                .expect("parameters parse");
         let model = SEIRModel::new(parameters);
-        let output = model.integrate(simulation.parameters.days);
+        let output = model.integrate(simulation.rust_parameters.days);
         let actual = totals_by_group(&output, output_type.clone(), n);
 
         assert_totals_close(&actual, expected, simulation_index, metric);
