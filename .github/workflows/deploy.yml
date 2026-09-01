@@ -18,9 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: corepack enable
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
@@ -28,12 +28,13 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: model
+      - uses: k88hudson/setup-plz@v1
       - run: cargo install wasm-pack --locked
       - run: pnpm install
-      - run: pnpm build
+      - run: plz build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
-      - run: pnpm docs:build
+      - run: plz docs build
         env:
           DOCS_BASE_PATH: /${{ github.event.repository.name }}/docs/
       - run: mv docs/.vitepress/dist dist/docs

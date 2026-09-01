@@ -349,8 +349,10 @@ mod tests {
 
     #[test]
     fn test_has_mitigations() {
-        let mut params = Parameters::default();
-        params.vaccine_enabled = false;
+        let mut params = Parameters {
+            vaccine_enabled: false,
+            ..Default::default()
+        };
         assert!(!params.has_mitigations());
 
         params.vaccine_enabled = true;
@@ -367,10 +369,12 @@ mod tests {
 
     #[test]
     fn test_without_mitigations() {
-        let mut params = Parameters::default();
-        params.vaccine_enabled = true;
-        params.antivirals_enabled = true;
-        params.community_enabled = true;
+        let params = Parameters {
+            vaccine_enabled: true,
+            antivirals_enabled: true,
+            community_enabled: true,
+            ..Default::default()
+        };
 
         let params_no_mitigations = params.without_mitigations();
         assert!(!params_no_mitigations.has_mitigations());

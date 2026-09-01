@@ -17,6 +17,8 @@ pub enum MitigationType {
 
 #[derive(Tsify, Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq, EnumIter)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
+// The shared `Incidence` suffix is part of the wasm-facing API.
+#[allow(clippy::enum_variant_names)]
 pub enum OutputType {
     InfectionIncidence,
     SymptomaticIncidence,
@@ -201,7 +203,10 @@ mod tests {
     fn test_without_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = false;
-        let model = SEIRModelUnified { parameters, days: 200 };
+        let model = SEIRModelUnified {
+            parameters,
+            days: 200,
+        };
         let run = model.run();
         assert!(!run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));
@@ -212,7 +217,10 @@ mod tests {
     fn test_with_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = true;
-        let model = SEIRModelUnified { parameters, days: 200 };
+        let model = SEIRModelUnified {
+            parameters,
+            days: 200,
+        };
         let run = model.run();
         assert!(run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));
