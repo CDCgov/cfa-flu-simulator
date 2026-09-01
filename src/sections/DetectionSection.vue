@@ -23,8 +23,6 @@ const pTestSymptoPct = computed({
   },
 });
 
-const UNMITIGATED_COLOR = "#9ca3af";
-
 const symptomaticRows = computed<OutputItemGrouped[] | null>(() => {
   const r = props.results;
   if (!r) return null;
@@ -38,30 +36,23 @@ const symptomaticRows = computed<OutputItemGrouped[] | null>(() => {
 const testedChart = computed(() => {
   const rows = symptomaticRows.value;
   if (!rows) return null;
-  const allCases = rows.map((r) =>
-    r.grouped_values.reduce((a, b) => a + b, 0),
+  const tested = rows.map(
+    (r) => r.grouped_values.reduce((a, b) => a + b, 0) * params.p_test_sympto,
   );
-  const tested = allCases.map((v) => v * params.p_test_sympto);
-  const sc = pickScale(Math.max(...allCases));
+  const sc = pickScale(Math.max(...tested));
   const xLabels = rows.map((r) => String(Math.round(r.time)));
   const series: Series[] = [
-    {
-      data: scale(allCases, sc.divisor),
-      color: UNMITIGATED_COLOR,
-      legend: "All",
-    },
     {
       data: scale(tested, sc.divisor),
       color: "var(--accent)",
       strokeWidth: 2,
-      legend: "Tested",
     },
   ];
   return {
     series,
     xLabels,
     scale: sc,
-    rawBySeries: [allCases, tested],
+    rawBySeries: [tested],
   };
 });
 
@@ -128,7 +119,7 @@ const subtitle = computed(
             v-if="testedChart"
             :series="testedChart.series"
             :x-labels="testedChart.xLabels"
-            :y-label="`Cases${testedChart.scale.unit ? ` (${testedChart.scale.unit})` : ''}`"
+            :y-label="`Cases Tested${testedChart.scale.unit ? ` (${testedChart.scale.unit})` : ''}`"
             filename="symptomatic-cases-tested"
             :height="180"
             :y-min="0"
