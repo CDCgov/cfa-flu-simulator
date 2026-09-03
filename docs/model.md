@@ -14,7 +14,7 @@ Removed individuals cannot be re-infected.
 
 ### Health outcomes
 
-Some infections are symptomatic. Symptomatic infections are assumed to be equally infectious in the absence of mitigations. However, symptoms can trigger mitigations like isolation and antiviral usage that do affect onward transmission.
+Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for mitigations like isolation and antiviral usage.
 
 Hospitalization and death are included in the model, but only as counting functions. Upon infection, some proportion of people will go on to these outcomes at some later time, depending on model parameters and other mitigations. The model makes the simplifying assumption that hospitalization and death have no impact on disease dynamics.
 
