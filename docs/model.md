@@ -51,7 +51,10 @@ Inpatient antivirals have no effect on transmission.
 
 #### Community mitigations
 
-The model assumes that an intervention takes effect on some date, immediately changing transmission by some constant factor, and then ends, immediately returning transmission to its pre-intervention status. This factor can be different for different pairs of populations (e.g., school closures may substantially reduce child-child contacts while increasing child-adult contacts).
+The model assumes that an intervention takes effect on some date, immediately changing transmission by some constant factor, and then ends, immediately returning transmission to its pre-intervention status.
+The reduction is a total effect and includes both the reduction in number of contacts and the probability of infection per contact.
+
+This factor can be different for different pairs of populations (e.g., school closures may substantially reduce child-child contacts while increasing child-adult contacts).
 
 #### Testing, tracing, isolation, and quarantine (TTIQ)
 
