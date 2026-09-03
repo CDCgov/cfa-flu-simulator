@@ -77,6 +77,14 @@ function roundTo1000(n: number): number {
 function formatCount(n: number): string {
   return fmt.format(roundTo1000(n));
 }
+
+const pctFmt = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 1,
+});
+function formatPct(n: number): string {
+  return pctFmt.format(n);
+}
 </script>
 
 <template>
@@ -91,6 +99,7 @@ function formatCount(n: number): string {
               <th>Unmitigated</th>
               <th v-if="t.hasMitigated">Mitigated</th>
               <th v-if="t.hasMitigated">Prevented</th>
+              <th v-if="t.hasMitigated">% Prevented</th>
             </tr>
           </thead>
           <tbody>
@@ -100,15 +109,20 @@ function formatCount(n: number): string {
               <td v-if="t.hasMitigated" class="summary__num">
                 {{ row.mitigated !== null ? formatCount(row.mitigated) : "—" }}
               </td>
+              <td v-if="t.hasMitigated" class="summary__num">
+                {{ row.prevented !== null ? formatCount(row.prevented) : "—" }}
+              </td>
               <td v-if="t.hasMitigated" class="summary__prevented">
                 <div class="summary__prevented-value">
-                  {{ row.prevented !== null ? formatCount(row.prevented) : "—" }}
+                  {{ row.preventedPct !== null ? formatPct(row.preventedPct) : "—" }}
                 </div>
-                <div
-                  v-if="row.preventedPct !== null && row.preventedPct > 0"
-                  class="summary__bar"
-                  :style="{ width: `${Math.min(100, row.preventedPct * 100)}%` }"
-                />
+                <div v-if="row.preventedPct !== null" class="summary__bar-track">
+                  <div
+                    v-if="row.preventedPct > 0"
+                    class="summary__bar"
+                    :style="{ width: `${Math.min(100, row.preventedPct * 100)}%` }"
+                  />
+                </div>
               </td>
             </tr>
           </tbody>
@@ -145,6 +159,7 @@ function formatCount(n: number): string {
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  white-space: nowrap;
   opacity: 0.55;
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid rgba(128, 128, 128, 0.25);
@@ -172,11 +187,16 @@ function formatCount(n: number): string {
 .summary__prevented-value {
   font-feature-settings: "tnum";
 }
-.summary__bar {
+.summary__bar-track {
   margin-top: 0.25rem;
   height: 3px;
+  background: rgba(128, 128, 128, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.summary__bar {
+  height: 100%;
   background: var(--accent);
   border-radius: 2px;
-  max-width: 100%;
 }
 </style>
