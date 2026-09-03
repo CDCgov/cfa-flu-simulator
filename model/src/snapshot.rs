@@ -198,7 +198,11 @@ fn check_scenario(scenario: &str) {
         ),
     ];
     for (actual_series, expected_series, name) in pairs {
-        assert_series_close(actual_series, expected_series, &format!("{scenario} {name}"));
+        assert_series_close(
+            actual_series,
+            expected_series,
+            &format!("{scenario} {name}"),
+        );
     }
 }
 
