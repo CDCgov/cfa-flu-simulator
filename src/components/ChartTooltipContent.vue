@@ -39,8 +39,10 @@ function formatValue(displayed: number, seriesIdx: number): string {
   <div class="tt">
     <div class="tt__day">Day {{ xLabels[index] }}</div>
     <div v-for="(v, i) in values" :key="i" class="tt__row">
-      <span class="tt__swatch" :style="{ background: v.color }" />
-      <span class="tt__label">{{ series[v.seriesIndex].legend }}</span>
+      <template v-if="series[v.seriesIndex].legend">
+        <span class="tt__swatch" :style="{ background: v.color }" />
+        <span class="tt__label">{{ series[v.seriesIndex].legend }}</span>
+      </template>
       <span class="tt__value">{{ formatValue(v.value, v.seriesIndex) }}</span>
     </div>
   </div>
