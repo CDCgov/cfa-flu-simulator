@@ -12,6 +12,7 @@ export default defineConfig({
     sidebar: [
       { text: "Introduction", link: "/" },
       { text: "Model description", link: "/model" },
+      { text: "Model verification", link: "/verification" },
     ],
     socialLinks: [
       {
