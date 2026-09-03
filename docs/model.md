@@ -252,13 +252,15 @@ Define the parameters:
 
 During the period from $t_\mathrm{start}$ to $t_\mathrm{start} + \Delta t_\mathrm{duration}$, adjust the contact matrix entries from $C_{ij}$ to $(1 - \mathrm{Eff}) \times C_{ij}$.
 
-### Surveillance and detection
+### Surveillance, testing, and detection
 
 Define the parameters:
 
 - $p_{\mathrm{test}|Y}$: proportion of newly infectious, symptomatic people who are tested (e.g., who seek and receive a test), assumed constant
 - test sensitivity
 - probability a positive test is forwarded to public health
+
+Testing could be any modality, such as self-administered or PCR. The sensitivity and forwarding probabilities represent the average of those values across all testing modalities.
 
 Then:
 
