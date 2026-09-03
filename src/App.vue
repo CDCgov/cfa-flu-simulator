@@ -27,6 +27,14 @@ const { ready, reset } = provideParams();
         <TTIQSection />
       </template>
       <p v-else class="loading">Loading model…</p>
+      <footer class="sidebar-footer">
+        <a
+          href="https://www.cdc.gov/other/privacy.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Privacy Policy</a
+        >
+      </footer>
     </template>
     <ResultsView v-if="ready" />
   </SidebarLayout>
@@ -56,6 +64,13 @@ const { ready, reset } = provideParams();
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
 }
 
 :deep(.MainContent) {
