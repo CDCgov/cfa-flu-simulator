@@ -4,7 +4,13 @@
 
 This is a Susceptible-Exposed-Infectious-Removed (SEIR) compartmental ordinary differential equations (ODE) model, modified to account for public health interventions including medical countermeasures (vaccination and antivirals) and non-pharmaceutical interventions (testing, tracing, isolation, and quantine).
 
-In a compartmental ODE model, individuals move through discrete disease states, with the time spent by individuals in each state exponentially distributed across individuals. Individuals are assumed to have a constant infectiousness while in the Infectious state. Individuals are not infectious at all while in the Susceptible, Exposed, and Removed states. Removed individuals cannot be re-infected.
+In a compartmental ODE model, individuals move through discrete disease states, with the time spent by individuals in each state exponentially distributed across individuals.
+
+Individuals are assumed to have a constant infectiousness while in the Infectious state.
+This is conceptually equivalent to a person having, while infectious, a fixed probability of infecting each susceptible person they contact.
+Individuals are not infectious at all while in the Susceptible, Exposed, and Removed states.
+
+Removed individuals cannot be re-infected.
 
 ### Health outcomes
 
