@@ -77,10 +77,10 @@ These compartments currently represent the proportion of the total population $N
 
 ### Parameters
 
-- Model initialization
+- Model initialization (see [below](#model-initialization))
     - $N$: total population size
     - $N_i$: size of each population (so that $N_i/N$ is the proportion of the population in group $i$)
-    - $\mathrm{IU}_\bullet(0)$: number of people initially infected, assumed distributed proportionally across groups, i.e., $\mathrm{IU}_i(0) = (N_i / N) \times \mathrm{IU}_\bullet(0)$
+    - $J$: number of people initially infected, distributed across exposed and infectious, and assumed distributed proportionally across groups
     - $\mathrm{RU}_\bullet(0)$: number of people initially immune, assumed distributed proportionally across groups
 - Transmission
     - $R_0$: basic reproduction number
@@ -128,10 +128,23 @@ These compartments currently represent the proportion of the total population $N
 
 ### Model initialization
 
-- $\mathrm{RU}_i(0) = \mathrm{RU}_\bullet(0) \times (N_i / N)$
-- $\mathrm{IU}_i(0) = \mathrm{IU}_\bullet(0) \times (N_i / N)$, with the caveat that, while $\mathrm{RU}_\bullet(0) + \mathrm{IU}_\bullet(0) > N$ is strictly speaking a mathematical impossibility, the current implementation will prefer immunity to infection (e.g., if $\mathrm{RU}_\bullet(0)/N$ is set to 100%, then there will be zero infections at all times)
-- $\mathrm{SU}_i(0) = N_i - \mathrm{IU}_i(0) - \mathrm{RU}_i(0)$
-- All Exposed and Vaccinated compartments are initialized at zero
+First, reconcile the total population size $N$, initial infections $J$, and number initially immune $\mathrm{RU}_\bullet(0)$. The model implementation will, in the case of conflicting user input, prefer immunity to infection. (E.g., if $\mathrm{RU}_\bullet(0)/N$ is set to 100%, then there will be zero infections at all times.)
+
+Second, split the initial infections $J$ across $\mathrm{EU}_\bullet(0)$ and $\mathrm{IU}_\bullet(0)$ according to the average incubation and infectious period durations:
+
+$$
+\begin{gather*}
+J = \mathrm{EU}_\bullet(0) + \mathrm{IU}_\bullet(0) \\
+\frac{\mathrm{EU}_\bullet(0)}{\mathrm{IU}_\bullet(0)} = \frac{T_E}{T_I} \\
+\implies \mathrm{EU}_\bullet(0) = J \frac{T_E}{T_E + T_I}
+\end{gather*}
+$$
+
+Then, split across groups: $\mathrm{EU}_i(0) = \mathrm{EU}_\bullet(0) \times (N_i / N)$, and similarly for the $\mathrm{IU}_i(0)$ and $\mathrm{RU}_i(0)$.
+
+Finally, $\mathrm{SU}_i(0) = N_i - [\mathrm{EU}_i(0) + \mathrm{IU}_i(0) + \mathrm{RU}_i(0)]$.
+
+All vaccinated compartments are initialized at zero.
 
 ### Equations
 
