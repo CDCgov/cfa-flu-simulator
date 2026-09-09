@@ -4,6 +4,7 @@ import {
   reactive,
   ref,
   shallowRef,
+  toRaw,
   type InjectionKey,
   type Ref,
 } from "vue";
@@ -129,6 +130,14 @@ export interface ParamsStore {
   params: Parameters;
   ready: Ref<boolean>;
   reset: () => void;
+  /** Plain (non-reactive) copy of the current parameters. */
+  exportParams: () => Parameters;
+  /**
+   * Replace the current parameters with `input` layered over the defaults.
+   * Unknown keys and values of the wrong type are dropped. Throws if the
+   * input is not an object or contains no recognised parameters.
+   */
+  importParams: (input: unknown) => void;
 }
 
 const ParamsKey: InjectionKey<ParamsStore> = Symbol("params");
@@ -140,6 +149,38 @@ const TOML_DEFAULTS = parse(rawDefaults) as unknown as Parameters;
 
 function seedParameters(): Parameters {
   return structuredClone(TOML_DEFAULTS);
+}
+
+function sameShape(value: unknown, reference: unknown): boolean {
+  if (Array.isArray(reference)) {
+    return (
+      Array.isArray(value) &&
+      value.every((v) => typeof v === typeof reference[0])
+    );
+  }
+  return typeof value === typeof reference;
+}
+
+export function mergeImported(
+  input: unknown,
+  defaults: Parameters,
+): Parameters {
+  if (input === null || typeof input !== "object" || Array.isArray(input)) {
+    throw new Error("Parameters file must contain a JSON object");
+  }
+  const source = input as Record<string, unknown>;
+  const merged: Record<string, unknown> = { ...structuredClone(defaults) };
+  let accepted = 0;
+  for (const key of Object.keys(defaults) as (keyof Parameters)[]) {
+    const value = source[key];
+    if (value === undefined || !sameShape(value, defaults[key])) continue;
+    merged[key] = structuredClone(value);
+    accepted++;
+  }
+  if (accepted === 0) {
+    throw new Error("No recognised parameters found in file");
+  }
+  return merged as unknown as Parameters;
 }
 
 // Keys omitted from URL sync: structural/UI-only fields the user never edits.
@@ -173,7 +214,22 @@ export function createParamsStore(): ParamsStore {
     ready.value = true;
   });
 
-  return { params, ready, reset: () => resetUrl() };
+  function exportParams(): Parameters {
+    return structuredClone(toRaw(params));
+  }
+
+  function importParams(input: unknown) {
+    const defaults = wasmDefaults.value ?? TOML_DEFAULTS;
+    Object.assign(params, mergeImported(input, defaults));
+  }
+
+  return {
+    params,
+    ready,
+    reset: () => resetUrl(),
+    exportParams,
+    importParams,
+  };
 }
 
 export function provideParams(): ParamsStore {

@@ -26,35 +26,35 @@ defineEmits<(e: "update:enabled", v: boolean) => void>();
 
 <style scoped>
 .mitigation-section {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  background: rgba(255, 255, 255, 0.02);
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  background: var(--color-bg-0);
 }
 .mitigation-section[data-enabled="true"] {
-  border-color: rgba(74, 222, 128, 0.3);
-  background: rgba(74, 222, 128, 0.03);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-bg-0));
 }
 .mitigation-section__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 .mitigation-section__title {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  opacity: 0.85;
+  color: var(--color-text-secondary);
 }
 .mitigation-section__body {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding-top: 0.75rem;
-  margin-top: 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
 }
 </style>
