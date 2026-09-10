@@ -13,7 +13,7 @@ const emit = defineEmits<(e: "update:modelValue", v: number[]) => void>();
 const { params } = useParams();
 const cfg = computed(() => getField(props.path));
 
-// "All" mode: all groups share the first group's value. We detect this
+// "All Ages" mode: all groups share the first group's value. We detect this
 // initially by checking if all values are equal.
 const allMode = ref(props.modelValue.every((v) => v === props.modelValue[0]));
 
@@ -30,7 +30,7 @@ function update(index: number, value: number) {
   }
 }
 
-// When "All" is toggled on, snap other values to index 0.
+// When "All Ages" is toggled on, snap other values to index 0.
 watch(allMode, (on) => {
   if (on && props.modelValue.length > 0) {
     emit(
@@ -62,12 +62,12 @@ const percent = computed(() => cfg.value.type === "percent");
         :number-type="numberType"
         live
       />
-      <Toggle v-model="allMode" label="All" class="group-editor__toggle" />
+      <Toggle v-model="allMode" label="All Ages" class="group-editor__toggle" />
     </div>
     <template v-else>
       <div class="group-editor__header">
         <span class="group-editor__label">{{ cfg.label }}</span>
-        <Toggle v-model="allMode" label="All" />
+        <Toggle v-model="allMode" label="All Ages" />
       </div>
       <div class="group-editor__grid">
       <div
