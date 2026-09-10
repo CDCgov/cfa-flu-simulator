@@ -156,14 +156,17 @@ slider = true
 section = "vaccine"
 label = "Vaccine type"
 type = "select"
-options = [{ value = 1, label = "One dose" }, { value = 2, label = "Two doses" }]
+options = [
+    { value = 1, label = "One dose" },
+    { value = 2, label = "Two doses" },
+]
 
 [vaccine_start]
 section = "vaccine"
 label = "Vaccination start"
 tooltip = "Start day of the vaccination campaign"
 min = 0
-max = 200                  # clamped to days at runtime
+max = 200                                         # clamped to days at runtime
 step = 1
 default = 50
 type = "integer"
@@ -196,7 +199,7 @@ show_when_doses_2 = true
 label = "Delay between doses"
 tooltip = "Time that a person must wait before receiving their second dose, in days"
 min = 0
-max = 200                  # clamped to days at runtime
+max = 200                                                                            # clamped to days at runtime
 step = 1
 default = 30
 type = "integer"
@@ -301,7 +304,7 @@ section = "antivirals"
 label = "Effectiveness for onward transmission"
 tooltip = "Proportional reduction in onward transmission among infected individuals who receive outpatient antivirals and adhere to the regimen"
 min = 0
-max = 1
+max = 0.5
 step = 0.01
 default = 0.30
 type = "percent"
@@ -312,7 +315,7 @@ section = "antivirals"
 label = "Effectiveness for hospitalization"
 tooltip = "Of symptomatic infections who receive outpatient antivirals and adhere to the regimen, the proportion that avert hospitalization"
 min = 0
-max = 1
+max = 0.5
 step = 0.01
 default = 0.20
 type = "percent"
@@ -380,7 +383,7 @@ section = "community"
 label = "Start day"
 tooltip = "First day that the intervention has its effect"
 min = 0
-max = 200                  # clamped to days at runtime
+max = 200                                                  # clamped to days at runtime
 step = 1
 default = 60
 type = "integer"
@@ -391,7 +394,7 @@ section = "community"
 label = "Duration (days)"
 tooltip = "Time over which the intervention has its effect"
 min = 1
-max = 140                  # clamped to days-start at runtime
+max = 140                                                   # clamped to days-start at runtime
 step = 1
 default = 20
 type = "integer"

@@ -4,11 +4,17 @@
 
 This is a Susceptible-Exposed-Infectious-Removed (SEIR) compartmental ordinary differential equations (ODE) model, modified to account for public health interventions including medical countermeasures (vaccination and antivirals) and non-pharmaceutical interventions (testing, tracing, isolation, and quantine).
 
-In a compartmental ODE model, individuals move through discrete disease states, with the time spent by individuals in each state exponentially distributed across individuals. Individuals are assumed to have a constant infectiousness while in the Infectious state. Individuals are not infectious at all while in the Susceptible, Exposed, and Removed states. Removed individuals cannot be re-infected.
+In a compartmental ODE model, individuals move through discrete disease states, with the time spent by individuals in each state exponentially distributed across individuals.
+
+Individuals are assumed to have a constant infectiousness while in the Infectious state.
+This is conceptually equivalent to a person having, while infectious, a fixed probability of infecting each susceptible person they contact.
+Individuals are not infectious at all while in the Susceptible, Exposed, and Removed states.
+
+Removed individuals cannot be re-infected.
 
 ### Health outcomes
 
-Some infections are symptomatic. Symptomatic infections are assumed to be equally infectious in the absence of mitigations. However, symptoms can trigger mitigations like isolation and antiviral usage that do affect onward transmission.
+Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for mitigations like isolation and antiviral usage.
 
 Hospitalization and death are included in the model, but only as counting functions. Upon infection, some proportion of people will go on to these outcomes at some later time, depending on model parameters and other mitigations. The model makes the simplifying assumption that hospitalization and death have no impact on disease dynamics.
 
@@ -30,15 +36,25 @@ If the vaccine is two-dose, then upon completing the second dose-to-protection d
 
 #### Antivirals
 
-People with symptomatic infections can receive outpatient antivirals. Antivirals prevent transmission with effectiveness $\mathrm{AVE}_I$. Rather than separately simulating treated and untreated individuals, the model assumes that antivirals reduce overall disease transmission by a constant factor equal to: the fraction symptomatic, times the proportion of symptomatic infections that receive (and adhere to) antivirals, times $\mathrm{AVE}_I$. Thus, $\mathrm{AVE}_I$ approximately accounts for delays in treatment. For example, if all individuals received antivirals halfway through their infectious period, then $\mathrm{AVE}_I$ will almost certainly be less than 50%.
+Antivirals have two effects: they can prevent onward transmission and can prevent progression to more severe disease.
+In the model, people with symptomatic infections can receive outpatient antivirals, and hospitalized people can receive inpatient antivirals.
 
-In the model, antivirals are not used prophylatically.
+Outpatient antivirals prevent transmission with effectiveness $\mathrm{AVE}_I$. The model applies this reduction to the proportion of infections that are symptomatic that receive and adhere to antivirals. In the current implementation, there is no delay between onset of infectiousness and onset of the reduction in infectiousness due to antiviral. Thus, $\mathrm{AVE}_I$ should be selected to accounts for delays in treatment. For example, if all individuals received antivirals halfway through their infectious period, then $\mathrm{AVE}_I$ will almost certainly be less than 50%.
 
-Additionally, antivirals prevent progression from symptomatic infection to hospitalization with effectiveness $\mathrm{AVE}_H$, and then also prevent progression from hospitalization to death with effectiveness $\mathrm{AVE}_D$. These effects are synergistic.
+Outpatient antivirals prevent progression from symptomatic infection to hospitalization with effectiveness $\mathrm{AVE}_H$.
+
+Outpatient antivirals are not used prophylatically.
+
+Inpatient antivirlas prevent progression from hospitalization to death with effectiveness $\mathrm{AVE}_D$. Outpatient and inpatient virals are assumed to have independent effects: a person can receive outpatient antivirals, lowering their risk of hospitalization (and, by extension death), and also inpatient antivirals, specifically lowering their risk of death.
+
+Inpatient antivirals have no effect on transmission.
 
 #### Community mitigations
 
-The model assumes that an intervention takes effect on some date, immediately changing transmission by some constant factor, and then ends, immediately returning transmission to its pre-intervention status. This factor can be different for different pairs of populations (e.g., school closures may substantially reduce child-child contacts while increasing child-adult contacts).
+The model assumes that an intervention takes effect on some date, immediately changing transmission by some constant factor, and then ends, immediately returning transmission to its pre-intervention status.
+The reduction is a total effect and includes both the reduction in number of contacts and the probability of infection per contact.
+
+This factor can be different for different pairs of populations (e.g., school closures may substantially reduce child-child contacts while increasing child-adult contacts).
 
 #### Testing, tracing, isolation, and quarantine (TTIQ)
 
@@ -246,13 +262,15 @@ Define the parameters:
 
 During the period from $t_\mathrm{start}$ to $t_\mathrm{start} + \Delta t_\mathrm{duration}$, adjust the contact matrix entries from $C_{ij}$ to $(1 - \mathrm{Eff}) \times C_{ij}$.
 
-### Surveillance and detection
+### Surveillance, testing, and detection
 
 Define the parameters:
 
 - $p_{\mathrm{test}|Y}$: proportion of newly infectious, symptomatic people who are tested (e.g., who seek and receive a test), assumed constant
 - test sensitivity
 - probability a positive test is forwarded to public health
+
+Testing could be any modality, such as self-administered or PCR. The sensitivity and forwarding probabilities represent the average of those values across all testing modalities.
 
 Then:
 
