@@ -8,7 +8,7 @@ import {
   type ModelOutputExport,
   type OutputItemGrouped,
 } from "../composables/useParams";
-import { pickScale, scale } from "../utils/chartScale";
+import { chartCsv, pickScale, scale } from "../utils/chartScale";
 
 const props = defineProps<{
   results: ModelOutputExport | null;
@@ -94,6 +94,20 @@ const pDetectChart = computed(() => {
   return { series, xLabels, annotations };
 });
 
+function testedCsv(): string {
+  const c = testedChart.value;
+  if (!c) return "";
+  return chartCsv(c.xLabels, [{ header: "Cases tested", data: c.rawBySeries[0] }]);
+}
+
+function pDetectCsv(): string {
+  const c = pDetectChart.value;
+  if (!c) return "";
+  return chartCsv(c.xLabels, [
+    { header: "P(detect >= 1) %", data: c.series[0].data as number[] },
+  ]);
+}
+
 function fmtPct(v: number, digits = 1): string {
   return `${(v * 100).toFixed(digits)}%`;
 }
@@ -121,6 +135,9 @@ const subtitle = computed(
             :x-labels="testedChart.xLabels"
             :y-label="`Cases Tested${testedChart.scale.unit ? ` (${testedChart.scale.unit})` : ''}`"
             filename="symptomatic-cases-tested"
+            :menu="false"
+            :csv="testedCsv"
+            download-link="Download (CSV)"
             :height="180"
             :y-min="0"
             :x-min="0"
@@ -148,6 +165,9 @@ const subtitle = computed(
             :annotations="pDetectChart.annotations"
             y-label="Probability (%)"
             filename="cumulative-probability-of-detection"
+            :menu="false"
+            :csv="pDetectCsv"
+            download-link="Download (CSV)"
             :height="220"
             :y-min="0"
             :x-min="0"
