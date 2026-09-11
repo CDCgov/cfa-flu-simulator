@@ -18,8 +18,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7(jspdf@4.2.1)
       smol-toml:
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.1
+        version: 1.7.1
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@5.9.3)
@@ -1354,8 +1354,8 @@ packages:
   slick@1.12.2:
     resolution: {integrity: sha512-4qdtOGcBjral6YIBCWJ0ljFSKNLz9KkhbWtuGvUyRowl1kxfuE1x/Z/aJcaiilpb3do9bl5K7/1h9XC5wWpY/A==}
 
-  smol-toml@1.6.1:
-    resolution: {integrity: sha512-dWUG8F5sIIARXih1DTaQAX4SsiTXhInKf1buxdY9DIg4ZYPZK5nGM1VRIYmEbDbsHt7USo99xSLFu5Q1IqTmsg==}
+  smol-toml@1.7.1:
+    resolution: {integrity: sha512-PPlsspAZ4jbMBu5DMFhfUGDQLu/vrL4SyBROVS37x8ynnVmFIs1VPBz1Co8Xks3TvpIaZXmU85y4DrQ+UyVFoQ==}
     engines: {node: '>= 18'}
 
   source-map-js@1.2.1:
@@ -1749,7 +1749,7 @@ snapshots:
       '@codemirror/view': 6.43.10
       codemirror: 6.0.2
       reka-ui: 2.10.4(vue@3.5.42(typescript@5.9.3))
-      smol-toml: 1.6.1
+      smol-toml: 1.7.1
       vue: 3.5.42(typescript@5.9.3)
       vue-codemirror: 6.1.1(codemirror@6.0.2)(vue@3.5.42(typescript@5.9.3))
       yaml: 2.9.0
@@ -2963,7 +2963,7 @@ snapshots:
 
   slick@1.12.2: {}
 
-  smol-toml@1.6.1: {}
+  smol-toml@1.7.1: {}
 
   source-map-js@1.2.1: {}
 
