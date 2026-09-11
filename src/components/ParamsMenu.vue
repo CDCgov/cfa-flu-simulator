@@ -83,7 +83,7 @@ async function onFileChosen(event: Event) {
       :aria-expanded="open"
     >
       Parameters
-      <Icon icon="arrow_drop_down" size="sm" decorative />
+      <Icon icon="keyboard_arrow_down" size="sm" decorative />
     </Button>
     <div
       id="params-menu-list"
@@ -110,6 +110,13 @@ async function onFileChosen(event: Event) {
 <style scoped>
 .params-menu {
   display: inline-block;
+}
+
+/* The cfasim-ui Button sets no gap and pads both sides equally, which leaves
+   the caret flush against the label and floating well short of the edge. */
+.params-menu .button {
+  gap: var(--space-1);
+  padding-right: var(--space-2);
 }
 
 /* The theme's --shadow-focus is an invalid light-dark() of shadows, so the

@@ -13,6 +13,7 @@ const dosesOptions = (dosesCfg.options ?? []).map((o) => ({
   value: String(o.value),
   label: o.label,
 }));
+const twoDose = computed(() => params.vaccine_doses === 2);
 const dosesString = computed({
   get: () => String(params.vaccine_doses),
   set: (v: string) => {
@@ -50,14 +51,25 @@ const dosesString = computed({
       />
       <ParamField path="vaccine_p_get_2_doses" v-model="params.vaccine_p_get_2_doses" />
     </template>
-    <ParamField path="vaccine_ve_s" v-model="params.vaccine_ve_s" />
-    <ParamField path="vaccine_ve_i" v-model="params.vaccine_ve_i" />
-    <ParamField path="vaccine_ve_p" v-model="params.vaccine_ve_p" />
-    <template v-if="params.vaccine_doses === 2">
-      <ParamField path="vaccine_ve_2s" v-model="params.vaccine_ve_2s" />
-      <ParamField path="vaccine_ve_2i" v-model="params.vaccine_ve_2i" />
-      <ParamField path="vaccine_ve_2p" v-model="params.vaccine_ve_2p" />
-    </template>
+    <!-- Two-dose mode folds each pair into one slider, a handle per dose. -->
+    <ParamField
+      path="vaccine_ve_s"
+      v-model="params.vaccine_ve_s"
+      :paired="twoDose"
+      v-model:upper-value="params.vaccine_ve_2s"
+    />
+    <ParamField
+      path="vaccine_ve_i"
+      v-model="params.vaccine_ve_i"
+      :paired="twoDose"
+      v-model:upper-value="params.vaccine_ve_2i"
+    />
+    <ParamField
+      path="vaccine_ve_p"
+      v-model="params.vaccine_ve_p"
+      :paired="twoDose"
+      v-model:upper-value="params.vaccine_ve_2p"
+    />
     <ParamField path="vaccine_ramp_up" v-model="params.vaccine_ramp_up" />
   </MitigationSection>
 </template>

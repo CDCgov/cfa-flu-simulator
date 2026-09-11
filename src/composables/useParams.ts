@@ -5,11 +5,13 @@ import {
   ref,
   shallowRef,
   toRaw,
+  watch,
   type InjectionKey,
   type Ref,
 } from "vue";
 import { parse } from "smol-toml";
 import { useUrlParams } from "cfasim-ui/shared";
+import { allFields, rangePairs } from "../config/uiConfig";
 import rawDefaults from "../../model/default-params.toml?raw";
 
 // Flat schema mirrors the Rust `Parameters` struct (wasm boundary).
@@ -193,6 +195,17 @@ const URL_IGNORE: (keyof Parameters)[] = [
   "ttiq_editable",
 ];
 
+// Only exposed for a 2-dose vaccine; held at defaults otherwise so a
+// single-dose link doesn't carry inert query params.
+const TWO_DOSE_ONLY = Object.entries(allFields())
+  .filter(([, cfg]) => cfg.show_when_doses_2)
+  .map(([path]) => path as keyof Parameters);
+
+// Pairs sharing a two-handle slider. reka-ui sorts handle values, so an
+// out-of-order pair would swap on first interaction; the second dose is
+// raised to meet the first instead, before it can reach a slider.
+const DOSE_PAIRS = rangePairs() as [keyof Parameters, keyof Parameters][];
+
 export function createParamsStore(): ParamsStore {
   const params = reactive<Parameters>(seedParameters());
   const ready = ref(false);
@@ -207,10 +220,50 @@ export function createParamsStore(): ParamsStore {
     { ignore: URL_IGNORE },
   );
 
+  // Values parked while the vaccine is single-dose, so the fields can be
+  // cleared from the URL without losing what the user typed.
+  let stashed: Record<string, unknown> | null = null;
+
+  function normalize() {
+    const write = params as Record<string, unknown>;
+    if (params.vaccine_doses === 2) {
+      if (stashed) {
+        Object.assign(write, stashed);
+        stashed = null;
+      }
+      for (const [first, second] of DOSE_PAIRS) {
+        const a = params[first] as number;
+        if ((params[second] as number) < a) write[second as string] = a;
+      }
+      return;
+    }
+    // Guarded: clearing the fields re-triggers the watcher, which would
+    // otherwise stash the defaults over the values just saved.
+    if (!stashed) {
+      stashed = Object.fromEntries(TWO_DOSE_ONLY.map((k) => [k, params[k]]));
+    }
+    const defaults = wasmDefaults.value ?? TOML_DEFAULTS;
+    for (const key of TWO_DOSE_ONLY) {
+      write[key as string] = structuredClone(defaults[key]);
+    }
+  }
+
+  // Watches the fields too, so a URL or imported JSON that sets them
+  // alongside a 1-dose vaccine is normalized as well.
+  watch(
+    () => [
+      params.vaccine_doses,
+      ...TWO_DOSE_ONLY.map((k) => params[k]),
+      ...DOSE_PAIRS.flat().map((k) => params[k]),
+    ],
+    normalize,
+  );
+
   loadWasm().then((mod) => {
     wasmDefaults.value = mod.get_default_parameters();
     Object.assign(params, wasmDefaults.value);
     hydrate();
+    normalize();
     ready.value = true;
   });
 

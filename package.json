@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "cfasim-ui": "^0.4.16",
+    "cfasim-ui": "^0.8.11",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "smol-toml": "^1.6.1",

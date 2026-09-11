@@ -13,6 +13,11 @@ export interface FieldConfig {
   show_when_doses_2?: boolean;
   label: string;
   tooltip?: string;
+  // Path of the 2-dose companion rendered as this field's upper handle.
+  range_with?: string;
+  // Used when paired with the 2-dose companion on one two-handle slider.
+  range_label?: string;
+  range_tooltip?: string;
   min?: number;
   max?: number;
   step?: number;
@@ -55,6 +60,27 @@ export function getField(path: string): FieldConfig {
 
 export function allFields(): Record<string, FieldConfig> {
   return config;
+}
+
+// [lower, upper] paths for fields rendered as one two-handle slider.
+export function rangePairs(): [string, string][] {
+  return Object.entries(config)
+    .filter(([, cfg]) => cfg.range_with)
+    .map(([path, cfg]) => [path, cfg.range_with as string]);
+}
+
+// Both handles share one scale, so the paired configs have to agree. Checked
+// once here rather than during render, where a throw would blank the app.
+for (const [lower, upper] of rangePairs()) {
+  const a = getField(lower);
+  const b = getField(upper);
+  for (const key of ["min", "max", "step", "type", "slider"] as const) {
+    if (a[key] !== b[key]) {
+      throw new Error(
+        `ui-params.toml: paired "${lower}"/"${upper}" disagree on "${key}"`,
+      );
+    }
+  }
 }
 
 // Fields belonging to a section, in TOML declaration order.
