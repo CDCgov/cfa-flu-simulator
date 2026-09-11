@@ -6,8 +6,7 @@ pub mod mitigations;
 mod model;
 mod model_unified;
 pub mod parameters;
-#[cfg(test)]
-mod snapshot;
+pub mod snapshot;
 mod utils;
 
 // Temporary legacy stubs — consumed by src/App.vue via the vite wasm-pack plugin.
