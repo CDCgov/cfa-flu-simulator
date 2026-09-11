@@ -27,7 +27,7 @@ export interface Parameters {
   r0: number;
   latent_period: number;
   infectious_period: number;
-  fraction_symptomatic: number[];
+  p_symp_given_inf: number[];
   fraction_hospitalized: number[];
   hospitalization_delay: number;
   fraction_dead: number[];
