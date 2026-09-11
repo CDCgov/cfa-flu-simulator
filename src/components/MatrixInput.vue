@@ -17,6 +17,14 @@ const { params } = useParams();
 const cfg = computed(() => getField(props.path));
 const n = computed(() => params.population_fraction_labels.length);
 
+// type=integer -> numberType=integer, percent=false
+// type=float -> numberType=float, percent=false
+// type=percent -> numberType=float, percent=true
+const numberType = computed<"integer" | "float">(() =>
+  cfg.value.type === "integer" ? "integer" : "float",
+);
+const percent = computed(() => cfg.value.type === "percent");
+
 function idx(row: number, col: number): number {
   return col * n.value + row;
 }
@@ -53,18 +61,21 @@ function update(row: number, col: number, value: number) {
         <tr v-for="(rowLabel, r) in params.population_fraction_labels" :key="r">
           <th scope="row">{{ rowLabel }}</th>
           <td v-for="(_col, c) in params.population_fraction_labels" :key="c">
+            <!-- If below the diagonal, make this an inert, "mirror" value,
+                 but with the same formatting -->
             <NumberInput
-              v-if="c >= r"
               :model-value="get(r, c)"
               @update:model-value="update(r, c, $event)"
               :min="cfg.min"
               :max="cfg.max"
               :step="cfg.step"
               hide-label
-              number-type="float"
+              :number-type="numberType"
+              :percent="percent"
+              :inert="c < r"
+              :class="{ 'matrix-input__mirror': c < r }"
               live
             />
-            <span v-else class="matrix-input__mirror">{{ get(r, c).toFixed(2) }}</span>
           </td>
         </tr>
       </tbody>
