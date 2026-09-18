@@ -3,3 +3,11 @@ allowBuilds:
   esbuild: true
   core-js: false
   vue-demi: false
+minimumReleaseAgeExclude:
+  - '@cfasim-ui/charts@0.8.11'
+  - '@cfasim-ui/components@0.8.11'
+  - '@cfasim-ui/pyodide@0.8.11'
+  - '@cfasim-ui/shared@0.8.11'
+  - '@cfasim-ui/theme@0.8.11'
+  - '@cfasim-ui/wasm@0.8.11'
+  - cfasim-ui@0.8.11
