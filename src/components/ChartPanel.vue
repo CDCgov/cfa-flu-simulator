@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import { LineChart } from "cfasim-ui/charts";
 import ChartTooltipContent from "./ChartTooltipContent.vue";
-import type { ChartData } from "../utils/chartScale";
+import { chartCsv, type ChartData } from "../utils/chartScale";
 
-defineProps<{
+const props = defineProps<{
   data: ChartData;
   filename: string;
   height?: number;
   yLabel?: string;
 }>();
+
+function toCsv(): string {
+  const { series, xLabels, rawBySeries } = props.data;
+  return chartCsv(
+    xLabels,
+    rawBySeries.map((data, i) => ({
+      header: series[i].legend ?? `series_${i}`,
+      data,
+    })),
+  );
+}
 </script>
 
 <template>
@@ -21,6 +32,9 @@ defineProps<{
     :height="height ?? 200"
     :y-min="0"
     :x-min="0"
+    :menu="false"
+    :csv="toCsv"
+    download-link="Download (CSV)"
     tooltip-trigger="hover"
     tooltip-clamp="window"
   >
