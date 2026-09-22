@@ -84,7 +84,7 @@ default = 2.5
 type = "float"
 slider = true
 
-[fraction_symptomatic]
+[p_symp_given_inf]
 section = "scenario"
 label = "Symptomatic fraction"
 tooltip = "Proportion of infections that would result in symptoms in the absence of mitigations"
@@ -96,20 +96,20 @@ type = "percent"
 slider = true
 per_group = true
 
-[fraction_hospitalized]
+[p_hosp_given_symp]
 section = "scenario"
-label = "Infection-hospitalization ratio"
-tooltip = "Proportion of infections that would result in hospitalization in the absence of mitigations"
+label = "Case-hospitalization ratio"
+tooltip = "Proportion of cases that would result in hospitalization in the absence of mitigations"
 min = 0.0
 max = 0.1
 step = 0.001
 type = "percent"
 per_group = true
 
-[fraction_dead]
+[p_death_given_hosp]
 section = "scenario"
-label = "Infection-fatality ratio"
-tooltip = "Proportion of infections that would result in death in the absence of mitigations"
+label = "Hospitalization-fatality ratio"
+tooltip = "Proportion of hospitalizations that would result in death in the absence of mitigations"
 min = 0.0
 max = 0.2
 step = 0.001

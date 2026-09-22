@@ -177,7 +177,7 @@ fn effective_infectious<const N: usize, S>(
     infectious: &Matrix<f64, Const<N>, Const<1>, S>,
     ve_i: f64,
     ve_p: f64,
-    fraction_symptomatic: &SVector<f64, N>,
+    p_symp_given_inf: &SVector<f64, N>,
     antiviral_reduction_given_symp: &SVector<f64, N>,
 ) -> SVector<f64, N>
 where
@@ -185,7 +185,7 @@ where
 {
     let ones = SVector::<f64, N>::from_element(1.0);
     (infectious * (1.0 - ve_i)).component_mul(
-        &(ones - (1.0 - ve_p) * fraction_symptomatic.component_mul(antiviral_reduction_given_symp)),
+        &(ones - (1.0 - ve_p) * p_symp_given_inf.component_mul(antiviral_reduction_given_symp)),
     )
 }
 
@@ -276,7 +276,7 @@ where
                 let new_symptomatic = (new_infections_unvac
                     + (1.0 - self.parameters.mitigations.vaccine.ve_p) * new_infections_vac
                     + (1.0 - self.parameters.mitigations.vaccine.ve_2p) * new_infections_vac2)
-                    .component_mul(&self.parameters.fraction_symptomatic);
+                    .component_mul(&self.parameters.p_symp_given_inf);
                 let new_hospitalizations = state.get_h_cum() - prev_h_cum;
                 let new_deaths = state.get_d_cum() - prev_d_cum;
                 output.add_infection_incidence(*time, new_infections.data.as_slice().into());
@@ -346,24 +346,23 @@ impl<const N: usize> System<f64, State<N>> for &SEIRModel<N> {
 
         let beta = self.parameters.r0 / self.parameters.infectious_period;
         let ones = SVector::<f64, N>::from_element(1.0);
-        let fraction_symptomatic = &self.parameters.fraction_symptomatic;
+        let p_symp_given_inf = &self.parameters.p_symp_given_inf;
         let antiviral_reduction = &self.ave.pop_eff_i_given_symp;
-        let i_effective =
-            effective_infectious(&i, 0.0, 0.0, fraction_symptomatic, antiviral_reduction)
-                + effective_infectious(
-                    &iv,
-                    vax_params.ve_i,
-                    vax_params.ve_p,
-                    fraction_symptomatic,
-                    antiviral_reduction,
-                )
-                + effective_infectious(
-                    &i2v,
-                    vax_params.ve_2i,
-                    vax_params.ve_2p,
-                    fraction_symptomatic,
-                    antiviral_reduction,
-                );
+        let i_effective = effective_infectious(&i, 0.0, 0.0, p_symp_given_inf, antiviral_reduction)
+            + effective_infectious(
+                &iv,
+                vax_params.ve_i,
+                vax_params.ve_p,
+                p_symp_given_inf,
+                antiviral_reduction,
+            )
+            + effective_infectious(
+                &i2v,
+                vax_params.ve_2i,
+                vax_params.ve_2p,
+                p_symp_given_inf,
+                antiviral_reduction,
+            );
 
         let infection_rate = (beta / self.parameters.population)
             * (contact_matrix * i_effective).component_div(&self.parameters.population_fractions);
@@ -412,21 +411,21 @@ impl<const N: usize> System<f64, State<N>> for &SEIRModel<N> {
             .component_mul(&self.parameters.population_fractions)
             * administration_rate2;
 
-        let dat_risk =
-            de_to_i + dev_to_iv * (1.0 - vax_params.ve_p) + de2v_to_i2v * (1.0 - vax_params.ve_2p);
-        let dsymp = dat_risk.component_mul(&self.parameters.fraction_symptomatic);
-
-        let dto_pre_h = dat_risk
-            .component_mul(&self.parameters.fraction_hospitalized)
+        // symptomatic infections
+        let dsymp = (de_to_i
+            + dev_to_iv * (1.0 - vax_params.ve_p)
+            + de2v_to_i2v * (1.0 - vax_params.ve_2p))
+            .component_mul(&self.parameters.p_symp_given_inf);
+        // hospitalizations
+        let dto_pre_h = dsymp
+            .component_mul(&self.parameters.p_hosp_given_symp)
             .component_mul(&(ones - self.ave.pop_eff_p_hosp_given_symp));
-        let dpre_h_to_h_cum = pre_h / self.parameters.hospitalization_delay;
-
-        let dto_pre_d = dat_risk
-            .component_mul(&self.parameters.fraction_dead)
-            .component_mul(&(ones - self.ave.pop_eff_p_hosp_given_symp))
+        let dpre_h_to_h_cum = pre_h / self.parameters.inf_hosp_delay;
+        // deaths
+        let dto_pre_d = dto_pre_h
+            .component_mul(&self.parameters.p_death_given_hosp)
             .component_mul(&(ones - self.ave.pop_eff_p_death_given_hosp));
-
-        let dpre_d_to_d_cum = pre_d / self.parameters.death_delay;
+        let dpre_d_to_d_cum = pre_d / self.parameters.inf_death_delay;
 
         dy.set_s(&-(ds_to_e + ds_to_sv));
         dy.set_e(&(ds_to_e - de_to_i));
@@ -561,11 +560,11 @@ mod test {
             latent_period: 1.0,
             infectious_period: 3.0,
             mitigations: MitigationParamsTyped::default(),
-            fraction_symptomatic: Vector1::new(0.5),
-            fraction_hospitalized: Vector1::new(0.0),
-            hospitalization_delay: 1.0,
-            fraction_dead: Vector1::new(0.0),
-            death_delay: 1.0,
+            p_symp_given_inf: Vector1::new(0.5),
+            p_hosp_given_symp: Vector1::new(0.0),
+            inf_hosp_delay: 1.0,
+            p_death_given_hosp: Vector1::new(0.0),
+            inf_death_delay: 1.0,
             p_test_sympto: 0.0,
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
@@ -601,11 +600,11 @@ mod test {
             latent_period: 1.0,
             infectious_period: 3.0,
             mitigations: MitigationParamsTyped::default(),
-            fraction_symptomatic: Vector1::new(0.5),
-            fraction_hospitalized: Vector1::new(0.0),
-            hospitalization_delay: 1.0,
-            fraction_dead: Vector1::new(0.0),
-            death_delay: 1.0,
+            p_symp_given_inf: Vector1::new(0.5),
+            p_hosp_given_symp: Vector1::new(0.0),
+            inf_hosp_delay: 1.0,
+            p_death_given_hosp: Vector1::new(0.0),
+            inf_death_delay: 1.0,
             p_test_sympto: 0.0,
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
@@ -660,11 +659,11 @@ mod test {
                 community: MitigationParamsTyped::<1>::default().community,
                 ttiq: ttiq_params,
             },
-            fraction_symptomatic: Vector1::new(0.5),
-            fraction_hospitalized: Vector1::new(0.0),
-            hospitalization_delay: 1.0,
-            fraction_dead: Vector1::new(0.0),
-            death_delay: 1.0,
+            p_symp_given_inf: Vector1::new(0.5),
+            p_hosp_given_symp: Vector1::new(0.0),
+            inf_hosp_delay: 1.0,
+            p_death_given_hosp: Vector1::new(0.0),
+            inf_death_delay: 1.0,
             p_test_sympto: 0.0,
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
@@ -747,7 +746,12 @@ mod test {
             .map(|x| DVector::from_vec(x.grouped_values.clone()))
             .reduce(|acc, elem| acc + elem)
             .unwrap();
-        let ihr = hospitalizations_by_group.component_div(&incidence_by_group);
+        // simulated and expected infection-hospitalization ratios
+        let sim_ihr = hospitalizations_by_group.component_div(&incidence_by_group);
+        let expect_ihr = model
+            .parameters
+            .p_symp_given_inf
+            .component_mul(&model.parameters.p_hosp_given_symp);
 
         let deaths_by_group = output
             .get_output(&OutputType::DeathIncidence)
@@ -755,27 +759,32 @@ mod test {
             .map(|x| DVector::from_vec(x.grouped_values.clone()))
             .reduce(|acc, elem| acc + elem)
             .unwrap();
-        let ifr = deaths_by_group.component_div(&incidence_by_group);
+        // simulated and expected infection-fatality ratios
+        let sim_ifr = deaths_by_group.component_div(&incidence_by_group);
+        let expect_ifr = model
+            .parameters
+            .p_symp_given_inf
+            .component_mul(&model.parameters.p_hosp_given_symp)
+            .component_mul(&model.parameters.p_death_given_hosp);
 
         assert!((0.6755054 - attack_rate).abs() < 1e-5);
 
         assert!((0.8658730 - attack_rate_by_group[0]).abs() < 1e-5);
         assert!((0.6120495 - attack_rate_by_group[1]).abs() < 1e-5);
 
-        assert!((model.parameters.fraction_hospitalized[0] - ihr[0]).abs() < 1e-5);
-        assert!((model.parameters.fraction_hospitalized[1] - ihr[1]).abs() < 1e-5);
+        assert!((sim_ihr[0] - expect_ihr[0]).abs() < 1e-5);
+        assert!((sim_ihr[1] - expect_ihr[1]).abs() < 1e-5);
 
-        assert!(
-            (model.parameters.fraction_dead[0] - ifr[0]).abs() < 1e-5,
-            "fraction_dead={:?} ifr={:?}",
-            model.parameters.fraction_dead,
-            ifr
-        );
-        assert!((model.parameters.fraction_dead[1] - ifr[1]).abs() < 1e-5);
+        assert!((sim_ifr[0] - expect_ifr[0]).abs() < 1e-5);
+        assert!((sim_ifr[1] - expect_ifr[1]).abs() < 1e-5);
     }
 
     #[test]
     fn test_antiviral() {
+        let fs = 0.5;
+        let ihr = 0.1;
+        let ifr = 0.01;
+
         let mut params = ParametersTyped {
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
@@ -787,11 +796,11 @@ mod test {
             latent_period: 1.0,
             infectious_period: 3.0,
             mitigations: MitigationParamsTyped::default(),
-            fraction_symptomatic: Vector1::new(0.5),
-            fraction_hospitalized: Vector1::new(0.1),
-            hospitalization_delay: 1.0,
-            fraction_dead: Vector1::new(0.01),
-            death_delay: 1.0,
+            p_symp_given_inf: Vector1::new(fs),
+            p_hosp_given_symp: Vector1::new(ihr / fs),
+            inf_hosp_delay: 1.0,
+            p_death_given_hosp: Vector1::new(ifr / ihr),
+            inf_death_delay: 1.0,
             p_test_sympto: 0.0,
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
@@ -896,6 +905,10 @@ mod test {
 
     #[test]
     fn test_2dose_vaccine() {
+        let fs = 0.5;
+        let ihr = 0.1;
+        let ifr = 0.01;
+
         let mut params = ParametersTyped {
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
@@ -907,11 +920,11 @@ mod test {
             latent_period: 1.0,
             infectious_period: 3.0,
             mitigations: MitigationParamsTyped::default(),
-            fraction_symptomatic: Vector1::new(0.5),
-            fraction_hospitalized: Vector1::new(0.1),
-            hospitalization_delay: 1.0,
-            fraction_dead: Vector1::new(0.01),
-            death_delay: 1.0,
+            p_symp_given_inf: Vector1::new(fs),
+            p_hosp_given_symp: Vector1::new(ihr / fs),
+            inf_hosp_delay: 1.0,
+            p_death_given_hosp: Vector1::new(ifr / ihr),
+            inf_death_delay: 1.0,
             p_test_sympto: 0.0,
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
@@ -952,11 +965,11 @@ mod test {
             latent_period: 1.0,
             infectious_period: 3.0,
             mitigations: MitigationParamsTyped::default(),
-            fraction_symptomatic: Vector1::new(0.5),
-            fraction_hospitalized: Vector1::new(0.1),
-            hospitalization_delay: 1.0,
-            fraction_dead: Vector1::new(0.01),
-            death_delay: 1.0,
+            p_symp_given_inf: Vector1::new(0.5),
+            p_hosp_given_symp: Vector1::new(0.1),
+            inf_hosp_delay: 1.0,
+            p_death_given_hosp: Vector1::new(0.01),
+            inf_death_delay: 1.0,
             p_test_sympto: 0.0,
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
