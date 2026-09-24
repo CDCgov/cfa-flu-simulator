@@ -39,12 +39,18 @@ fail_hook = { suggest_command = "plz format" }
 dir = "model"
 run = "cargo clippy --all-targets -- -D warnings"
 
-# Run the model test suite
-[tasks.test]
+[taskgroup.test]
+[taskgroup.test.run]
+description = "Run model test suite"
 dir = "model"
 run = "cargo test"
 
+[taskgroup.test.update]
+description = "Update test fixtures"
+dir = "model"
+run = "cargo run -p cfa-flu-simulator --bin update_snapshot"
+
 # Checks run before each commit
 [tasks.precommit]
-run_serial = ["plz:format-check", "plz:clippy", "plz:test"]
+run_serial = ["plz:format-check", "plz:clippy", "plz:test:run"]
 git_hook = "pre-commit"
