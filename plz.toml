@@ -52,5 +52,5 @@ run = "cargo run -p cfa-flu-simulator --bin update_snapshot"
 
 # Checks run before each commit
 [tasks.precommit]
-run_serial = ["plz:format-check", "plz:clippy", "plz:test"]
+run_serial = ["plz:format-check", "plz:clippy", "plz:test:run"]
 git_hook = "pre-commit"
