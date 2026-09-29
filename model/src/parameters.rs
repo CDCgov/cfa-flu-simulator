@@ -146,11 +146,11 @@ pub(crate) struct ParametersTyped<const N: usize> {
     pub infectious_period: f64,
     // probability symptomatic given infection; i.e., fraction symptomatic (FS)
     pub p_symp_given_inf: SVector<f64, N>,
-    // prob. hospitalized given symptomatic; i.e., case hospitalization ratio (CHR)
+    // prob. hospitalized given symptomatic; i.e., symptomatic-hospitalization ratio (SHR)
     pub p_hosp_given_symp: SVector<f64, N>,
     // delay from infection to hospitalization
     pub inf_hosp_delay: f64,
-    // prob. death given hospitalization; P[D|H] = CFR / CHR
+    // prob. death given hospitalization; P[D|H] = CFR / SHR
     pub p_death_given_hosp: SVector<f64, N>,
     pub inf_death_delay: f64,
     pub mitigations: MitigationParamsTyped<N>,

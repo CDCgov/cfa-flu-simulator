@@ -137,7 +137,7 @@ These compartments currently represent the proportion of the total population $N
 - Health outcomes
     - $\mathrm{FS}_i$: fraction symptomatic, i.e., proportion of infections that are symptomatic
         - Symptomatic and asymptomatic cases are assumed otherwise equal (e.g., equally infectious) so that this fraction does not affect transmission (except via mitigations that depend on symptoms)
-    - $\mathrm{CHR}_i$: case hospitalization ratio, i.e., proportion of symptomatic infections that result in hospitalization
+    - $\mathrm{SHR}_i$: symptomatic infection-hospitalization ratio, i.e., proportion of symptomatic infections that result in hospitalization. (Note this is not the case-hospitalization ratio, which depends on case ascertainment.)
     - $\mathrm{CFR}_i$: case fatality ratio, i.e., proportion of symptomatic infections that result in death
 
 ### Model initialization
@@ -253,9 +253,9 @@ The numbers of hospitalizations and deaths are:
 
 $$
 \begin{align*}
-\dot{H}^\mathrm{pre}_i(t) &= (1 - A_\mathrm{op} \mathrm{AVE}_H) \times \mathrm{CHR}_i \times \dot{Y}^\mathrm{cum}_i(t) \\
+\dot{H}^\mathrm{pre}_i(t) &= (1 - A_\mathrm{op} \mathrm{AVE}_H) \times \mathrm{SHR}_i \times \dot{Y}^\mathrm{cum}_i(t) \\
 \dot{H}^\mathrm{cum}_i(t) &= H^\mathrm{pre}_i(t) \times \frac{1}{T_H^\mathrm{pre}} \\
-\dot{D}^\mathrm{pre}_i(t) &= (1 - A_\mathrm{ip} \mathrm{AVE}_D) \times \frac{\mathrm{CFR}_i}{\mathrm{CHR}_i} \times \dot{H}^\mathrm{pre}_i(t) \\
+\dot{D}^\mathrm{pre}_i(t) &= (1 - A_\mathrm{ip} \mathrm{AVE}_D) \times \frac{\mathrm{CFR}_i}{\mathrm{SHR}_i} \times \dot{H}^\mathrm{pre}_i(t) \\
 \dot{D}^\mathrm{cum}_i(t) &= D^\mathrm{pre}_i(t) \times \frac{1}{T_D^\mathrm{pre}}
 \end{align*}
 $$
