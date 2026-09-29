@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { NumberInput, Toggle } from "cfasim-ui/components";
+import { Hint, NumberInput, Toggle } from "cfasim-ui/components";
 import { getField } from "../config/uiConfig";
 import { useParams } from "../composables/useParams";
 
@@ -48,28 +48,28 @@ const percent = computed(() => cfg.value.type === "percent");
 
 <template>
   <div class="group-editor">
-    <div v-if="allMode" class="group-editor__all">
-      <NumberInput
-        :label="cfg.label"
-        :hint="cfg.tooltip"
-        :model-value="modelValue[0]"
-        @update:model-value="update(0, $event)"
-        :min="cfg.min"
-        :max="cfg.max"
-        :step="cfg.step"
-        :slider="cfg.slider"
-        :percent="percent"
-        :number-type="numberType"
-        live
-      />
-      <Toggle v-model="allMode" label="All Ages" class="group-editor__toggle" />
+    <div class="group-editor__header">
+      <span class="group-editor__label">
+        {{ cfg.label }}
+        <Hint v-if="cfg.tooltip" :text="cfg.tooltip" />
+      </span>
+      <Toggle v-model="allMode" label="All Ages" />
     </div>
-    <template v-else>
-      <div class="group-editor__header">
-        <span class="group-editor__label">{{ cfg.label }}</span>
-        <Toggle v-model="allMode" label="All Ages" />
-      </div>
-      <div class="group-editor__grid">
+    <NumberInput
+      v-if="allMode"
+      :label="cfg.label"
+      hide-label
+      :model-value="modelValue[0]"
+      @update:model-value="update(0, $event)"
+      :min="cfg.min"
+      :max="cfg.max"
+      :step="cfg.step"
+      :slider="cfg.slider"
+      :percent="percent"
+      :number-type="numberType"
+      live
+    />
+    <div v-else class="group-editor__grid">
       <div
         v-for="(value, i) in modelValue"
         :key="i"
@@ -87,8 +87,7 @@ const percent = computed(() => cfg.value.type === "percent");
           live
         />
       </div>
-      </div>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -104,20 +103,14 @@ const percent = computed(() => cfg.value.type === "percent");
   align-items: center;
 }
 .group-editor__label {
-  font-size: 0.875rem;
-  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  font-size: var(--font-size-sm);
 }
 .group-editor__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 0.5rem;
-}
-.group-editor__all {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-}
-.group-editor__all > :first-child {
-  flex: 1;
 }
 </style>
