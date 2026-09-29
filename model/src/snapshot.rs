@@ -102,17 +102,19 @@ fn run_scenario(scenario: &str) -> Fixture {
     fixture
 }
 
-pub fn update_snapshot() {
-    let path = snapshot_path();
-
-    // BTreeMap is like HashMap, only it ensures that the scenarios are in deterministic order
+pub fn snapshot_json() -> String {
+    // BTreeMap is like HashMap, only it ensures that the scenarios are in deterministic order.
     let fixtures: BTreeMap<_, _> = SCENARIOS
         .into_iter()
         .map(|scenario| (scenario.to_string(), run_scenario(scenario)))
         .collect();
     let json = serde_json::to_string_pretty(&fixtures).expect("serialize fixtures");
-    std::fs::write(&path, format!("{json}\n")).expect("write fixtures");
-    println!("wrote {}", path.display());
+    format!("{json}\n")
+}
+
+pub fn update_snapshot() {
+    let path = snapshot_path();
+    std::fs::write(&path, snapshot_json()).expect("write fixtures");
 }
 
 #[cfg(test)]
