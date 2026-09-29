@@ -137,31 +137,49 @@ pub fn p_detect1(n: f64, p: f64) -> f64 {
 
 fn distribute_initials<const N: usize>(
     n: SVector<f64, N>,
-    i0: SVector<f64, N>,
+    seed: SVector<f64, N>,
     r0: SVector<f64, N>,
-) -> (SVector<f64, N>, SVector<f64, N>, SVector<f64, N>) {
+    e_fraction: f64,
+) -> (
+    SVector<f64, N>,
+    SVector<f64, N>,
+    SVector<f64, N>,
+    SVector<f64, N>,
+) {
     let mut s0_out = SVector::<f64, N>::zeros();
+    let mut e0_out = SVector::<f64, N>::zeros();
     let mut i0_out = SVector::<f64, N>::zeros();
     let mut r0_out = SVector::<f64, N>::zeros();
 
     for j in 0..N {
-        let (ss, ii, rr) = _distribute_initials1(n[j], i0[j], r0[j]);
+        let (ss, ee, ii, rr) = _distribute_initials1(n[j], seed[j], r0[j], e_fraction);
         s0_out[j] = ss;
+        e0_out[j] = ee;
         i0_out[j] = ii;
         r0_out[j] = rr;
     }
 
-    (s0_out, i0_out, r0_out)
+    (s0_out, e0_out, i0_out, r0_out)
 }
 
-fn _distribute_initials1(n: f64, i0: f64, r0: f64) -> (f64, f64, f64) {
-    if r0 + i0 <= n {
-        (n - i0 - r0, i0, r0)
+/// Distribute initial compartment states, accounting for:
+/// - split between E and I
+/// - initial immunity R
+/// - what to do if there aren't enough people to allocate, given `n`, `seed`, and `r0`
+fn _distribute_initials1(n: f64, seed: f64, r0: f64, e_fraction: f64) -> (f64, f64, f64, f64) {
+    let (s0, seed_allocated, r0_out) = if r0 + seed <= n {
+        (n - seed - r0, seed, r0)
     } else if r0 <= n {
         (0.0, n - r0, r0)
     } else {
-        panic!("Do not know how to allocate n={n} i0={i0} r0={r0}");
-    }
+        panic!("Do not know how to allocate n={n} seed={seed} r0={r0}");
+    };
+    (
+        s0,
+        seed_allocated * e_fraction,
+        seed_allocated * (1.0 - e_fraction),
+        r0_out,
+    )
 }
 
 /// Contribution of one vaccination group to the effective number of
@@ -235,14 +253,31 @@ where
         let populations = self.parameters.population * population_fractions;
 
         let mut initial_state: State<N> = SVector::zeros();
-        let (initial_s, initial_i, initial_r) = distribute_initials(
+        // distribute initial infections between E and I states
+        let e_fraction = self.parameters.latent_period
+            / (self.parameters.latent_period + self.parameters.infectious_period);
+        let (initial_s, initial_e, initial_i, initial_r) = distribute_initials(
             populations,
             self.parameters.initial_infections * population_fractions,
             self.parameters.fraction_initial_immune * populations,
+            e_fraction,
         );
         initial_state.set_s(&initial_s);
+        initial_state.set_e(&initial_e);
         initial_state.set_i(&initial_i);
         initial_state.set_r(&initial_r);
+
+        // initial I's contribute toward hosps and deaths
+        let ones = SVector::<f64, N>::from_element(1.0);
+        let initial_pre_h = initial_i
+            .component_mul(&self.parameters.fraction_hospitalized)
+            .component_mul(&(ones - self.ave.pop_eff_p_hosp_given_symp));
+        let initial_pre_d = initial_i
+            .component_mul(&self.parameters.fraction_dead)
+            .component_mul(&(ones - self.ave.pop_eff_p_hosp_given_symp))
+            .component_mul(&(ones - self.ave.pop_eff_p_death_given_hosp));
+        initial_state.set_pre_h(&initial_pre_h);
+        initial_state.set_pre_d(&initial_pre_d);
 
         let mut stepper = Dopri5::new(self, 0.0, days as f64, 1.0, initial_state, 1e-6, 1e-6);
         let _res = stepper.integrate();
@@ -532,17 +567,19 @@ mod test {
         let i0 = Vector2::new(10.0, 20.0);
         let r0 = Vector2::new(5.0, 10.0);
 
-        let (s0, i0_out, r0_out) = distribute_initials(n, i0, r0);
+        let (s0, e0_out, i0_out, r0_out) = distribute_initials(n, i0, r0, 0.4);
         assert_float_eq!(s0[0], 85.0, abs <= 1e-5);
-        assert_float_eq!(i0_out[0], 10.0, abs <= 1e-5);
+        assert_float_eq!(e0_out[0], 4.0, abs <= 1e-5);
+        assert_float_eq!(i0_out[0], 6.0, abs <= 1e-5);
         assert_float_eq!(r0_out[0], 5.0, abs <= 1e-5);
     }
 
     #[test]
     fn test_distribute_initials_precedence() {
-        let (s, i, r) = _distribute_initials1(100.0, 75.0, 75.0);
+        let (s, e, i, r) = _distribute_initials1(100.0, 75.0, 75.0, 0.4);
         assert_float_eq!(s, 0.0, abs <= 1e-5);
-        assert_float_eq!(i, 25.0, abs <= 1e-5);
+        assert_float_eq!(e, 10.0, abs <= 1e-5);
+        assert_float_eq!(i, 15.0, abs <= 1e-5);
         assert_float_eq!(r, 75.0, abs <= 1e-5);
     }
 
