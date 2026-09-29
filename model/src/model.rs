@@ -270,11 +270,11 @@ where
         // initial I's contribute toward hosps and deaths
         let ones = SVector::<f64, N>::from_element(1.0);
         let initial_pre_h = initial_i
-            .component_mul(&self.parameters.fraction_hospitalized)
+            .component_mul(&self.parameters.p_symp_given_inf)
+            .component_mul(&self.parameters.p_hosp_given_symp)
             .component_mul(&(ones - self.ave.pop_eff_p_hosp_given_symp));
-        let initial_pre_d = initial_i
-            .component_mul(&self.parameters.fraction_dead)
-            .component_mul(&(ones - self.ave.pop_eff_p_hosp_given_symp))
+        let initial_pre_d = initial_pre_h
+            .component_mul(&self.parameters.p_death_given_hosp)
             .component_mul(&(ones - self.ave.pop_eff_p_death_given_hosp));
         initial_state.set_pre_h(&initial_pre_h);
         initial_state.set_pre_d(&initial_pre_d);
