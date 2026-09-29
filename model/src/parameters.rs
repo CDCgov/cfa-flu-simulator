@@ -135,6 +135,7 @@ impl Default for Parameters {
 // Solver-internal typed counterpart.
 #[derive(Debug, Clone)]
 pub(crate) struct ParametersTyped<const N: usize> {
+    pub days: usize,
     pub population: f64,
     pub population_fractions: SVector<f64, N>,
     pub population_fraction_labels: SVector<String, N>,
@@ -229,6 +230,7 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
             p_traced_quarantines: params.ttiq_p_traced_quarantines,
         };
         Ok(ParametersTyped {
+            days: params.days,
             population: params.population,
             population_fractions: SVector::from_iterator(params.population_fractions),
             population_fraction_labels: SVector::from_iterator(params.population_fraction_labels),
@@ -264,9 +266,7 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
         let t = params.mitigations.ttiq;
         Parameters {
             n: N,
-            // `days` is a run-level arg, not part of ParametersTyped. The
-            // From impl exists only for the roundtrip test; fill a default.
-            days: 200,
+            days: params.days,
             population: params.population,
             population_fractions: params.population_fractions.iter().copied().collect(),
             population_fraction_labels: params.population_fraction_labels.iter().cloned().collect(),

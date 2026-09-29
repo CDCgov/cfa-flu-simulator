@@ -248,7 +248,8 @@ impl<const N: usize> DynodeModel for SEIRModel<N>
 where
     [(); 17 * N]: Sized,
 {
-    fn integrate(&self, days: usize) -> ModelOutput {
+    fn integrate(&self) -> ModelOutput {
+        let days = self.parameters.days;
         let population_fractions = self.parameters.population_fractions;
         let populations = self.parameters.population * population_fractions;
 
@@ -588,6 +589,7 @@ mod test {
         let fii = 0.25;
 
         let parameters1 = ParametersTyped {
+            days: 300,
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
             population_fraction_labels: Vector1::new("All".to_string()),
@@ -615,8 +617,8 @@ mod test {
         let model1 = SEIRModel::new(parameters1);
         let model2 = SEIRModel::new(parameters2);
 
-        let results1 = TestResults::new(&model1.parameters, &model1.integrate(300));
-        let results2 = TestResults::new(&model2.parameters, &model2.integrate(300));
+        let results1 = TestResults::new(&model1.parameters, &model1.integrate());
+        let results2 = TestResults::new(&model2.parameters, &model2.integrate());
 
         assert_float_eq!(
             results1.attack_rate,
@@ -628,6 +630,7 @@ mod test {
     #[test]
     fn test_seir_unmitigated() {
         let model = SEIRModel::new(ParametersTyped {
+            days: 300,
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
             population_fraction_labels: Vector1::new("All".to_string()),
@@ -647,7 +650,7 @@ mod test {
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
         });
-        let results = TestResults::new(&model.parameters, &model.integrate(300));
+        let results = TestResults::new(&model.parameters, &model.integrate());
         assert_float_eq!(results.attack_rate, 0.796814, abs <= 1e-5);
     }
 
@@ -682,6 +685,7 @@ mod test {
         };
 
         let model = SEIRModel::new(ParametersTyped {
+            days: 300,
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
             population_fraction_labels: Vector1::new("All".to_string()),
@@ -706,7 +710,7 @@ mod test {
             test_sensitivity: 0.90,
             p_test_forward: 0.90,
         });
-        let results = TestResults::new(&model.parameters, &model.integrate(300));
+        let results = TestResults::new(&model.parameters, &model.integrate());
         let expected = 0.7583813;
         assert_float_eq!(results.attack_rate, expected, abs <= 1e-5);
     }
@@ -725,7 +729,7 @@ mod test {
         };
 
         let model = SEIRModel::new(parameters);
-        let results = TestResults::new(&model.parameters, &model.integrate(300));
+        let results = TestResults::new(&model.parameters, &model.integrate());
         assert_float_eq!(results.attack_rate, 0.0, abs <= 1e-10);
     }
 
@@ -743,7 +747,7 @@ mod test {
         };
 
         let model = SEIRModel::new(parameters);
-        let results = TestResults::new(&model.parameters, &model.integrate(300));
+        let results = TestResults::new(&model.parameters, &model.integrate());
         assert_float_eq!(results.attack_rate, 0.0, abs <= 1e-10);
     }
 
@@ -758,7 +762,7 @@ mod test {
         params.infectious_period = 3.0;
 
         let model = SEIRModel::new(params);
-        let output = model.integrate(300);
+        let output = model.integrate();
 
         let total_incidence: f64 = output
             .get_output(&OutputType::InfectionIncidence)
@@ -814,6 +818,7 @@ mod test {
     #[test]
     fn test_antiviral() {
         let mut params = ParametersTyped {
+            days: 300,
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
             population_fraction_labels: Vector1::new("All".to_string()),
@@ -846,7 +851,7 @@ mod test {
         };
 
         let model = SEIRModel::new(params);
-        let results = TestResults::new(&model.parameters, &model.integrate(300));
+        let results = TestResults::new(&model.parameters, &model.integrate());
         assert_float_eq!(results.attack_rate, 0.77889514, abs <= 1e-5);
     }
 
@@ -916,7 +921,7 @@ mod test {
 
             let params: ParametersTyped<2> = p.try_into().unwrap();
             let model = SEIRModel::new(params);
-            TestResults::new(&model.parameters, &model.integrate(300)).attack_rate
+            TestResults::new(&model.parameters, &model.integrate()).attack_rate
         };
 
         let rates: Vec<f64> = [0.0, 0.5, 1.0]
@@ -934,6 +939,7 @@ mod test {
     #[test]
     fn test_2dose_vaccine() {
         let mut params = ParametersTyped {
+            days: 300,
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
             population_fraction_labels: Vector1::new("All".to_string()),
@@ -972,13 +978,14 @@ mod test {
         };
 
         let model = SEIRModel::new(params);
-        let results = TestResults::new(&model.parameters, &model.integrate(300));
+        let results = TestResults::new(&model.parameters, &model.integrate());
         assert_float_eq!(results.attack_rate, 0.7672022, abs <= 1e-5);
     }
 
     #[test]
     fn test_2dose_vaccine_ignore_dose1() {
         let mut params1 = ParametersTyped {
+            days: 300,
             population: 330_000_000.0,
             population_fractions: Vector1::new(1.0),
             population_fraction_labels: Vector1::new("All".to_string()),
@@ -1026,8 +1033,8 @@ mod test {
         let model1 = SEIRModel::new(params1);
         let model2 = SEIRModel::new(params2);
 
-        let results1 = TestResults::new(&model1.parameters, &model1.integrate(300));
-        let results2 = TestResults::new(&model2.parameters, &model2.integrate(300));
+        let results1 = TestResults::new(&model1.parameters, &model1.integrate());
+        let results2 = TestResults::new(&model2.parameters, &model2.integrate());
 
         assert_float_eq!(results1.attack_rate, results2.attack_rate, abs <= 1e-10);
     }
@@ -1083,9 +1090,8 @@ mod test {
         let model1 = SEIRModel::new(params1);
         let model2 = SEIRModel::new(params2);
 
-        let sim_duration = 300;
-        let results1 = TestResults::new(&model1.parameters, &model1.integrate(sim_duration));
-        let results2 = TestResults::new(&model2.parameters, &model2.integrate(sim_duration));
+        let results1 = TestResults::new(&model1.parameters, &model1.integrate());
+        let results2 = TestResults::new(&model2.parameters, &model2.integrate());
 
         assert_float_eq!(results1.attack_rate, results2.attack_rate, abs <= 1e-10);
     }
