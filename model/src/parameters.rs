@@ -32,11 +32,11 @@ pub struct Parameters {
     pub r0: f64,
     pub latent_period: f64,
     pub infectious_period: f64,
-    pub fraction_symptomatic: Vec<f64>,
-    pub fraction_hospitalized: Vec<f64>,
-    pub hospitalization_delay: f64,
-    pub fraction_dead: Vec<f64>,
-    pub death_delay: f64,
+    pub p_symp_given_inf: Vec<f64>,
+    pub p_hosp_given_symp: Vec<f64>,
+    pub inf_hosp_delay: f64,
+    pub p_death_given_hosp: Vec<f64>,
+    pub inf_death_delay: f64,
     pub p_test_sympto: f64,
     pub test_sensitivity: f64,
     pub p_test_forward: f64,
@@ -107,14 +107,14 @@ impl Parameters {
         if self.population_fraction_labels.len() != self.n {
             return Err("population_fraction_labels length != n");
         }
-        if self.fraction_symptomatic.len() != self.n {
-            return Err("fraction_symptomatic length != n");
+        if self.p_symp_given_inf.len() != self.n {
+            return Err("p_symp_given_inf  length != n");
         }
-        if self.fraction_hospitalized.len() != self.n {
-            return Err("fraction_hospitalized length != n");
+        if self.p_hosp_given_symp.len() != self.n {
+            return Err("p_hosp_given_symp length != n");
         }
-        if self.fraction_dead.len() != self.n {
-            return Err("fraction_dead length != n");
+        if self.p_death_given_hosp.len() != self.n {
+            return Err("p_death_given_hosp length != n");
         }
         if self.contact_matrix.len() != self.n * self.n {
             return Err("contact_matrix length != n*n");
@@ -144,11 +144,15 @@ pub(crate) struct ParametersTyped<const N: usize> {
     pub r0: f64,
     pub latent_period: f64,
     pub infectious_period: f64,
-    pub fraction_symptomatic: SVector<f64, N>,
-    pub fraction_hospitalized: SVector<f64, N>,
-    pub hospitalization_delay: f64,
-    pub fraction_dead: SVector<f64, N>,
-    pub death_delay: f64,
+    // probability symptomatic given infection; i.e., fraction symptomatic (FS)
+    pub p_symp_given_inf: SVector<f64, N>,
+    // prob. hospitalized given symptomatic; i.e., case hospitalization ratio (CHR)
+    pub p_hosp_given_symp: SVector<f64, N>,
+    // delay from infection to hospitalization
+    pub inf_hosp_delay: f64,
+    // prob. death given hospitalization; P[D|H] = CFR / CHR
+    pub p_death_given_hosp: SVector<f64, N>,
+    pub inf_death_delay: f64,
     pub mitigations: MitigationParamsTyped<N>,
     pub p_test_sympto: f64,
     pub test_sensitivity: f64,
@@ -238,11 +242,11 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
             r0: params.r0,
             latent_period: params.latent_period,
             infectious_period: params.infectious_period,
-            fraction_symptomatic: SVector::from_iterator(params.fraction_symptomatic),
-            fraction_hospitalized: SVector::from_iterator(params.fraction_hospitalized),
-            hospitalization_delay: params.hospitalization_delay,
-            fraction_dead: SVector::from_iterator(params.fraction_dead),
-            death_delay: params.death_delay,
+            p_symp_given_inf: SVector::from_iterator(params.p_symp_given_inf),
+            p_hosp_given_symp: SVector::from_iterator(params.p_hosp_given_symp),
+            inf_hosp_delay: params.inf_hosp_delay,
+            p_death_given_hosp: SVector::from_iterator(params.p_death_given_hosp),
+            inf_death_delay: params.inf_death_delay,
             mitigations: MitigationParamsTyped {
                 vaccine,
                 antivirals,
@@ -276,11 +280,11 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
             r0: params.r0,
             latent_period: params.latent_period,
             infectious_period: params.infectious_period,
-            fraction_symptomatic: params.fraction_symptomatic.iter().copied().collect(),
-            fraction_hospitalized: params.fraction_hospitalized.iter().copied().collect(),
-            hospitalization_delay: params.hospitalization_delay,
-            fraction_dead: params.fraction_dead.iter().copied().collect(),
-            death_delay: params.death_delay,
+            p_symp_given_inf: params.p_symp_given_inf.iter().copied().collect(),
+            p_hosp_given_symp: params.p_hosp_given_symp.iter().copied().collect(),
+            inf_hosp_delay: params.inf_hosp_delay,
+            p_death_given_hosp: params.p_death_given_hosp.iter().copied().collect(),
+            inf_death_delay: params.inf_death_delay,
             p_test_sympto: params.p_test_sympto,
             test_sensitivity: params.test_sensitivity,
             p_test_forward: params.p_test_forward,
