@@ -7,7 +7,7 @@ use crate::model::SEIRModel;
 use crate::model_unified::{DynodeModel, OutputItemGrouped, OutputType};
 use crate::parameters::{Parameters, ParametersTyped};
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::{collections::BTreeMap, path::PathBuf};
 
 const SCENARIOS: [&str; 5] = [
     "no_mitigations",
@@ -41,8 +41,8 @@ struct Fixture {
     death_incidence: Vec<OutputItemGrouped>,
 }
 
-fn snapshot_dir() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/snapshot-data")
+fn snapshot_path() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/snapshot-data/snapshots.json")
 }
 
 fn sum_series(series: &[OutputItemGrouped]) -> f64 {
@@ -103,16 +103,16 @@ fn run_scenario(scenario: &str) -> Fixture {
 }
 
 pub fn update_snapshot() {
-    let out_dir = snapshot_dir();
-    std::fs::create_dir_all(&out_dir).expect("create snapshot-data dir");
+    let path = snapshot_path();
 
-    for scenario in SCENARIOS {
-        let fixture = run_scenario(scenario);
-        let path = out_dir.join(format!("{scenario}.json"));
-        let json = serde_json::to_string_pretty(&fixture).expect("serialize fixture");
-        std::fs::write(&path, format!("{json}\n")).expect("write fixture");
-        println!("wrote {}", path.display());
-    }
+    // BTreeMap is like HashMap, only it ensures that the scenarios are in deterministic order
+    let fixtures: BTreeMap<_, _> = SCENARIOS
+        .into_iter()
+        .map(|scenario| (scenario.to_string(), run_scenario(scenario)))
+        .collect();
+    let json = serde_json::to_string_pretty(&fixtures).expect("serialize fixtures");
+    std::fs::write(&path, format!("{json}\n")).expect("write fixtures");
+    println!("wrote {}", path.display());
 }
 
 #[cfg(test)]
@@ -121,8 +121,8 @@ mod test {
     const RELATIVE_TOLERANCE: f64 = 1e-9;
     use super::*;
 
-    fn load_fixture(name: &str) -> Fixture {
-        let path = snapshot_dir().join(format!("{name}.json"));
+    fn load_fixtures() -> BTreeMap<String, Fixture> {
+        let path = snapshot_path();
         let raw = std::fs::read_to_string(&path)
             .unwrap_or_else(|e| panic!("failed to read fixture {}: {e}", path.display()));
         serde_json::from_str(&raw).expect("fixture parses")
@@ -186,7 +186,10 @@ mod test {
     }
 
     fn check_scenario(scenario: &str) {
-        let expected = load_fixture(scenario);
+        let fixtures = load_fixtures();
+        let expected = fixtures
+            .get(scenario)
+            .unwrap_or_else(|| panic!("missing fixture for scenario {scenario}"));
         let actual = run_scenario(scenario);
 
         assert_eq!(expected.scenario, scenario);
