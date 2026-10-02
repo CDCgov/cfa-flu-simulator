@@ -50,6 +50,10 @@ description = "Update test fixtures"
 dir = "model"
 run = "cargo run -p cfa-flu-simulator --bin update_snapshot"
 
+[taskgroup.test.diff]
+description = "Compare current output with committed fixtures"
+run = "uv run scripts/compare_snapshot_fixtures.py"
+
 # Checks run before each commit
 [tasks.precommit]
 run_serial = ["plz:format-check", "plz:clippy", "plz:test:run"]
