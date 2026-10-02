@@ -132,7 +132,7 @@ impl ModelOutputExport {
 }
 
 pub trait DynodeModel: Any {
-    fn integrate(&self, days: usize) -> ModelOutput;
+    fn integrate(&self) -> ModelOutput;
 }
 
 fn select_model(parameters: ParametersTyped<2>) -> Box<dyn DynodeModel> {
@@ -143,7 +143,6 @@ fn select_model(parameters: ParametersTyped<2>) -> Box<dyn DynodeModel> {
 #[wasm_bindgen]
 pub struct SEIRModelUnified {
     parameters: ParametersTyped<2>,
-    days: usize,
 }
 
 #[wasm_bindgen]
@@ -152,10 +151,8 @@ impl SEIRModelUnified {
     pub fn new(js_params: JsValue) -> Self {
         crate::utils::set_panic_hook();
         let parameters: Parameters = from_value(js_params).expect("Failed to parse parameters");
-        let days = parameters.days;
         SEIRModelUnified {
             parameters: parameters.try_into().unwrap(),
-            days,
         }
     }
 
@@ -166,7 +163,7 @@ impl SEIRModelUnified {
         let base_label: MitigationType = if self.parameters.has_mitigations() {
             runs.push((
                 MitigationType::Unmitigated,
-                select_model(self.parameters.without_mitigations()).integrate(self.days),
+                select_model(self.parameters.without_mitigations()).integrate(),
             ));
             MitigationType::Mitigated
         } else {
@@ -175,7 +172,7 @@ impl SEIRModelUnified {
 
         runs.push((
             base_label,
-            select_model(self.parameters.clone()).integrate(self.days),
+            select_model(self.parameters.clone()).integrate(),
         ));
 
         ModelOutputExport::new(runs)
@@ -203,10 +200,7 @@ mod tests {
     fn test_without_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = false;
-        let model = SEIRModelUnified {
-            parameters,
-            days: 200,
-        };
+        let model = SEIRModelUnified { parameters };
         let run = model.run();
         assert!(!run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));
@@ -217,10 +211,7 @@ mod tests {
     fn test_with_mitigations() {
         let mut parameters = default_typed();
         parameters.mitigations.vaccine.enabled = true;
-        let model = SEIRModelUnified {
-            parameters,
-            days: 200,
-        };
+        let model = SEIRModelUnified { parameters };
         let run = model.run();
         assert!(run.output.contains_key(&MitigationType::Mitigated));
         assert!(run.output.contains_key(&MitigationType::Unmitigated));
