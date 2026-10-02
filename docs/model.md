@@ -16,21 +16,29 @@ Removed individuals cannot be re-infected.
 
 Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for mitigations like isolation and antiviral usage.
 
-Hospitalization and death are included in the model, but only as counting functions. Upon infection, some proportion of people will go on to these outcomes at some later time, depending on model parameters and other mitigations. The model makes the simplifying assumption that hospitalization and death have no impact on disease dynamics.
+Hospitalization and death are included in the model, but only as counting functions.
+Upon infection, some proportion of people will go on to these outcomes at some later time, depending on model parameters and other mitigations.
+The model makes the simplifying assumption that hospitalization and death have no impact on disease dynamics.
 
 ### Mitigations
 
 #### Vaccination
 
-On a certain day, vaccination begins. If the vaccine is single-dose, then vaccines are administered at the maximum daily rate until they are exhausted. If the vaccine is two-dose, then first doses are administered at a constant rate such that, when both first and second doses are being administered, the total administration rate is at the maximum. Vaccines are assumed to be optimally pre-allocated: at the time of the first dose, if that person will receive a second dose, a second dose is ensured available at the appropriate time. No doses are wasted.
+On a certain day, vaccination begins.
+If the vaccine is single-dose, then vaccines are administered at the maximum daily rate until they are exhausted.
+If the vaccine is two-dose, then first doses are administered at a constant rate such that, when both first and second doses are being administered, the total administration rate is at the maximum.
+Vaccines are assumed to be optimally pre-allocated: at the time of the first dose, if that person will receive a second dose, a second dose is ensured available at the appropriate time.
+No doses are wasted.
 
-After vaccination, there is a delay from dose to protection. If that person is infected during that delay, they never have any protection from vaccination. If they complete that delay before being infected, they have three kinds of protection from the vaccine:
+After vaccination, there is a delay from dose to protection.
+If that person is infected during that delay, they never have any protection from vaccination.
+If they complete that delay before being infected, they have three kinds of protection from the vaccine:
 
 - potential protection against being infected,
 - given infection, potential protection against onward transmission, and
 - given infection, potential protection against symptoms.
 
-Vaccines are assumed to provide no _additional_ protection against hospitalization or death; vaccinated people are less likely to be hospitalized or die because they are less likely to progress to symptomatic infection, but the probability of hospitalization or death given symptomatic infection is assumed the same among vaccinated and unvaccinated individuals.
+Vaccines are assumed to provide no *additional* protection against hospitalization or death; vaccinated people are less likely to be hospitalized or die because they are less likely to progress to symptomatic infection, but the probability of hospitalization or death given symptomatic infection is assumed the same among vaccinated and unvaccinated individuals.
 
 If the vaccine is two-dose, then upon completing the second dose-to-protection delay, if they have not been infected, a person's protection increases.
 
@@ -39,13 +47,18 @@ If the vaccine is two-dose, then upon completing the second dose-to-protection d
 Antivirals have two effects: they can prevent onward transmission and can prevent progression to more severe disease.
 In the model, people with symptomatic infections can receive outpatient antivirals, and hospitalized people can receive inpatient antivirals.
 
-Outpatient antivirals prevent transmission with effectiveness $\mathrm{AVE}_I$. The model applies this reduction to the proportion of infections that are symptomatic that receive and adhere to antivirals. In the current implementation, there is no delay between onset of infectiousness and onset of the reduction in infectiousness due to antiviral. Thus, $\mathrm{AVE}_I$ should be selected to accounts for delays in treatment. For example, if all individuals received antivirals halfway through their infectious period, then $\mathrm{AVE}_I$ will almost certainly be less than 50%.
+Outpatient antivirals prevent transmission with effectiveness $\mathrm{AVE}_I$.
+The model applies this reduction to the proportion of infections that are symptomatic that receive and adhere to antivirals.
+In the current implementation, there is no delay between onset of infectiousness and onset of the reduction in infectiousness due to antiviral.
+Thus, $\mathrm{AVE}_I$ should be selected to accounts for delays in treatment.
+For example, if all individuals received antivirals halfway through their infectious period, then $\mathrm{AVE}_I$ will almost certainly be less than 50%.
 
 Outpatient antivirals prevent progression from symptomatic infection to hospitalization with effectiveness $\mathrm{AVE}_H$.
 
 Outpatient antivirals are not used prophylatically.
 
-Inpatient antivirlas prevent progression from hospitalization to death with effectiveness $\mathrm{AVE}_D$. Outpatient and inpatient virals are assumed to have independent effects: a person can receive outpatient antivirals, lowering their risk of hospitalization (and, by extension death), and also inpatient antivirals, specifically lowering their risk of death.
+Inpatient antivirlas prevent progression from hospitalization to death with effectiveness $\mathrm{AVE}_D$.
+Outpatient and inpatient virals are assumed to have independent effects: a person can receive outpatient antivirals, lowering their risk of hospitalization (and, by extension death), and also inpatient antivirals, specifically lowering their risk of death.
 
 Inpatient antivirals have no effect on transmission.
 
@@ -58,9 +71,11 @@ This factor can be different for different pairs of populations (e.g., school cl
 
 #### Testing, tracing, isolation, and quarantine (TTIQ)
 
-Infectious individuals (who are identified via some type of surveillance or testing) may _isolate_, effectively averting part (or all) of their remaining infectious period. _Contact tracing_ can then identify exposed individuals, who may _quarantine_, averting part or all of their infectious period.
+Infectious individuals (who are identified via some type of surveillance or testing) may *isolate*, effectively averting part (or all) of their remaining infectious period.
+*Contact tracing* can then identify exposed individuals, who may *quarantine*, averting part or all of their infectious period.
 
-Testing/isolation is assumed to reduce the mean infectious period by some constant factor. Contact tracing and quarantine are assumed to eliminate onward transmission from some proportion of otherwise infectious individuals.
+Testing/isolation is assumed to reduce the mean infectious period by some constant factor.
+Contact tracing and quarantine are assumed to eliminate onward transmission from some proportion of otherwise infectious individuals.
 
 ## Detailed model description
 
@@ -120,40 +135,45 @@ These compartments currently represent the proportion of the total population $N
     - $\mathrm{VE}_S$: effectiveness for susceptibility (i.e., against being infected)
     - $\mathrm{VE}_I$: effectiveness for onward transmission given infected
     - $\mathrm{VE}_{P,Y|I}$: effectiveness for symptoms given infection.
-        - At this time, vaccines are assumed to have no _additional_ protection against hospitalization and death. In future iterations, vaccines might provide further protection against hospitalization given symptomatic $\mathrm{VE}_{P,H|Y}$, or protection against death given hospitalization $\mathrm{VE}_{P,D|H}$.
+        - At this time, vaccines are assumed to have no *additional* protection against hospitalization and death.
+          In future iterations, vaccines might provide further protection against hospitalization given symptomatic $\mathrm{VE}_{P,H|Y}$, or protection against death given hospitalization $\mathrm{VE}_{P,D|H}$.
     - $\mathrm{VE}_{2S}$, etc.: effectiveness of two doses (N.B.: this is not an incremental quantity; we expect $\mathrm{VE}_{2S} \geq \mathrm{VE}_S$)
 - Antiviral effectiveness
-    - $\mathrm{AVE}_I$: antiviral effectiveness for onward transmission given
-      infected.
-        - Note that this is the _effectiveness_ and incorporates the interaction between the delay from exposure to receiving antivirals and the generation time distribution.
+    - $\mathrm{AVE}_I$: antiviral effectiveness for onward transmission given infected.
+        - Note that this is the *effectiveness* and incorporates the interaction between the delay from exposure to receiving antivirals and the generation time distribution.
     - $\mathrm{AVE}_H$: effectiveness for progression to hospitalization given symptomatic infection
     - $\mathrm{AVE}_D$: effectiveness for progression to death given hospitalization
         - All fatalities are assumed to occur following hospitalization, so the protection against death given symptomatic infection is the combination of these two protections
     - Note that outpatient and inpatient antivirals are considered sufficiently different that individuals can receive both and they have independent effects.
     - In the model, antivirals are not given before exposure, so $\mathrm{AVE}_S$ is undefined.
 - Antiviral usage
-    - $A_\mathrm{op}$: proportion of symptomatic but not (yet) hospitalized people who receive antivirals. This probability is a combination of seeking care, being diagnosed, getting an antiviral prescribed, and adhering to the regimen. ("op" is for "outpatient.)
+    - $A_\mathrm{op}$: proportion of symptomatic but not (yet) hospitalized people who receive antivirals.
+      This probability is a combination of seeking care, being diagnosed, getting an antiviral prescribed, and adhering to the regimen.
+      ("op" is for "outpatient.)
     - $A_\mathrm{ip}$: proportion of hospitalized ("ip" is for "inpatient") people who receive antivirals
 - Health outcomes
     - $\mathrm{FS}_i$: fraction symptomatic, i.e., proportion of infections that are symptomatic
         - Symptomatic and asymptomatic cases are assumed otherwise equal (e.g., equally infectious) so that this fraction does not affect transmission (except via mitigations that depend on symptoms)
     - $\mathrm{IHR}_i$: proportion of infections that result in hospitalization
-        - This is a proportion of _infections_, so the symptomatic fraction is already incorporated. If a case is defined as a symptomatic infection, then the case-hospitalization ratio (i.e., proportion of cases that are hospitalized) is $\mathrm{IHR}_i / \mathrm{FS}_i$
+        - This is a proportion of *infections*, so the symptomatic fraction is already incorporated.
+          If a case is defined as a symptomatic infection, then the case-hospitalization ratio (i.e., proportion of cases that are hospitalized) is $\mathrm{IHR}_i / \mathrm{FS}_i$
     - $\mathrm{IFR}_i$: proportion of infections that result in death ("F" is for "fatality").
         - Similarly to the relationship of $\mathrm{IHR_i}$ to the case-hospitalization rate, the case-fatality ratio (where a case is defined as a symptomatic infection) is $\mathrm{IFR}_i / \mathrm{FS}_i$.
 
 ### Model initialization
 
-First, reconcile the total population size $N$, initial infections $J$, and number initially immune $\mathrm{RU}_\bullet(0)$. The model implementation will, in the case of conflicting user input, prefer immunity to infection. (E.g., if $\mathrm{RU}_\bullet(0)/N$ is set to 100%, then there will be zero infections at all times.)
+First, reconcile the total population size $N$, initial infections $J$, and number initially immune $\mathrm{RU}_\bullet(0)$.
+The model implementation will, in the case of conflicting user input, prefer immunity to infection.
+(E.g., if $\mathrm{RU}_\bullet(0)/N$ is set to 100%, then there will be zero infections at all times.)
 
 Second, split the initial infections $J$ across $\mathrm{EU}_\bullet(0)$ and $\mathrm{IU}_\bullet(0)$ according to the average incubation and infectious period durations:
 
 $$
-\begin{gather*}
-J = \mathrm{EU}_\bullet(0) + \mathrm{IU}_\bullet(0) \\
-\frac{\mathrm{EU}_\bullet(0)}{\mathrm{IU}_\bullet(0)} = \frac{T_E}{T_I} \\
-\implies \mathrm{EU}_\bullet(0) = J \frac{T_E}{T_E + T_I}
-\end{gather*}
+  \begin{gather*}
+    J = \mathrm{EU}_\bullet(0) + \mathrm{IU}_\bullet(0) \\
+    \frac{\mathrm{EU}_\bullet(0)}{\mathrm{IU}_\bullet(0)} = \frac{T_E}{T_I} \\
+    \implies \mathrm{EU}_\bullet(0) = J \frac{T_E}{T_E + T_I}
+  \end{gather*}
 $$
 
 Then, split across groups: $\mathrm{EU}_i(0) = \mathrm{EU}_\bullet(0) \times (N_i / N)$, and similarly for the $\mathrm{IU}_i(0)$ and $\mathrm{RU}_i(0)$.
@@ -168,51 +188,56 @@ Let $f(t, A, B)$ be the flux from compartment $A$ to $B$ at time $t$.
 
 #### Vaccination
 
-Assume that first dose vaccination begins at some rate, continues at that rate, then stops. Second dose vaccinations occur in a similar block, delayed in time. Rates of first and second dose administration are such that, if the two vaccination blocks overlapped, they would hit the maximum rate.
+Assume that first dose vaccination begins at some rate, continues at that rate, then stops.
+Second dose vaccinations occur in a similar block, delayed in time.
+Rates of first and second dose administration are such that, if the two vaccination blocks overlapped, they would hit the maximum rate.
 
 First derive the duration $T = V_\mathrm{tot} / \dot{V}_\mathrm{max}$ of each vaccination block, i.e., the total doses available divided by the maximum rate at which they can be administered.
 
 $$
-\dot{V}_1(t) = \begin{cases}
-\frac{\dot{V}_\mathrm{max}}{1 + p_{V2}} & t_V \leq t < t_V + T \\
-0 & \text{otherwise}
-\end{cases}
+  \dot{V}_1(t) = \begin{cases}
+                   \frac{\dot{V}_\mathrm{max}}{1 + p_{V2}} & t_V \leq t < t_V + T \\
+                   0                                       & \text{otherwise}
+                 \end{cases}
 $$
 
 The second-dose rate is:
 
 $$
-\dot{V}_2(t) = \begin{cases}
-\frac{p_{V2}}{1 + p_{V2}} \dot{V}_\mathrm{max} & t_V + \Delta t_{V2}
-\leq t < t_V + \Delta t_{V2} + T \\
-0 & \text{otherwise}
-\end{cases}
+  \dot{V}_2(t) = \begin{cases}
+                   \frac{p_{V2}}{1 + p_{V2}} \dot{V}_\mathrm{max} & t_V + \Delta t_{V2}
+                   \leq t < t_V + \Delta t_{V2} + T               \\
+                   0                                              & \text{otherwise}
+                 \end{cases}
 $$
 
 The flux into the vaccine-protected compartments are:
 
 $$
-\begin{align*}
-f(t, \mathrm{SU}_i, \mathrm{SV}_i(t)) &= \frac{\mathrm{SU}}{\mathrm{SU}(t) + \mathrm{EU}(t) + \mathrm{IU}(t) + \mathrm{RU}(t)} \frac{N_i}{N} \dot{V}_1(t - \tau_\mathrm{ramp}) \\
-f(t, \mathrm{SV}_i, \mathrm{S2V}_i(t)) &= \frac{\mathrm{SV}(t)}{\mathrm{SV}(t) + \mathrm{EV}(t) + \mathrm{IV}(t) + \mathrm{RV}(t)} \frac{N_i}{N} \dot{V}_2(t - \tau_\mathrm{ramp})
-\end{align*}
+  \begin{align*}
+    f(t, \mathrm{SU}_i, \mathrm{SV}_i(t))  & = \frac{\mathrm{SU}}{\mathrm{SU}(t) + \mathrm{EU}(t) + \mathrm{IU}(t) + \mathrm{RU}(t)} \frac{N_i}{N} \dot{V}_1(t - \tau_\mathrm{ramp})    \\
+    f(t, \mathrm{SV}_i, \mathrm{S2V}_i(t)) & = \frac{\mathrm{SV}(t)}{\mathrm{SV}(t) + \mathrm{EV}(t) + \mathrm{IV}(t) + \mathrm{RV}(t)} \frac{N_i}{N} \dot{V}_2(t - \tau_\mathrm{ramp})
+  \end{align*}
 $$
 
-Vaccines only provide protection if the dose-to-protection delay completes before exposure. Thus, individuals keep their vaccine protection status (U, V, or 2V) as they transition from $S$ to $E$, $I$, and $R$.
+Vaccines only provide protection if the dose-to-protection delay completes before exposure.
+Thus, individuals keep their vaccine protection status (U, V, or 2V) as they transition from $S$ to $E$, $I$, and $R$.
 
 #### Transmission
 
 The effective number of infectious people in group $j$ (`i_effective`), accounting for the effects of vaccination and therapeutics on reducing transmission, is:
 
 $$
-I^\mathrm{eff}_j(t) = \mathrm{IU}_j(t) \times (1 - \mathrm{FS}_j A_\mathrm{op} \mathrm{AVE}_I)
-  + \mathrm{IV}_j(t) \times (1 - \mathrm{VE}_I) \left[ 1 - \mathrm{FS}_j (1 - \mathrm{VE}_P) A_\mathrm{op} \mathrm{AVE}_I \right]
+  I^\mathrm{eff}_j(t)
+  = \mathrm{IU}_j(t) \times (1 - \mathrm{FS}_j A_\mathrm{op} \mathrm{AVE}_I)
+    + \mathrm{IV}_j(t)
+    \times (1 - \mathrm{VE}_I) \left[ 1 - \mathrm{FS}_j (1 - \mathrm{VE}_P) A_\mathrm{op} \mathrm{AVE}_I \right]
 $$
 
 The force of infection on group $i$ (`infection_rate`, modulo a factor of the population fractions) is:
 
 $$
-\phi_i(t) = \frac{\beta}{N} \sum_j C_{ij} I^\mathrm{eff}_j(t)
+  \phi_i(t) = \frac{\beta}{N} \sum_j C_{ij} I^\mathrm{eff}_j(t)
 $$
 
 Note that $\beta$ is divided by $N$ to convert from numbers of people (in terms of which $R_0$ is defined) to proportions,
@@ -220,19 +245,19 @@ Note that $\beta$ is divided by $N$ to convert from numbers of people (in terms 
 So that the fluxes from susceptible to exposed are:
 
 $$
-\begin{align*}
-f(t, \mathrm{SU_i, \mathrm{EU}_i}) &= \phi_i \frac{\mathrm{SU}_i(t)}{N_i/N} \\
-f(t, \mathrm{SV_i, \mathrm{EV}_i}) &= \phi_i (1 - \mathrm{VE}_S) \frac{\mathrm{SV}_i(t)}{N_i/N}
-\end{align*}
+  \begin{align*}
+    f(t, \mathrm{SU_i, \mathrm{EU}_i}) & = \phi_i \frac{\mathrm{SU}_i(t)}{N_i/N}                     \\
+    f(t, \mathrm{SV_i, \mathrm{EV}_i}) & = \phi_i (1 - \mathrm{VE}_S) \frac{\mathrm{SV}_i(t)}{N_i/N}
+  \end{align*}
 $$
 
 #### Latency and infectiousness
 
 $$
-\begin{align*}
-f(t, \mathrm{EU}_i, \mathrm{IU}_i) &= \mathrm{EU}_i(t) \times \frac{1}{T_E} \\
-f(t, \mathrm{IU}_i, \mathrm{RU}_i) &= \mathrm{IU}_i(t) \times \frac{1}{T_I} \\
-\end{align*}
+  \begin{align*}
+    f(t, \mathrm{EU}_i, \mathrm{IU}_i) & = \mathrm{EU}_i(t) \times \frac{1}{T_E} \\
+    f(t, \mathrm{IU}_i, \mathrm{RU}_i) & = \mathrm{IU}_i(t) \times \frac{1}{T_I} \\
+  \end{align*}
 $$
 
 and similarly for the vaccinated compartments.
@@ -242,25 +267,27 @@ and similarly for the vaccinated compartments.
 The rate of new infections is:
 
 $$
-\dot{I}^\mathrm{cum}_i(t) = f(t, \mathrm{EU}_i, \mathrm{IU}_i) + f(t, \mathrm{EV}_i, \mathrm{IV}_i)
+  \dot{I}^\mathrm{cum}_i(t) = f(t, \mathrm{EU}_i, \mathrm{IU}_i)
+                              + f(t, \mathrm{EV}_i, \mathrm{IV}_i)
 $$
 
 The rate of new infections that are not protected by vaccination against progression to symptoms is:
 
 $$
-\dot{X}_i(t) = f(t, \mathrm{EU}_i, \mathrm{IU}_i) + (1 - \mathrm{VE}_P) f(t, \mathrm{EV}_i, \mathrm{IV}_i)
+  \dot{X}_i(t) = f(t, \mathrm{EU}_i, \mathrm{IU}_i)
+                 + (1 - \mathrm{VE}_P) f(t, \mathrm{EV}_i, \mathrm{IV}_i)
 $$
 
 The numbers of health outcomes (symptomatic infections, hospitalizations, and deaths) are:
 
 $$
-\begin{align*}
-\dot{Y}^\mathrm{cum}_i(t) &= \mathrm{FS}_i \times \dot{X}_i(t) \\
-\dot{H}^\mathrm{pre}_i(t) &= \mathrm{IHR}_i \times (1 - A_\mathrm{op} \mathrm{AVE}_H) \times \dot{X}_i(t) \\
-\dot{H}^\mathrm{cum}_i(t) &= H^\mathrm{pre}_i(t) \times \frac{1}{T_H^\mathrm{pre}} \\
-\dot{D}^\mathrm{pre}_i(t) &= \mathrm{IFR}_i \times (1 - A_\mathrm{op} \mathrm{AVE}_H) \times (1 - A_\mathrm{ip} \mathrm{AVE}_D) \times \dot{X}_i(t) \\
-\dot{D}^\mathrm{cum}_i(t) &= D^\mathrm{pre}_i(t) \times \frac{1}{T_D^\mathrm{pre}}
-\end{align*}
+  \begin{align*}
+    \dot{Y}^\mathrm{cum}_i(t) & = \mathrm{FS}_i \times \dot{X}_i(t)                                                                                      \\
+    \dot{H}^\mathrm{pre}_i(t) & = \mathrm{IHR}_i \times (1 - A_\mathrm{op} \mathrm{AVE}_H) \times \dot{X}_i(t)                                           \\
+    \dot{H}^\mathrm{cum}_i(t) & = H^\mathrm{pre}_i(t) \times \frac{1}{T_H^\mathrm{pre}}                                                                  \\
+    \dot{D}^\mathrm{pre}_i(t) & = \mathrm{IFR}_i \times (1 - A_\mathrm{op} \mathrm{AVE}_H) \times (1 - A_\mathrm{ip} \mathrm{AVE}_D) \times \dot{X}_i(t) \\
+    \dot{D}^\mathrm{cum}_i(t) & = D^\mathrm{pre}_i(t) \times \frac{1}{T_D^\mathrm{pre}}
+  \end{align*}
 $$
 
 ## Mitigations
@@ -283,16 +310,17 @@ Define the parameters:
 - test sensitivity
 - probability a positive test is forwarded to public health
 
-Testing could be any modality, such as self-administered or PCR. The sensitivity and forwarding probabilities represent the average of those values across all testing modalities.
+Testing could be any modality, such as self-administered or PCR.
+The sensitivity and forwarding probabilities represent the average of those values across all testing modalities.
 
 Then:
 
 $$
-\begin{align*}
-\mathrm{CumTested}(t) &= p_{\mathrm{demand}|Y} \sum_i Y^\mathrm{cum}_i \\
-\mathrm{CumProbDetect1}(t) &= 1 - (1 - [\text{test sensitivity}] \times \mathbb{P}[\text{forwarded} | \text{positive}])^{\mathrm{CumTested(t)}} \\
-\mathbb{E}[\mathrm{CumFracInfectionsIdentified(t)}] &= [\text{test sensitivity}] \times \mathbb{P}[\text{forwarded} | \text{positive}] \times \frac{\mathrm{CumTested}(t)}{\sum_i I_i^\mathrm{cum}(t)}
-\end{align*}
+  \begin{align*}
+    \mathrm{CumTested}(t)                               & = p_{\mathrm{demand}|Y} \sum_i Y^\mathrm{cum}_i                                                                                                   \\
+    \mathrm{CumProbDetect1}(t)                          & = 1 - (1 - [\text{test sensitivity}] \times \mathbb{P}[\text{forwarded} | \text{positive}])^{\mathrm{CumTested(t)}}                               \\
+    \mathbb{E}[\mathrm{CumFracInfectionsIdentified(t)}] & = [\text{test sensitivity}] \times \mathbb{P}[\text{forwarded} | \text{positive}] \times \frac{\mathrm{CumTested}(t)}{\sum_i I_i^\mathrm{cum}(t)}
+  \end{align*}
 $$
 
 We report the times at which the cumulative detection probability reaches certain thresholds (e.g., 25%, 50%, and 75%).

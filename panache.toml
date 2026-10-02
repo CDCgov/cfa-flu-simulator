@@ -1,0 +1,12 @@
+flavor = "gfm"
+
+[format]
+wrap = "sentence"
+
+[formatters]
+
+[linters]
+
+[extensions]
+four-space-rule = true
+python-markdown-admonitions = true
