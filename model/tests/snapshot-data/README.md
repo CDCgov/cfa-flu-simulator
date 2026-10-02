@@ -1,7 +1,7 @@
 # Model Regression Snapshots
 
-These fixtures are generated from the native Rust model. To update the committed
-fixtures after an intentional model change:
+The test fixture `snapshots.json` is generated from the native Rust model. To
+update it after an intentional model change:
 
 ```sh
 cargo run -p cfa-flu-simulator --bin update_snapshot
