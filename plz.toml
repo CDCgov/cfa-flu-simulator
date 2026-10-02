@@ -23,16 +23,31 @@ run = "vitepress dev docs"
 [taskgroup.docs.build]
 run = "vitepress build docs"
 
-# Format the Rust sources
 [tasks.format]
+description = "Format Rust and Markdown"
+run_parallel = ["plz:format-rust", "plz:format-md"]
+
+# Format the Rust sources
+[tasks.format-rust]
 dir = "model"
 run = "cargo fmt"
 
-# Verify formatting without rewriting files
 [tasks.format-check]
+description = "Check Rust and Markdown formatting, without rewriting"
+run_parallel = ["plz:format-check-rust", "plz:format-check-md"]
+
+[tasks.format-check-rust]
 dir = "model"
 run = "cargo fmt --check"
 fail_hook = { suggest_command = "plz format" }
+
+[tasks.format-check-md]
+description = "Check formatting of Markdown files"
+run = "panache format --check ."
+
+[tasks.format-md]
+description = "Format Markdown files"
+run = "panache format ."
 
 # Lint, treating every warning as an error
 [tasks.clippy]

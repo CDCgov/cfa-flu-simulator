@@ -334,12 +334,12 @@ See the base model description above.
 This model approximates the different impacts from these policies as a reduction in the mean duration of the infectious period:
 
 $$
-\begin{equation*}
-\begin{split}
-T_I^\mathrm{int} = T_I &\times (1 - \mathbb{P}[\text{infectious is identified}] \times \mathbb{P}[\text{identified infectious isolates}] \times [\text{prop. reduction in $T_I$ due to isolation}]) \\
-&\times (1 - \mathbb{P}[\text{contact tracing identifies exposed}] \times \mathbb{P}[\text{identified exposed quarantines}] )
-\end{split}
-\end{equation*}
+  \begin{equation*}
+    \begin{split}
+      T_I^\mathrm{int} = T_I & \times (1 - \mathbb{P}[\text{infectious is identified}] \times \mathbb{P}[\text{identified infectious isolates}] \times [\text{prop. reduction in } T_I \text{ due to isolation}]) \\
+                             & \times (1 - \mathbb{P}[\text{contact tracing identifies exposed}] \times \mathbb{P}[\text{identified exposed quarantines}] )
+    \end{split}
+  \end{equation*}
 $$
 
 ## References
