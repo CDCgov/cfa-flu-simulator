@@ -25,5 +25,6 @@ jobs:
         with:
           workspaces: model
       - uses: k88hudson/setup-plz@v1
+      - uses: jolars/panache-action@v1
       # Same task the pre-commit hook runs: format-check, clippy, test
       - run: plz precommit
