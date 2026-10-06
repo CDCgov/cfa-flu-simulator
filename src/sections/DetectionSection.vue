@@ -8,7 +8,12 @@ import {
   type ModelOutputExport,
   type OutputItemGrouped,
 } from "../composables/useParams";
-import { pickScale, scale } from "../utils/chartScale";
+import {
+  pickScale,
+  scale,
+  TICK_LABEL_STYLE,
+  Y_LABEL_CHART_PADDING,
+} from "../utils/chartScale";
 
 const props = defineProps<{
   results: ModelOutputExport | null;
@@ -85,7 +90,8 @@ const pDetectChart = computed(() => {
       x: idx,
       y: threshold * 100,
       text: `**${label}** Day ${Math.round(trimmed[idx].time)}`,
-      offset: { x: 8, y: -8 },
+      offset: { x: 8, y: -6 },
+      fontSize: 14,
       pointer: "ruleY",
       lineDash: "4 4",
       color: "var(--accent)",
@@ -120,6 +126,8 @@ const subtitle = computed(
             :series="testedChart.series"
             :x-labels="testedChart.xLabels"
             :y-label="`Cases Tested${testedChart.scale.unit ? ` (${testedChart.scale.unit})` : ''}`"
+            :chart-padding="Y_LABEL_CHART_PADDING"
+            :tick-label-style="TICK_LABEL_STYLE"
             filename="symptomatic-cases-tested"
             :height="180"
             :y-min="0"
@@ -147,6 +155,8 @@ const subtitle = computed(
             :x-labels="pDetectChart.xLabels"
             :annotations="pDetectChart.annotations"
             y-label="Probability (%)"
+            :chart-padding="Y_LABEL_CHART_PADDING"
+            :tick-label-style="TICK_LABEL_STYLE"
             filename="cumulative-probability-of-detection"
             :height="220"
             :y-min="0"

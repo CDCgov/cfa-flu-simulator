@@ -53,10 +53,9 @@ const importError = ref<string | null>(null);
 <style>
 :root {
   --accent: rgb(0, 87, 183);
-}
-
-[data-theme="cdc"] {
-  --font-weight-heading: 600;
+  --font-family:
+    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
 }
 
 .input-label {
