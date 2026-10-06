@@ -1,32 +1,31 @@
+<script lang="ts">
+export type ResultsTab = "charts" | "summary" | "detection";
+</script>
+
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import type { Series, AreaSection } from "cfasim-ui/charts";
-import { Button } from "cfasim-ui/components";
 import ChartPanel from "../components/ChartPanel.vue";
-import OnThisPage from "../components/OnThisPage.vue";
 import SummaryView from "./SummaryView.vue";
 import DetectionSection from "../sections/DetectionSection.vue";
 import { useParams, type ModelOutputExport, type OutputItemGrouped, type OutputTypeLabel } from "../composables/useParams";
 import { useModelRun } from "../composables/useModelRun";
 import { pickScale, scale, type ChartData } from "../utils/chartScale";
-import { generateReport } from "../utils/pdfReport";
 
 const { params } = useParams();
 const { results, running, error } = useModelRun();
 
-const downloading = ref(false);
-async function handleDownload() {
-  const container = document.getElementById("results-root");
-  if (!container || downloading.value) return;
-  downloading.value = true;
-  try {
-    await generateReport(container, params);
-  } catch (e) {
-    console.error("Report generation failed", e);
-  } finally {
-    downloading.value = false;
-  }
-}
+const props = defineProps<{ tab: ResultsTab }>();
+
+// The tabs share one scroll container, so start each panel from the top.
+const root = ref<HTMLElement | null>(null);
+watch(
+  () => props.tab,
+  async () => {
+    await nextTick();
+    root.value?.scrollIntoView({ block: "start" });
+  },
+);
 
 // --- series extraction helpers ---------------------------------------------
 
@@ -223,23 +222,14 @@ const headerTitle = computed(() =>
     ? "Mitigated vs. Unmitigated Scenario"
     : "Unmitigated Scenario",
 );
-
-const onThisPageGroups = computed(() => [
-  {
-    label: "",
-    items: [
-      { id: "charts", label: "Charts" },
-      { id: "summary", label: "Summary" },
-      { id: "detection", label: "Detection" },
-    ],
-  },
-]);
 </script>
 
 <template>
   <div class="results-layout">
-    <div class="results" id="results-root">
-      <header class="results__header">
+    <div ref="root" class="results" id="results-root">
+      <!-- Hidden, not removed, on Detection: the PDF report reads its title
+           and subtitle from here. -->
+      <header v-show="tab !== 'detection'" class="results__header">
         <h1>{{ headerTitle }}</h1>
         <p class="results__subtitle">{{ subtitle }}</p>
       </header>
@@ -247,82 +237,76 @@ const onThisPageGroups = computed(() => [
       <p v-if="error" class="results__error">Error: {{ error }}</p>
       <p v-else-if="!results && running" class="results__loading">Running model…</p>
 
-      <template v-if="overallChart">
-        <section class="results__section results__section--flush" data-otp-id="charts" id="charts">
-          <h2>Overall Infection Incidence</h2>
-          <ChartPanel
-            :data="overallChart"
-            :y-label="`Incidence${overallChart.scale.unit ? ` (${overallChart.scale.unit})` : ''}`"
-            filename="overall-infection-incidence"
-            :height="320"
-          />
-        </section>
+      <!-- Inactive panels are clipped, not removed: the PDF report reads
+           charts and tables from the DOM. -->
+      <div v-if="overallChart" class="results__panels">
+        <div class="results__panel" :inert="tab !== 'charts'">
+          <section class="results__section results__section--flush" id="charts">
+            <h2>Overall Infection Incidence</h2>
+            <ChartPanel
+              :data="overallChart"
+              :y-label="`Incidence${overallChart.scale.unit ? ` (${overallChart.scale.unit})` : ''}`"
+              filename="overall-infection-incidence"
+              :height="320"
+            />
+          </section>
 
-        <section class="results__grid-3">
-          <div v-if="deathChart" class="results__small">
-            <h3>Deaths</h3>
-            <ChartPanel
-              :data="deathChart"
-              :y-label="`Incidence${deathChart.scale.unit ? ` (${deathChart.scale.unit})` : ''}`"
-              filename="death-incidence"
-              :height="180"
-            />
-          </div>
-          <div v-if="hospChart" class="results__small">
-            <h3>Hospitalizations</h3>
-            <ChartPanel
-              :data="hospChart"
-              filename="hospital-incidence"
-              :height="180"
-            />
-          </div>
-          <div v-if="symptomaticChart" class="results__small">
-            <h3>Symptomatic Infections</h3>
-            <ChartPanel
-              :data="symptomaticChart"
-              filename="symptomatic-incidence"
-              :height="180"
-            />
-          </div>
-        </section>
-
-        <section class="results__section">
-          <h1>Infection Incidence by Age Group</h1>
-          <div class="results__grid-n">
-            <div v-for="(g, gi) in groupCharts" :key="g.label" class="results__small">
-              <h3>{{ g.label }}</h3>
+          <section class="results__grid-3">
+            <div v-if="deathChart" class="results__small">
+              <h3>Deaths</h3>
               <ChartPanel
-                v-if="g.data"
-                :data="g.data"
-                :y-label="gi === 0 && g.data.scale.unit ? `(${g.data.scale.unit})` : ''"
-                :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
-                :height="200"
+                :data="deathChart"
+                :y-label="`Incidence${deathChart.scale.unit ? ` (${deathChart.scale.unit})` : ''}`"
+                filename="death-incidence"
+                :height="180"
               />
             </div>
-          </div>
-        </section>
+            <div v-if="hospChart" class="results__small">
+              <h3>Hospitalizations</h3>
+              <ChartPanel
+                :data="hospChart"
+                filename="hospital-incidence"
+                :height="180"
+              />
+            </div>
+            <div v-if="symptomaticChart" class="results__small">
+              <h3>Symptomatic Infections</h3>
+              <ChartPanel
+                :data="symptomaticChart"
+                filename="symptomatic-incidence"
+                :height="180"
+              />
+            </div>
+          </section>
 
-        <section class="results__section" data-otp-id="summary" id="summary">
-          <h1>Summary</h1>
-          <SummaryView />
-        </section>
+          <section class="results__section">
+            <h1>Infection Incidence by Age Group</h1>
+            <div class="results__grid-n">
+              <div v-for="(g, gi) in groupCharts" :key="g.label" class="results__small">
+                <h3>{{ g.label }}</h3>
+                <ChartPanel
+                  v-if="g.data"
+                  :data="g.data"
+                  :y-label="gi === 0 && g.data.scale.unit ? `(${g.data.scale.unit})` : ''"
+                  :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
+                  :height="200"
+                />
+              </div>
+            </div>
+          </section>
+        </div>
 
-        <DetectionSection :results="results" />
-      </template>
-    </div>
-    <aside class="results-layout__rail">
-      <div class="rail__sticky">
-        <OnThisPage :groups="onThisPageGroups" />
-        <Button
-          class="rail__download"
-          variant="secondary"
-          :disabled="downloading"
-          @click="handleDownload"
-        >
-          {{ downloading ? "Generating…" : "Download report" }}
-        </Button>
+        <div class="results__panel" :inert="tab !== 'summary'">
+          <section class="results__section" id="summary">
+            <SummaryView />
+          </section>
+        </div>
+
+        <div class="results__panel" :inert="tab !== 'detection'">
+          <DetectionSection :results="results" />
+        </div>
       </div>
-    </aside>
+    </div>
   </div>
 </template>
 
@@ -330,47 +314,28 @@ const onThisPageGroups = computed(() => [
 .results-layout {
   container-type: inline-size;
   container-name: results;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1.5rem;
-  align-items: start;
-}
-.results-layout__rail {
-  display: none;
-  padding: 1rem 1.5rem 1rem 0;
-  align-self: stretch;
-}
-.rail__sticky {
-  position: sticky;
-  top: 1rem;
-}
-.rail__download {
-  margin-top: 1rem;
-  margin-left: 1rem;
-}
-/* OnThisPage is sticky on its own; inside the sticky wrapper that's redundant. */
-.rail__sticky :deep(.otp) {
-  position: static;
-}
-@container results (max-width: 819px) {
-  .results-layout {
-    grid-template-columns: 1fr;
-  }
-}
-@container results (min-width: 820px) {
-  .results-layout__rail {
-    display: block;
-  }
-  .results {
-    padding-inline-end: 1.5rem;
-  }
 }
 .results {
+  --results-gap: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--results-gap);
   padding: 1rem 0 1rem 1.5rem;
   min-width: 0;
+  /* The scroll container's top padding, so scrollIntoView lands at the top. */
+  scroll-margin-top: var(--space-6);
+}
+.results__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--results-gap);
+  min-width: 0;
+}
+/* Not display: none or visibility: hidden. Charts need a real width to
+   render, and the report bakes computed visibility into each chart image. */
+.results__panel[inert] {
+  height: 0;
+  overflow: hidden;
 }
 .results :deep(h1) { font-size: 1.5rem; margin: 0 0 0.5rem; }
 .results :deep(h2) { font-size: 1rem; margin: 0 0 0.5rem; }
@@ -395,7 +360,7 @@ const onThisPageGroups = computed(() => [
   .results {
     padding-block: 0.5rem;
     padding-inline-start: 0.75rem;
-    gap: 1rem;
+    --results-gap: 1rem;
   }
   .results :deep(h1) { font-size: 1.25rem; }
   .results__grid-3 {
