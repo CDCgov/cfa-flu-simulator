@@ -9,8 +9,6 @@ use crate::parameters::{Parameters, ParametersTyped};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-const DAYS: usize = 200;
-
 const SCENARIOS: [&str; 5] = [
     "no_mitigations",
     "vaccine_only",
@@ -82,7 +80,7 @@ fn make_params(scenario: &str) -> Parameters {
 
 fn run_scenario(scenario: &str) -> Fixture {
     let typed: ParametersTyped<2> = make_params(scenario).try_into().expect("params -> typed");
-    let actual = SEIRModel::new(typed).integrate(DAYS);
+    let actual = SEIRModel::new(typed).integrate();
 
     let mut fixture = Fixture {
         metadata: FixtureMetadata {
