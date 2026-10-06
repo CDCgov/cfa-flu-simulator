@@ -107,6 +107,8 @@ function buildChart(
 
 // --- active-mitigation windows ---------------------------------------------
 
+const SECTION_LABEL_STYLE = { fontSize: 14 };
+
 function buildAreaSections(
   rows: OutputItemGrouped[],
   seriesIndex: number,
@@ -149,6 +151,8 @@ function buildAreaSections(
         label: `Day ${Math.round(startDay)}–${Math.round(endDay)}`,
         description: `${formatDoses(params.vaccine_doses_available)} vaccines administered`,
         legend,
+        inlineLabelStyle: SECTION_LABEL_STYLE,
+        inlineDescriptionStyle: SECTION_LABEL_STYLE,
       });
     }
   }
@@ -167,6 +171,8 @@ function buildAreaSections(
       label: `Day ${Math.round(params.community_start)}–${Math.round(end)}`,
       description: "Community mitigation",
       legend,
+      inlineLabelStyle: SECTION_LABEL_STYLE,
+      inlineDescriptionStyle: SECTION_LABEL_STYLE,
     });
   }
 
@@ -242,7 +248,7 @@ const onThisPageGroups = computed(() => [
       <p v-else-if="!results && running" class="results__loading">Running model…</p>
 
       <template v-if="overallChart">
-        <section class="results__section" data-otp-id="charts" id="charts">
+        <section class="results__section results__section--flush" data-otp-id="charts" id="charts">
           <h2>Overall Infection Incidence</h2>
           <ChartPanel
             :data="overallChart"
@@ -370,6 +376,9 @@ const onThisPageGroups = computed(() => [
 .results :deep(h2) { font-size: 1rem; margin: 0 0 0.5rem; }
 .results :deep(h3) { font-size: 1rem; margin: 0 0 0.25rem; }
 .results__subtitle { margin: 0.25rem 0 0; opacity: 0.65; }
+/* The theme's base `section` margin stacks on the flex gap. Drop it so the
+   overall chart sits closer to the small charts that continue it. */
+.results__section--flush { margin-bottom: 0; }
 .results__error { color: #ef4444; }
 .results__loading { opacity: 0.7; }
 .results__grid-3 {
