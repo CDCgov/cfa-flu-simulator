@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { SelectBox } from "cfasim-ui/components";
+import { NumberInput, SelectBox } from "cfasim-ui/components";
 import MitigationSection from "../components/MitigationSection.vue";
 import ParamField from "../components/ParamField.vue";
 import { useParams } from "../composables/useParams";
@@ -20,6 +20,9 @@ const dosesString = computed({
     params.vaccine_doses = Number(v);
   },
 });
+const VE_SP = computed(
+  () => 1.0 - (1.0 - params.vaccine_ve_s) * (1.0 - params.vaccine_ve_p)
+);
 </script>
 
 <template>
@@ -70,6 +73,24 @@ const dosesString = computed({
       :paired="twoDose"
       v-model:upper-value="params.vaccine_ve_2p"
     />
+    <div class="ve-sp-readout" inert>
+      <NumberInput
+        label="Effectiveness against symptomatic disease"
+        :model-value="VE_SP"
+        :min="0"
+        :max="1"
+        :step="0.01"
+        percent
+        number-type="float"
+        slider
+      />
+    </div>
     <ParamField path="vaccine_ramp_up" v-model="params.vaccine_ramp_up" />
   </MitigationSection>
 </template>
+
+<style scoped>
+.ve-sp-readout {
+  pointer-events: none;
+}
+</style>
