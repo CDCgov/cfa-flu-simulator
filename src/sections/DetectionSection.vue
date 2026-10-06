@@ -21,13 +21,6 @@ const props = defineProps<{
 
 const { params } = useParams();
 
-const pTestSymptoPct = computed({
-  get: () => params.p_test_sympto * 100,
-  set: (v: number) => {
-    params.p_test_sympto = v / 100;
-  },
-});
-
 const symptomaticRows = computed<OutputItemGrouped[] | null>(() => {
   const r = props.results;
   if (!r) return null;
@@ -53,12 +46,30 @@ const testedChart = computed(() => {
       strokeWidth: 2,
     },
   ];
+  const peakIdx = tested.indexOf(Math.max(...tested));
   return {
     series,
     xLabels,
     scale: sc,
     rawBySeries: [tested],
+    peak: { value: tested[peakIdx], day: Math.round(rows[peakIdx].time) },
+    total: tested.reduce((a, b) => a + b, 0),
   };
+});
+
+const approx = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 2 });
+// Non-breaking hyphen, so "200-day" never wraps after the dash.
+const simulation = computed(() => `${params.days}\u2011day simulation`);
+
+const testedDescription = computed(() => {
+  const chart = testedChart.value;
+  if (!chart) return "";
+  return (
+    `Tests given each day to newly symptomatic people, at ${fmtPct(params.p_test_sympto)} ` +
+    `of symptomatic infections. Testing peaks at about ${approx.format(chart.peak.value)} ` +
+    `on day ${chart.peak.day}, with about ${approx.format(chart.total)} tests over the ` +
+    `whole ${simulation.value}.`
+  );
 });
 
 const pDetectChart = computed(() => {
@@ -80,16 +91,17 @@ const pDetectChart = computed(() => {
     },
   ];
   const annotations: ChartAnnotation[] = [];
-  for (const { threshold, label } of [
-    { threshold: 0.25, label: "≥25%" },
-    { threshold: 0.75, label: "≥75%" },
-  ]) {
+  // First day the probability reaches each threshold; null if it never does.
+  const milestones: { pct: number; day: number | null }[] = [];
+  for (const threshold of [0.25, 0.75]) {
     const idx = trimmed.findIndex((p) => p.value >= threshold);
+    const pct = threshold * 100;
+    milestones.push({ pct, day: idx < 0 ? null : Math.round(trimmed[idx].time) });
     if (idx < 0) continue;
     annotations.push({
       x: idx,
-      y: threshold * 100,
-      text: `**${label}** Day ${Math.round(trimmed[idx].time)}`,
+      y: pct,
+      text: `**≥${pct}%** Day ${Math.round(trimmed[idx].time)}`,
       offset: { x: 8, y: -6 },
       fontSize: 14,
       pointer: "ruleY",
@@ -97,7 +109,22 @@ const pDetectChart = computed(() => {
       color: "var(--accent)",
     });
   }
-  return { series, xLabels, annotations };
+  return { series, xLabels, annotations, milestones };
+});
+
+const pDetectDescription = computed(() => {
+  const chart = pDetectChart.value;
+  if (!chart) return "";
+  const [low, high] = chart.milestones;
+  const detected = "that public health has detected at least one case";
+  if (low.day === null) {
+    return `Under these settings the chance ${detected} stays below ${low.pct}% for the whole ${simulation.value}.`;
+  }
+  const rest =
+    high.day === null
+      ? `but the chance never reaches ${high.pct}% within the ${simulation.value}`
+      : `and a ${high.pct}% chance by day ${high.day}`;
+  return `Under these settings there is a ${low.pct}% chance ${detected} by day ${low.day}, ${rest}.`;
 });
 
 function fmtPct(v: number, digits = 1): string {
@@ -113,14 +140,30 @@ const subtitle = computed(
 </script>
 
 <template>
-  <section class="results__section detection" data-otp-id="detection" id="detection">
+  <section class="results__section detection" id="detection">
     <h1>Probability of Detecting at Least One Case</h1>
     <p class="results__subtitle">{{ subtitle }}</p>
 
     <div class="detection__layout">
+      <aside class="detection__controls">
+        <h3>Detection</h3>
+        <ParamField
+          path="p_test_sympto"
+          v-model="params.p_test_sympto"
+        />
+        <ParamField
+          path="test_sensitivity"
+          v-model="params.test_sensitivity"
+        />
+        <ParamField
+          path="p_test_forward"
+          v-model="params.p_test_forward"
+        />
+      </aside>
       <div class="detection__charts">
         <div class="detection__chart">
           <h3>Symptomatic Cases Tested</h3>
+          <p class="detection__chart-desc">{{ testedDescription }}</p>
           <LineChart
             v-if="testedChart"
             :series="testedChart.series"
@@ -149,6 +192,7 @@ const subtitle = computed(
 
         <div class="detection__chart">
           <h3>Cumulative Probability of Detection</h3>
+          <p class="detection__chart-desc">{{ pDetectDescription }}</p>
           <LineChart
             v-if="pDetectChart"
             :series="pDetectChart.series"
@@ -177,21 +221,6 @@ const subtitle = computed(
         </div>
       </div>
 
-      <aside class="detection__controls">
-        <h3>Detection</h3>
-        <ParamField
-          path="p_test_sympto"
-          v-model="pTestSymptoPct"
-        />
-        <ParamField
-          path="test_sensitivity"
-          v-model="params.test_sensitivity"
-        />
-        <ParamField
-          path="p_test_forward"
-          v-model="params.p_test_forward"
-        />
-      </aside>
     </div>
   </section>
 </template>
@@ -201,8 +230,9 @@ const subtitle = computed(
   container-type: inline-size;
 }
 .detection__layout {
+  margin-top: var(--space-6);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 240px;
+  grid-template-columns: 320px minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
 }
@@ -215,11 +245,17 @@ const subtitle = computed(
 .detection__chart h3 {
   margin: 0 0 0.25rem;
 }
+.detection__chart-desc {
+  margin: 0 0 var(--space-3);
+  max-width: 70ch;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
 .detection__controls {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 0.75rem;
+  padding: var(--space-6);
   border: 1px solid rgba(128, 128, 128, 0.2);
   border-radius: 4px;
 }
@@ -233,9 +269,6 @@ const subtitle = computed(
 @container (max-width: 700px) {
   .detection__layout {
     grid-template-columns: 1fr;
-  }
-  .detection__controls {
-    order: -1;
   }
 }
 </style>
