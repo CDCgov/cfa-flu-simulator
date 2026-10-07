@@ -8,3 +8,4 @@ CHANGELOG.md
 docs/.vitepress/cache/
 docs/.vitepress/dist/
 *.svg
+__pycache__/
