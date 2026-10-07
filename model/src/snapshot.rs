@@ -115,6 +115,7 @@ pub fn snapshot_json() -> String {
 pub fn update_snapshot() {
     let path = snapshot_path();
     std::fs::write(&path, snapshot_json()).expect("write fixtures");
+    println!("Wrote snapshot to {}", path.display());
 }
 
 #[cfg(test)]
