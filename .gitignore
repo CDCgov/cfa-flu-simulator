@@ -3,7 +3,6 @@ public/wasm/
 .references/
 target/
 dist/
-*.svg
 CLAUDE.md
 CHANGELOG.md
 docs/.vitepress/cache/
