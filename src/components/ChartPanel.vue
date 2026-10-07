@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { LineChart } from "cfasim-ui/charts";
 import ChartTooltipContent from "./ChartTooltipContent.vue";
-import type { ChartData } from "../utils/chartScale";
+import {
+  TICK_LABEL_STYLE,
+  Y_LABEL_CHART_PADDING,
+  type ChartData,
+} from "../utils/chartScale";
 
 defineProps<{
   data: ChartData;
@@ -17,6 +21,8 @@ defineProps<{
     :x-labels="data.xLabels"
     :area-sections="data.areaSections"
     :y-label="yLabel"
+    :chart-padding="yLabel ? Y_LABEL_CHART_PADDING : undefined"
+    :tick-label-style="TICK_LABEL_STYLE"
     :filename="filename"
     :height="height ?? 200"
     :y-min="0"

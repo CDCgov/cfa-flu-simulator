@@ -8,14 +8,22 @@ import VaccineSection from "./sections/VaccineSection.vue";
 import AntiviralsSection from "./sections/AntiviralsSection.vue";
 import CommunitySection from "./sections/CommunitySection.vue";
 import TTIQSection from "./sections/TTIQSection.vue";
-import ResultsView from "./views/ResultsView.vue";
+import DownloadReportButton from "./components/DownloadReportButton.vue";
+import ResultsView, { type ResultsTab } from "./views/ResultsView.vue";
 
 const { ready } = provideParams();
 const importError = ref<string | null>(null);
+
+const tabs: { value: ResultsTab; label: string }[] = [
+  { value: "charts", label: "Charts" },
+  { value: "summary", label: "Summary" },
+  { value: "detection", label: "Detection" },
+];
+const tab = ref<ResultsTab>("charts");
 </script>
 
 <template>
-  <SidebarLayout>
+  <SidebarLayout v-model:tab="tab" :tabs="tabs">
     <template #sidebar>
       <template v-if="ready">
         <div class="toolbar">
@@ -46,17 +54,19 @@ const importError = ref<string | null>(null);
         >
       </footer>
     </template>
-    <ResultsView v-if="ready" />
+    <template #topbar>
+      <DownloadReportButton v-if="ready" />
+    </template>
+    <ResultsView v-if="ready" :tab="tab" />
   </SidebarLayout>
 </template>
 
 <style>
 :root {
   --accent: rgb(0, 87, 183);
-}
-
-[data-theme="cdc"] {
-  --font-weight-heading: 600;
+  --font-family:
+    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
 }
 
 .input-label {
@@ -122,5 +132,13 @@ const importError = ref<string | null>(null);
 
 :deep(.MainContent) {
   max-width: 1600px;
+}
+
+/* Three tabs plus the two bar buttons overflow the narrowest phones. */
+@media (max-width: 389px) {
+  :deep(.TabsBar),
+  :deep(.TabsTrigger) {
+    padding-inline: var(--space-2);
+  }
 }
 </style>
