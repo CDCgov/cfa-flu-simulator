@@ -11,3 +11,6 @@ minimumReleaseAgeExclude:
   - '@cfasim-ui/theme@0.8.11'
   - '@cfasim-ui/wasm@0.8.11'
   - cfasim-ui@0.8.11
+overrides:
+  smol-toml: '>=1.7.1'
+  '@xmldom/xmldom': '>=0.9.12'
