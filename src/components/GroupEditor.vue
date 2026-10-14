@@ -17,7 +17,8 @@ const cfg = computed(() => getField(props.path));
 // initially by checking if all values are equal.
 const allMode = ref(props.modelValue.every((v) => v === props.modelValue[0]));
 
-function update(index: number, value: number) {
+function update(index: number, value: number | undefined) {
+  if (value === undefined) return;
   if (allMode.value) {
     emit(
       "update:modelValue",
