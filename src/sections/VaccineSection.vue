@@ -79,7 +79,7 @@ const overall = computed(() => {
         <span class="ve__derived-label">
           Effectiveness against symptomatic disease
           <Hint
-            text="Combined protection against symptomatic disease: 1 − (1 − susceptibility) × (1 − symptomatic disease). Derived from the two fields below."
+            text="Total protection against symptomatic disease (not conditioned on infection)"
           />
         </span>
         <output class="ve__derived-value">
