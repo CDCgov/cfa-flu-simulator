@@ -27,6 +27,7 @@ defineProps<{
     :height="height ?? 200"
     :y-min="0"
     :x-min="0"
+    y-grid
     tooltip-trigger="hover"
     tooltip-clamp="window"
   >

@@ -216,6 +216,14 @@ const subtitle = computed(() => {
   return `Impact of ${active.join(" + ")} on a population of ${pop} over ${params.days} days`;
 });
 
+const groupSubtitle = computed(() => {
+  const parts = params.population_fraction_labels.map((label, i) => {
+    const pct = Math.round((params.population_fractions[i] ?? 0) * 100);
+    return i === 0 ? `${label} (${pct}% of the population)` : `${label} (${pct}%)`;
+  });
+  return `Daily new infections among ${parts.join(" and ")}`;
+});
+
 const headerTitle = computed(() =>
   results.value && results.value.mitigation_types.length > 1
     ? "Mitigated vs. Unmitigated Scenario"
@@ -255,7 +263,7 @@ const headerTitle = computed(() =>
                 :data="deathChart"
                 :y-label="`Incidence${deathChart.scale.unit ? ` (${deathChart.scale.unit})` : ''}`"
                 filename="death-incidence"
-                :height="180"
+                :height="220"
               />
             </div>
             <div v-if="hospChart" class="results__small">
@@ -263,7 +271,7 @@ const headerTitle = computed(() =>
               <ChartPanel
                 :data="hospChart"
                 filename="hospital-incidence"
-                :height="180"
+                :height="220"
               />
             </div>
             <div v-if="symptomaticChart" class="results__small">
@@ -271,13 +279,16 @@ const headerTitle = computed(() =>
               <ChartPanel
                 :data="symptomaticChart"
                 filename="symptomatic-incidence"
-                :height="180"
+                :height="220"
               />
             </div>
           </section>
 
-          <section class="results__section">
-            <h1>Infection Incidence by Age Group</h1>
+          <section class="results__section" id="by-age-group">
+            <header class="results__header">
+              <h1>Infection Incidence by Age Group</h1>
+              <p class="results__subtitle">{{ groupSubtitle }}</p>
+            </header>
             <div class="results__grid-n">
               <div v-for="(g, gi) in groupCharts" :key="g.label" class="results__small">
                 <h3>{{ g.label }}</h3>
@@ -286,7 +297,7 @@ const headerTitle = computed(() =>
                   :data="g.data"
                   :y-label="gi === 0 && g.data.scale.unit ? `(${g.data.scale.unit})` : ''"
                   :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
-                  :height="200"
+                  :height="220"
                 />
               </div>
             </div>
@@ -334,6 +345,9 @@ const headerTitle = computed(() =>
 .results :deep(h2) { font-size: 1rem; margin: 0 0 0.5rem; }
 .results :deep(h3) { font-size: 1rem; margin: 0 0 0.25rem; }
 .results__subtitle { margin: 0.25rem 0 0; opacity: 0.65; }
+/* A header inside a section gets the same gap below it as the page header
+   gets from the flex column, so the two title blocks read the same. */
+.results__section > .results__header { margin-bottom: var(--results-gap); }
 /* The theme's base `section` margin stacks on the flex gap. Drop it so the
    overall chart sits closer to the small charts that continue it. */
 .results__section--flush { margin-bottom: 0; }
