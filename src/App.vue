@@ -17,7 +17,6 @@ const importError = ref<string | null>(null);
 const tabs: { value: ResultsTab; label: string }[] = [
   { value: "charts", label: "Charts" },
   { value: "summary", label: "Summary" },
-  { value: "detection", label: "Detection" },
 ];
 const tab = ref<ResultsTab>("charts");
 </script>

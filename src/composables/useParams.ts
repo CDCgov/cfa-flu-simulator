@@ -34,9 +34,6 @@ export interface Parameters {
   inf_hosp_delay: number;
   p_death_given_hosp: number[];
   inf_death_delay: number;
-  p_test_sympto: number;
-  test_sensitivity: number;
-  p_test_forward: number;
 
   vaccine_enabled: boolean;
   vaccine_editable: boolean;
@@ -93,7 +90,6 @@ export interface OutputItemGrouped {
 
 export interface ModelOutputExport {
   output: Record<MitigationLabel, Record<OutputTypeLabel, OutputItemGrouped[]>>;
-  p_detect: Record<MitigationLabel, { time: number; value: number }[]>;
   mitigation_types: MitigationLabel[];
   output_types: OutputTypeLabel[];
 }
