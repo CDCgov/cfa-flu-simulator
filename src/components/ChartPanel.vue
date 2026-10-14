@@ -3,6 +3,7 @@ import { LineChart } from "cfasim-ui/charts";
 import ChartTooltipContent from "./ChartTooltipContent.vue";
 import {
   TICK_LABEL_STYLE,
+  Y_GRID_STYLE,
   Y_LABEL_CHART_PADDING,
   type ChartData,
 } from "../utils/chartScale";
@@ -20,6 +21,7 @@ defineProps<{
     :series="data.series"
     :x-labels="data.xLabels"
     :area-sections="data.areaSections"
+    x-label="Days"
     :y-label="yLabel"
     :chart-padding="yLabel ? Y_LABEL_CHART_PADDING : undefined"
     :tick-label-style="TICK_LABEL_STYLE"
@@ -27,7 +29,7 @@ defineProps<{
     :height="height ?? 200"
     :y-min="0"
     :x-min="0"
-    y-grid
+    :y-grid="Y_GRID_STYLE"
     tooltip-trigger="hover"
     tooltip-clamp="window"
   >
