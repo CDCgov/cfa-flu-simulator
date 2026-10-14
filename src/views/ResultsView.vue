@@ -105,7 +105,7 @@ function buildChart(
 
 // --- active-mitigation windows ---------------------------------------------
 
-const SECTION_LABEL_STYLE = { fontSize: 14 };
+const SECTION_LABEL_STYLE = { fontSize: 13 };
 
 function buildAreaSections(
   rows: OutputItemGrouped[],
