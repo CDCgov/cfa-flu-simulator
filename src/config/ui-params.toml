@@ -6,7 +6,7 @@
 #
 # Every entry MUST declare `section = "<id>"` — this drives both the sidebar
 # grouping and the PDF report's Parameters section. Valid ids: "scenario",
-# "detection", "vaccine", "antivirals", "community", "ttiq". Adding a field
+# "vaccine", "antivirals", "community", "ttiq". Adding a field
 # here automatically adds it to the PDF export; no other edits required.
 # For fields only shown when the vaccine is 2-dose, set `show_when_doses_2 = true`.
 
@@ -115,40 +115,6 @@ max = 0.2
 step = 0.001
 type = "percent"
 per_group = true
-
-# ---- DETECTION -------------------------------------------------------------
-
-[p_test_sympto]
-section = "detection"
-label = "Proportion of symptomatic infections tested"
-min = 0
-max = 0.25
-step = 0.005
-default = 0.001
-type = "percent"
-slider = true
-
-[test_sensitivity]
-section = "detection"
-label = "Test sensitivity"
-tooltip = "Proportion of tested infections that are correctly identified as infected by the test"
-min = 0.6
-max = 1.0
-step = 0.01
-default = 0.90
-type = "percent"
-slider = true
-
-[p_test_forward]
-section = "detection"
-label = "Probability a positive test is forwarded to public health"
-tooltip = "Proportion of positive tests that are forwarded to a public health laboratory, resulting in a detection"
-min = 0
-max = 1.0
-step = 0.01
-default = 0.90
-type = "percent"
-slider = true
 
 # ---- VACCINE ---------------------------------------------------------------
 

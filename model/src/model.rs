@@ -130,11 +130,6 @@ impl<const N: usize> SEIRModel<N> {
     }
 }
 
-/// Probability of at least 1 success among N trials each with probability p
-pub fn p_detect1(n: f64, p: f64) -> f64 {
-    1.0 - (1.0 - p).powf(n)
-}
-
 fn distribute_initials<const N: usize>(
     n: SVector<f64, N>,
     seed: SVector<f64, N>,
@@ -319,13 +314,6 @@ where
                 output.add_symptomatic_incidence(*time, new_symptomatic.data.as_slice().into());
                 output.add_hospital_incidence(*time, new_hospitalizations.data.as_slice().into());
                 output.add_death_incidence(*time, new_deaths.data.as_slice().into());
-                output.add_p_detect(
-                    *time,
-                    p_detect1(
-                        state.get_y_cum().sum() * self.parameters.p_test_sympto,
-                        self.parameters.test_sensitivity * self.parameters.p_test_forward,
-                    ),
-                );
                 prev_i_plus_r = i_plus_r;
                 prev_iv_plus_rv = iv_plus_rv;
                 prev_iv2_plus_rv2 = iv2_plus_rv2;
@@ -604,9 +592,6 @@ mod test {
             inf_hosp_delay: 1.0,
             p_death_given_hosp: Vector1::new(0.0),
             inf_death_delay: 1.0,
-            p_test_sympto: 0.0,
-            test_sensitivity: 0.90,
-            p_test_forward: 0.90,
         };
         let mut parameters2 = parameters1.clone();
         parameters2.fraction_initial_immune = 0.0;
@@ -645,9 +630,6 @@ mod test {
             inf_hosp_delay: 1.0,
             p_death_given_hosp: Vector1::new(0.0),
             inf_death_delay: 1.0,
-            p_test_sympto: 0.0,
-            test_sensitivity: 0.90,
-            p_test_forward: 0.90,
         });
         let results = TestResults::new(&model.parameters, &model.integrate());
         assert_float_eq!(results.attack_rate, 0.796814, abs <= 1e-5);
@@ -705,9 +687,6 @@ mod test {
             inf_hosp_delay: 1.0,
             p_death_given_hosp: Vector1::new(0.0),
             inf_death_delay: 1.0,
-            p_test_sympto: 0.0,
-            test_sensitivity: 0.90,
-            p_test_forward: 0.90,
         });
         let results = TestResults::new(&model.parameters, &model.integrate());
         let expected = 0.7583813;
@@ -843,9 +822,6 @@ mod test {
             inf_hosp_delay: 1.0,
             p_death_given_hosp: Vector1::new(ifr / ihr),
             inf_death_delay: 1.0,
-            p_test_sympto: 0.0,
-            test_sensitivity: 0.90,
-            p_test_forward: 0.90,
         };
         params.mitigations.antivirals = AntiviralsParams {
             enabled: true,
@@ -968,9 +944,6 @@ mod test {
             inf_hosp_delay: 1.0,
             p_death_given_hosp: Vector1::new(ifr / ihr),
             inf_death_delay: 1.0,
-            p_test_sympto: 0.0,
-            test_sensitivity: 0.90,
-            p_test_forward: 0.90,
         };
         params.mitigations.vaccine = VaccineParams {
             enabled: true,
@@ -1014,9 +987,6 @@ mod test {
             inf_hosp_delay: 1.0,
             p_death_given_hosp: Vector1::new(0.01),
             inf_death_delay: 1.0,
-            p_test_sympto: 0.0,
-            test_sensitivity: 0.90,
-            p_test_forward: 0.90,
         };
         let vax_params1 = VaccineParams {
             enabled: true,

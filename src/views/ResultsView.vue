@@ -1,5 +1,5 @@
 <script lang="ts">
-export type ResultsTab = "charts" | "summary" | "detection";
+export type ResultsTab = "charts" | "summary";
 </script>
 
 <script setup lang="ts">
@@ -7,7 +7,6 @@ import { computed, nextTick, ref, watch } from "vue";
 import type { Series, AreaSection } from "cfasim-ui/charts";
 import ChartPanel from "../components/ChartPanel.vue";
 import SummaryView from "./SummaryView.vue";
-import DetectionSection from "../sections/DetectionSection.vue";
 import { useParams, type ModelOutputExport, type OutputItemGrouped, type OutputTypeLabel } from "../composables/useParams";
 import { useModelRun } from "../composables/useModelRun";
 import { pickScale, scale, type ChartData } from "../utils/chartScale";
@@ -227,9 +226,7 @@ const headerTitle = computed(() =>
 <template>
   <div class="results-layout">
     <div ref="root" class="results" id="results-root">
-      <!-- Hidden, not removed, on Detection: the PDF report reads its title
-           and subtitle from here. -->
-      <header v-show="tab !== 'detection'" class="results__header">
+      <header class="results__header">
         <h1>{{ headerTitle }}</h1>
         <p class="results__subtitle">{{ subtitle }}</p>
       </header>
@@ -300,10 +297,6 @@ const headerTitle = computed(() =>
           <section class="results__section" id="summary">
             <SummaryView />
           </section>
-        </div>
-
-        <div class="results__panel" :inert="tab !== 'detection'">
-          <DetectionSection :results="results" />
         </div>
       </div>
     </div>

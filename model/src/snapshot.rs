@@ -60,7 +60,6 @@ fn summarize(fixture: &Fixture) -> Summary {
 
 fn make_params(scenario: &str) -> Parameters {
     let mut p = Parameters {
-        p_test_sympto: 0.0,
         vaccine_enabled: false,
         antivirals_enabled: false,
         community_enabled: false,

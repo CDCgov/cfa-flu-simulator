@@ -33,16 +33,8 @@ pub struct OutputItemGrouped {
     pub(crate) grouped_values: Vec<f64>,
 }
 
-#[derive(Tsify, Debug, Clone, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
-pub struct OutputItemSingle {
-    pub(crate) time: f64,
-    pub(crate) value: f64,
-}
-
 pub struct ModelOutput {
     output: HashMap<OutputType, Vec<OutputItemGrouped>>,
-    p_detect: Vec<OutputItemSingle>,
 }
 
 impl ModelOutput {
@@ -51,10 +43,7 @@ impl ModelOutput {
         OutputType::iter().for_each(|output_type| {
             output.insert(output_type, Vec::new());
         });
-        Self {
-            output,
-            p_detect: Vec::new(),
-        }
+        Self { output }
     }
     #[allow(dead_code)]
     pub fn get_output(&self, output_type: &OutputType) -> &Vec<OutputItemGrouped> {
@@ -83,9 +72,6 @@ impl ModelOutput {
     pub fn add_death_incidence(&mut self, time: f64, grouped_values: Vec<f64>) {
         self.add_output(&OutputType::DeathIncidence, time, grouped_values);
     }
-    pub fn add_p_detect(&mut self, time: f64, value: f64) {
-        self.p_detect.push(OutputItemSingle { time, value });
-    }
 }
 
 impl Default for ModelOutput {
@@ -98,7 +84,6 @@ impl Default for ModelOutput {
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct ModelOutputExport {
     pub(crate) output: HashMap<MitigationType, HashMap<OutputType, Vec<OutputItemGrouped>>>,
-    pub(crate) p_detect: HashMap<MitigationType, Vec<OutputItemSingle>>,
     pub(crate) mitigation_types: Vec<MitigationType>,
     pub(crate) output_types: Vec<OutputType>,
 }
@@ -106,12 +91,8 @@ pub struct ModelOutputExport {
 impl ModelOutputExport {
     fn new(runs: Vec<(MitigationType, ModelOutput)>) -> Self {
         let mut output = HashMap::new();
-        let mut p_detect = HashMap::new();
         let mut mitigation_types = Vec::new();
         let output_types = OutputType::iter().collect();
-        runs.iter().for_each(|(mitigation_type, o)| {
-            p_detect.insert(mitigation_type.clone(), o.p_detect.clone());
-        });
         runs.iter().for_each(|(mitigation_type, o)| {
             let mut output_map = HashMap::new();
             for (output_type, items) in &o.output {
@@ -124,7 +105,6 @@ impl ModelOutputExport {
         });
         Self {
             output,
-            p_detect,
             mitigation_types,
             output_types,
         }

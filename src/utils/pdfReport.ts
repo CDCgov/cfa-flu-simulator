@@ -269,7 +269,7 @@ function collectCharts(container: HTMLElement): ChartBlock[] {
   const sections = container.querySelectorAll<HTMLElement>("section");
   sections.forEach((section) => {
     const id = section.getAttribute("id");
-    if (id === "summary" || id === "detection") return;
+    if (id === "summary") return;
 
     const cards = section.querySelectorAll<HTMLElement>(".results__small");
     if (cards.length) {
@@ -326,7 +326,6 @@ interface ReportSection {
 
 const REPORT_SECTIONS: ReportSection[] = [
   { id: "scenario", title: "Scenario" },
-  { id: "detection", title: "Detection" },
   {
     id: "vaccine",
     title: "Vaccine",
