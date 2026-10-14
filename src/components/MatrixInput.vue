@@ -34,7 +34,8 @@ function get(row: number, col: number): number {
 }
 
 // Upper triangle writes both (r,c) and (c,r) to preserve symmetry.
-function update(row: number, col: number, value: number) {
+function update(row: number, col: number, value: number | undefined) {
+  if (value === undefined) return;
   const next = [...props.modelValue];
   next[idx(row, col)] = value;
   next[idx(col, row)] = value;

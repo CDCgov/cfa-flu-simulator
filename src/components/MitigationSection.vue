@@ -15,7 +15,7 @@ defineEmits<(e: "update:enabled", v: boolean) => void>();
       <Toggle
         :label="enabled ? 'Enabled' : 'Disabled'"
         :model-value="enabled"
-        @update:model-value="$emit('update:enabled', $event)"
+        @update:model-value="(v) => v !== undefined && $emit('update:enabled', v)"
       />
     </header>
     <div v-if="enabled" class="mitigation-section__body">

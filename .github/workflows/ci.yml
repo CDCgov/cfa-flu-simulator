@@ -17,6 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
       # rust-toolchain.toml pins nightly; components are not in that file
       - uses: dtolnay/rust-toolchain@nightly
         with:
@@ -26,5 +31,6 @@ jobs:
           workspaces: model
       - uses: k88hudson/setup-plz@v1
       - uses: jolars/panache-action@v1
-      # Same task the pre-commit hook runs: format-check, clippy, test
+      - run: pnpm install
+      # Same task the pre-commit hook runs: format-check, clippy, test, typecheck
       - run: plz precommit

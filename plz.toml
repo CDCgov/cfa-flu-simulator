@@ -27,6 +27,11 @@ run = "vitepress build docs"
 description = "Format Rust and Markdown"
 run_parallel = ["plz:format-rust", "plz:format-md"]
 
+# Type-check the frontend, including .vue files
+[tasks.typecheck]
+run = "vue-tsc --noEmit"
+env = "pnpm"
+
 # Format the Rust sources
 [tasks.format-rust]
 dir = "model"
@@ -71,5 +76,5 @@ run = "uv run scripts/compare_snapshot_fixtures.py"
 
 # Checks run before each commit
 [tasks.precommit]
-run_serial = ["plz:format-check", "plz:clippy", "plz:test:run"]
+run_serial = ["plz:format-check", "plz:clippy", "plz:test:run", "plz:typecheck"]
 git_hook = "pre-commit"
