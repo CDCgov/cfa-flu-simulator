@@ -66,6 +66,23 @@ const tab = ref<ResultsTab>("charts");
   --font-family:
     "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
+  /* Input and button colour from cfasim-ui's cdc theme (themes/cdc.css),
+     without adopting the rest of that theme. */
+  --color-primary: light-dark(#007a99, #33b5d6);
+  --color-primary-hover: light-dark(#006680, #4dc4e0);
+  --color-primary-active: light-dark(#005c73, #1fa8cc);
+}
+
+/* Sidebar background and edge from the cdc theme. SidebarLayout paints
+   --color-bg-1 on its scroll pane and collapsed rail with scoped rules, so
+   the custom property is overridden on the rail (which both inherit) rather
+   than out-specifying those rules. */
+.SidebarLayout .SidebarRail {
+  --color-bg-1: light-dark(#f4fbfc, #162a2e);
+}
+
+.SidebarLayout .SidebarRail .SidebarScroll {
+  border-right-color: light-dark(#c5e4ec, #264349);
 }
 
 .input-label {
