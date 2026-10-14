@@ -37,9 +37,6 @@ pub struct Parameters {
     pub inf_hosp_delay: f64,
     pub p_death_given_hosp: Vec<f64>,
     pub inf_death_delay: f64,
-    pub p_test_sympto: f64,
-    pub test_sensitivity: f64,
-    pub p_test_forward: f64,
 
     pub vaccine_enabled: bool,
     pub vaccine_editable: bool,
@@ -155,9 +152,6 @@ pub(crate) struct ParametersTyped<const N: usize> {
     pub p_death_given_hosp: SVector<f64, N>,
     pub inf_death_delay: f64,
     pub mitigations: MitigationParamsTyped<N>,
-    pub p_test_sympto: f64,
-    pub test_sensitivity: f64,
-    pub p_test_forward: f64,
 }
 
 impl<const N: usize> ParametersTyped<N> {
@@ -255,9 +249,6 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
                 community,
                 ttiq,
             },
-            p_test_sympto: params.p_test_sympto,
-            test_sensitivity: params.test_sensitivity,
-            p_test_forward: params.p_test_forward,
         })
     }
 }
@@ -285,9 +276,6 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
             inf_hosp_delay: params.inf_hosp_delay,
             p_death_given_hosp: params.p_death_given_hosp.iter().copied().collect(),
             inf_death_delay: params.inf_death_delay,
-            p_test_sympto: params.p_test_sympto,
-            test_sensitivity: params.test_sensitivity,
-            p_test_forward: params.p_test_forward,
 
             vaccine_enabled: v.enabled,
             vaccine_editable: v.editable,

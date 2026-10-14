@@ -300,29 +300,6 @@ Define the parameters:
 
 During the period from $t_\mathrm{start}$ to $t_\mathrm{start} + \Delta t_\mathrm{duration}$, adjust the contact matrix entries from $C_{ij}$ to $(1 - \mathrm{Eff}) \times C_{ij}$.
 
-### Surveillance, testing, and detection
-
-Define the parameters:
-
-- $p_{\mathrm{test}|Y}$: proportion of newly infectious, symptomatic people who are tested (e.g., who seek and receive a test), assumed constant
-- test sensitivity
-- probability a positive test is forwarded to public health
-
-Testing could be any modality, such as self-administered or PCR.
-The sensitivity and forwarding probabilities represent the average of those values across all testing modalities.
-
-Then:
-
-$$
-  \begin{align*}
-    \mathrm{CumTested}(t)                               & = p_{\mathrm{demand}|Y} \sum_i Y^\mathrm{cum}_i                                                                                                   \\
-    \mathrm{CumProbDetect1}(t)                          & = 1 - (1 - [\text{test sensitivity}] \times \mathbb{P}[\text{forwarded} | \text{positive}])^{\mathrm{CumTested(t)}}                               \\
-    \mathbb{E}[\mathrm{CumFracInfectionsIdentified(t)}] & = [\text{test sensitivity}] \times \mathbb{P}[\text{forwarded} | \text{positive}] \times \frac{\mathrm{CumTested}(t)}{\sum_i I_i^\mathrm{cum}(t)}
-  \end{align*}
-$$
-
-We report the times at which the cumulative detection probability reaches certain thresholds (e.g., 25%, 50%, and 75%).
-
 ### Vaccination and antivirals
 
 See the base model description above.
