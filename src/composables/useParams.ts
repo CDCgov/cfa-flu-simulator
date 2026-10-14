@@ -30,10 +30,10 @@ export interface Parameters {
   latent_period: number;
   infectious_period: number;
   p_symp_given_inf: number[];
-  fraction_hospitalized: number[];
-  hospitalization_delay: number;
-  fraction_dead: number[];
-  death_delay: number;
+  p_hosp_given_symp: number[];
+  inf_hosp_delay: number;
+  p_death_given_hosp: number[];
+  inf_death_delay: number;
   p_test_sympto: number;
   test_sensitivity: number;
   p_test_forward: number;
