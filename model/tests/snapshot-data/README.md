@@ -15,4 +15,4 @@ cargo run -p cfa-flu-simulator --bin update_snapshot -- --stdout
 
 *Note*: The fixture *generation* is mildly platform-dependent.
 Fixture generation will conflate model changes and platform changes.
-The test suite uses a finite tolerance that ignores these changes.
+The test suite uses a finite tolerance (1e-4 relative) that ignores these changes.
