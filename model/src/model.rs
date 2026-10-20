@@ -17,26 +17,20 @@ impl<const N: usize> AVE<N> {
         let av_params = &params.mitigations.antivirals;
         let zeros = SVector::<f64, N>::from_element(0.0);
 
-        let prob_take_ave_given_symp = av_params.fraction_seek_care
-            * av_params.fraction_diagnosed_prescribed_outpatient
-            * av_params.fraction_adhere;
-
         let pop_eff_i_given_symp = if av_params.enabled {
-            SVector::<f64, N>::from_element(prob_take_ave_given_symp * av_params.ave_i)
+            SVector::<f64, N>::from_element(av_params.fraction_outpatient * av_params.ave_i)
         } else {
             zeros
         };
 
         let pop_eff_p_hosp_given_symp = if av_params.enabled {
-            SVector::<f64, N>::from_element(prob_take_ave_given_symp * av_params.ave_p_hosp)
+            SVector::<f64, N>::from_element(av_params.fraction_outpatient * av_params.ave_p_hosp)
         } else {
             zeros
         };
 
         let pop_eff_p_death_given_hosp = if av_params.enabled {
-            SVector::<f64, N>::from_element(
-                av_params.fraction_diagnosed_prescribed_inpatient * av_params.ave_p_death,
-            )
+            SVector::<f64, N>::from_element(av_params.fraction_inpatient * av_params.ave_p_death)
         } else {
             zeros
         };
@@ -829,10 +823,8 @@ mod test {
             ave_i: 0.5,
             ave_p_hosp: 0.5,
             ave_p_death: 0.0,
-            fraction_adhere: 0.5,
-            fraction_diagnosed_prescribed_inpatient: 0.5,
-            fraction_diagnosed_prescribed_outpatient: 0.5,
-            fraction_seek_care: 0.5,
+            fraction_outpatient: 0.5 * 0.5 * 0.5,
+            fraction_inpatient: 0.5,
         };
 
         let model = SEIRModel::new(params);
