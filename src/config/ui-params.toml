@@ -247,8 +247,8 @@ slider = true
 
 [vaccine_ve_p]
 section = "vaccine"
-label = "Effectiveness for symptomatic disease"
-tooltip = "Proportion of symptomatic disease among the vaccine-protected that is averted"
+label = "Effectiveness for progression to symptomatic disease"
+tooltip = "Proportion of symptomatic disease among the vaccine-protected infected that is averted"
 range_with = "vaccine_ve_2p"
 range_label = "Effectiveness for symptomatic disease (1st and 2nd dose)"
 range_tooltip = "Proportion of symptomatic disease among the vaccine-protected that is averted. The left handle is the effect after the first dose, the right handle after the second."
