@@ -56,10 +56,8 @@ export interface Parameters {
 
   antivirals_enabled: boolean;
   antivirals_editable: boolean;
-  antivirals_fraction_adhere: number;
-  antivirals_fraction_diagnosed_prescribed_inpatient: number;
-  antivirals_fraction_diagnosed_prescribed_outpatient: number;
-  antivirals_fraction_seek_care: number;
+  antivirals_fraction_outpatient: number;
+  antivirals_fraction_inpatient: number;
   antivirals_ave_i: number;
   antivirals_ave_p_hosp: number;
   antivirals_ave_p_death: number;

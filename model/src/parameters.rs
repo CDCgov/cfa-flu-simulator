@@ -59,10 +59,8 @@ pub struct Parameters {
 
     pub antivirals_enabled: bool,
     pub antivirals_editable: bool,
-    pub antivirals_fraction_adhere: f64,
-    pub antivirals_fraction_diagnosed_prescribed_inpatient: f64,
-    pub antivirals_fraction_diagnosed_prescribed_outpatient: f64,
-    pub antivirals_fraction_seek_care: f64,
+    pub antivirals_fraction_outpatient: f64,
+    pub antivirals_fraction_inpatient: f64,
     pub antivirals_ave_i: f64,
     pub antivirals_ave_p_hosp: f64,
     pub antivirals_ave_p_death: f64,
@@ -207,12 +205,8 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
         let antivirals = AntiviralsParams {
             enabled: params.antivirals_enabled,
             editable: params.antivirals_editable,
-            fraction_adhere: params.antivirals_fraction_adhere,
-            fraction_diagnosed_prescribed_inpatient: params
-                .antivirals_fraction_diagnosed_prescribed_inpatient,
-            fraction_diagnosed_prescribed_outpatient: params
-                .antivirals_fraction_diagnosed_prescribed_outpatient,
-            fraction_seek_care: params.antivirals_fraction_seek_care,
+            fraction_outpatient: params.antivirals_fraction_outpatient,
+            fraction_inpatient: params.antivirals_fraction_inpatient,
             ave_i: params.antivirals_ave_i,
             ave_p_hosp: params.antivirals_ave_p_hosp,
             ave_p_death: params.antivirals_ave_p_death,
@@ -307,12 +301,8 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
 
             antivirals_enabled: a.enabled,
             antivirals_editable: a.editable,
-            antivirals_fraction_adhere: a.fraction_adhere,
-            antivirals_fraction_diagnosed_prescribed_inpatient: a
-                .fraction_diagnosed_prescribed_inpatient,
-            antivirals_fraction_diagnosed_prescribed_outpatient: a
-                .fraction_diagnosed_prescribed_outpatient,
-            antivirals_fraction_seek_care: a.fraction_seek_care,
+            antivirals_fraction_outpatient: a.fraction_outpatient,
+            antivirals_fraction_inpatient: a.fraction_inpatient,
             antivirals_ave_i: a.ave_i,
             antivirals_ave_p_hosp: a.ave_p_hosp,
             antivirals_ave_p_death: a.ave_p_death,

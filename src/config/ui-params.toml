@@ -311,7 +311,7 @@ slider = true
 [antivirals_ave_i]
 section = "antivirals"
 label = "Effectiveness for onward transmission"
-tooltip = "Proportional reduction in onward transmission among infected individuals who receive outpatient antivirals and adhere to the regimen"
+tooltip = "Proportional reduction in onward transmission among infected individuals who receive outpatient antivirals"
 min = 0
 max = 0.5
 step = 0.01
@@ -322,7 +322,7 @@ slider = true
 [antivirals_ave_p_hosp]
 section = "antivirals"
 label = "Effectiveness for hospitalization"
-tooltip = "Of symptomatic infections who receive outpatient antivirals and adhere to the regimen, the proportion that avert hospitalization"
+tooltip = "Of symptomatic infections who receive outpatient antivirals and adhere to the regimen, the proportional reduction in hospitalizations"
 min = 0
 max = 0.5
 step = 0.01
@@ -341,42 +341,20 @@ default = 0.10
 type = "percent"
 slider = true
 
-[antivirals_fraction_seek_care]
+[antivirals_fraction_outpatient]
 section = "antivirals"
-label = "Fraction of cases that seek care"
-tooltip = "Proportion of symptomatic infections that seek care"
+label = "Fraction of symptomatic infections that receive outpatient antivirals"
+tooltip = "Fraction that seek care, are prescribed outpatient antivirals, and adhere to the regimen"
 min = 0
 max = 1
 step = 0.01
-default = 0.50
+default = 0.10
 type = "percent"
 slider = true
 
-[antivirals_fraction_diagnosed_prescribed_outpatient]
+[antivirals_fraction_inpatient]
 section = "antivirals"
-label = "Fraction of care-seeking outpatient cases that receive antivirals"
-tooltip = "Proportion of care-seeking infections that are prescribed outpatient antivirals"
-min = 0
-max = 1
-step = 0.01
-default = 0.40
-type = "percent"
-slider = true
-
-[antivirals_fraction_adhere]
-section = "antivirals"
-label = "Fraction of individuals that adhere to prescribed outpatient antiviral regimen"
-tooltip = "Proportion of individuals prescribed outpatient antivirals who take their full course of medication"
-min = 0
-max = 1
-step = 0.01
-default = 0.50
-type = "percent"
-slider = true
-
-[antivirals_fraction_diagnosed_prescribed_inpatient]
-section = "antivirals"
-label = "Fraction of hospitalized cases that receive antivirals"
+label = "Fraction of hospitalized cases that receive inpatient antivirals"
 tooltip = "Proportion of hospitalized infections that are prescribed inpatient antivirals"
 min = 0
 max = 1

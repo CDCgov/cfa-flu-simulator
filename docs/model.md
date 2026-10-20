@@ -139,8 +139,7 @@ These compartments currently represent the proportion of the total population $N
           In future iterations, vaccines might provide further protection against hospitalization given symptomatic $\mathrm{VE}_{P,H|Y}$, or protection against death given hospitalization $\mathrm{VE}_{P,D|H}$.
     - $\mathrm{VE}_{2S}$, etc.: effectiveness of two doses (N.B.: this is not an incremental quantity; we expect $\mathrm{VE}_{2S} \geq \mathrm{VE}_S$)
 - Antiviral effectiveness
-    - $\mathrm{AVE}_I$: antiviral effectiveness for onward transmission given infected.
-        - Note that this is the *effectiveness* and incorporates the interaction between the delay from exposure to receiving antivirals and the generation time distribution.
+    - $\mathrm{AVE}_I$: antiviral effectiveness for onward transmission
     - $\mathrm{AVE}_H$: effectiveness for progression to hospitalization given symptomatic infection
     - $\mathrm{AVE}_D$: effectiveness for progression to death given hospitalization
         - All fatalities are assumed to occur following hospitalization, so the protection against death given symptomatic infection is the combination of these two protections

@@ -48,10 +48,8 @@ vaccine_ve_2p = 0.75
 # Antivirals
 antivirals_enabled = false
 antivirals_editable = true
-antivirals_fraction_adhere = 0.50
-antivirals_fraction_diagnosed_prescribed_inpatient = 1.0
-antivirals_fraction_diagnosed_prescribed_outpatient = 0.40
-antivirals_fraction_seek_care = 0.50
+antivirals_fraction_outpatient = 0.10
+antivirals_fraction_inpatient = 1.0
 antivirals_ave_i = 0.30
 antivirals_ave_p_hosp = 0.20
 antivirals_ave_p_death = 0.1
