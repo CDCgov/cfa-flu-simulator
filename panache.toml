@@ -2,6 +2,7 @@ flavor = "gfm"
 
 [format]
 wrap = "sentence"
+no-break-abbreviations = ["al."]
 
 [formatters]
 

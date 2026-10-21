@@ -155,7 +155,8 @@ These compartments currently represent the proportion of the total population $N
         - Symptomatic and asymptomatic cases are assumed otherwise equal (e.g., equally infectious) so that this fraction does not affect transmission (except via mitigations that depend on symptoms)
     - $\mathrm{SHR}_i$: symptomatic infection-hospitalization ratio, i.e., proportion of symptomatic infections that result in hospitalization.
       (Note this is not the case-hospitalization ratio, which depends on case ascertainment.)
-    - $\mathrm{CFR}_i$: case fatality ratio, i.e., proportion of symptomatic infections that result in death
+    - $\mathrm{HFR}_i$: hospitalization-fatality ratio, i.e., ratio of deaths to hospitalizations.
+      (Note that this is not the proportion of hospitalizations that end in death, since it includes deaths that occur outside the hospital.)
 
 ### Model initialization
 
@@ -333,3 +334,7 @@ $$
     - [Mellis et al. 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10678642/)
     - [Ng et al. 2010](https://pmc.ncbi.nlm.nih.gov/articles/PMC2840043/)
     - [Uyeki et al. 2024](https://pubmed.ncbi.nlm.nih.gov/37983025/)
+- Severity
+    - [Reed et al. 2015](https://doi.org/10.1371/journal.pone.0118369), which estimated hospitalization-fatality ratios of 0.5% to 6.8% for various age groups for the 2010/2011 through 2012/2013 seasons
+    - [Reed et al. 2009](https://doi.org/10.3201/eid1512.091413), which estimated a symptomatic-hospitalization ratio of 0.45% (0.16% to 1.2%) for the 2009 pandemic
+    - [Rolfes et al. 2018](https://doi.org/10.1111/irv.12486), which references Reed et al. 2009
