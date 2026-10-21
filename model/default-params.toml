@@ -56,7 +56,7 @@ antivirals_ave_i = 0.30
 antivirals_ave_p_hosp = 0.20
 antivirals_ave_p_death = 0.1
 
-# Community
+# Contact-pattern mitigations (aka "Community")
 community_enabled = false
 community_editable = true
 community_start = 60.0

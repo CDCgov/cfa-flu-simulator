@@ -62,7 +62,7 @@ Outpatient and inpatient virals are assumed to have independent effects: a perso
 
 Inpatient antivirals have no effect on transmission.
 
-#### Community mitigations
+#### Contact-pattern interventions
 
 The model assumes that an intervention takes effect on some date, immediately changing transmission by some constant factor, and then ends, immediately returning transmission to its pre-intervention status.
 The reduction is a total effect and includes both the reduction in number of contacts and the probability of infection per contact.
@@ -290,7 +290,7 @@ $$
 
 ## Mitigations
 
-### Community mitigations
+### Contact-pattern interventions
 
 Define the parameters:
 
