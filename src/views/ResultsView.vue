@@ -76,14 +76,14 @@ function buildChart(
       data: scale(unmitRaw, sc.divisor),
       color: UNMITIGATED_COLOR,
       dashed: true,
-      legend: "Unmitigated",
+      legend: "Without interventions",
     });
     rawBySeries.push(unmitRaw);
     const mitRaw = extract(mitigated);
     series.push({
       data: scale(mitRaw, sc.divisor),
       strokeWidth: 2,
-      legend: "Mitigated",
+      legend: "With interventions",
     });
     rawBySeries.push(mitRaw);
     mitigatedSeriesIndex = 1;
@@ -91,7 +91,7 @@ function buildChart(
     series.push({
       data: scale(primaryData, sc.divisor),
       strokeWidth: 2,
-      legend: "Unmitigated",
+      legend: "Without interventions",
     });
     rawBySeries.push(primaryData);
   }
@@ -214,8 +214,8 @@ const subtitle = computed(() => {
 
 const headerTitle = computed(() =>
   results.value && results.value.mitigation_types.length > 1
-    ? "Mitigated vs. Unmitigated Scenario"
-    : "Unmitigated Scenario",
+    ? "Scenarios with and without interventions"
+    : "Scenario without interventions",
 );
 
 const onThisPageGroups = computed(() => [

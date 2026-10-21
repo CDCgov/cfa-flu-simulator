@@ -45,7 +45,7 @@ This framework also permits multiple types of vaccine effectiveness.
 
 The codebases used different ODE solvers.
 Tweaking the exact solver used or the step size had minimal effects, in line with expectations for those kinds of tweaks.
-The differences between solvers were most marked in simulations that included community mitigations and were most marked at the moment of the mitigation onset.
-This is not surprising, because community mitigation is modeled as a discontinuous change in the ODE rates, which different solvers will respond to somewhat differently.
+The differences between solvers were most marked in simulations that included contact-pattern interventions and were most marked at the moment of the intervention onset.
+This is not surprising, because a contact-pattern intervention is modeled as a discontinuous change in the ODE rates, which different solvers will respond to somewhat differently.
 
 Overall, I found no evidence to suggest that the choice of solver is tightly coupled with model design.
