@@ -165,7 +165,7 @@ function buildAreaSections(
       color: "#f59e0b",
       opacity: 0.15,
       label: `Day ${Math.round(params.community_start)}–${Math.round(end)}`,
-      description: "Contact-pattern intervention",
+      description: "Contact-pattern interventions",
       legend,
     });
   }
@@ -203,7 +203,7 @@ const subtitle = computed(() => {
   const active: string[] = [];
   if (params.vaccine_enabled) active.push("vaccination");
   if (params.antivirals_enabled) active.push("antivirals");
-  if (params.community_enabled) active.push("contact-pattern intervention");
+  if (params.community_enabled) active.push("contact-pattern interventions");
   if (params.ttiq_enabled) active.push("TTIQ");
   const pop = formatDoses(params.population);
   if (active.length === 0) {
