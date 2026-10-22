@@ -9,10 +9,8 @@ import {
   type InjectionKey,
   type Ref,
 } from "vue";
-import { parse } from "smol-toml";
 import { useUrlParams } from "cfasim-ui/shared";
-import { allFields, rangePairs } from "../config/uiConfig";
-import rawDefaults from "../../model/default-params.toml?raw";
+import { allFields, loadDefaultParameters, rangePairs } from "../config/uiConfig";
 
 // Flat schema mirrors the Rust `Parameters` struct (wasm boundary).
 // Mitigation fields are prefixed (vaccine_, antivirals_, community_, ttiq_)
@@ -99,7 +97,6 @@ export interface WasmModel {
 
 export interface WasmModule {
   default: () => Promise<unknown>;
-  get_default_parameters: () => Parameters;
   SEIRModelUnified: new (params: Parameters) => WasmModel;
 }
 
@@ -137,15 +134,6 @@ export interface ParamsStore {
 }
 
 const ParamsKey: InjectionKey<ParamsStore> = Symbol("params");
-
-// Build-time snapshot of model/default-params.toml (the same file the wasm
-// crate embeds via include_str!). Used to seed reactive state before wasm
-// loads; overwritten with `get_default_parameters()` on ready.
-const TOML_DEFAULTS = parse(rawDefaults) as unknown as Parameters;
-
-function seedParameters(): Parameters {
-  return structuredClone(TOML_DEFAULTS);
-}
 
 function sameShape(value: unknown, reference: unknown): boolean {
   if (Array.isArray(reference)) {
@@ -201,7 +189,7 @@ const TWO_DOSE_ONLY = Object.entries(allFields())
 const DOSE_PAIRS = rangePairs() as [keyof Parameters, keyof Parameters][];
 
 export function createParamsStore(): ParamsStore {
-  const params = reactive<Parameters>(seedParameters());
+  const params = reactive<Parameters>({} as Parameters);
   const ready = ref(false);
   // shallowRef: defaults are an immutable snapshot. A plain ref() would
   // deep-proxy the object, and useUrlParams' structuredClone chokes on the
@@ -236,7 +224,7 @@ export function createParamsStore(): ParamsStore {
     if (!stashed) {
       stashed = Object.fromEntries(TWO_DOSE_ONLY.map((k) => [k, params[k]]));
     }
-    const defaults = wasmDefaults.value ?? TOML_DEFAULTS;
+    const defaults = wasmDefaults.value ?? ({} as Parameters);
     for (const key of TWO_DOSE_ONLY) {
       write[key as string] = structuredClone(defaults[key]);
     }
@@ -253,9 +241,9 @@ export function createParamsStore(): ParamsStore {
     normalize,
   );
 
-  loadWasm().then((mod) => {
-    wasmDefaults.value = mod.get_default_parameters();
-    Object.assign(params, wasmDefaults.value);
+  Promise.all([loadDefaultParameters(), loadWasm()]).then(([defaults]) => {
+    wasmDefaults.value = defaults;
+    Object.assign(params, defaults);
     hydrate();
     normalize();
     ready.value = true;
@@ -266,7 +254,7 @@ export function createParamsStore(): ParamsStore {
   }
 
   function importParams(input: unknown) {
-    const defaults = wasmDefaults.value ?? TOML_DEFAULTS;
+    const defaults = wasmDefaults.value ?? ({} as Parameters);
     Object.assign(params, mergeImported(input, defaults));
   }
 

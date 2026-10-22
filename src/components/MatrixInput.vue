@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Symmetric n×n matrix editor. Values are stored column-major to match
-// nalgebra's native layout (see model/default-params.toml for details).
+// Symmetric n×n matrix editor.
+// Values are stored column-major to match nalgebra's native layout.
 // Index into flat: row r, col c → flat[c * n + r].
 import { computed } from "vue";
 import { Hint, NumberInput } from "cfasim-ui/components";
@@ -64,19 +64,9 @@ function update(row: number, col: number, value: number | undefined) {
           <td v-for="(_col, c) in params.population_fraction_labels" :key="c">
             <!-- If below the diagonal, make this an inert, "mirror" value,
                  but with the same formatting -->
-            <NumberInput
-              :model-value="get(r, c)"
-              @update:model-value="update(r, c, $event)"
-              :min="cfg.min"
-              :max="cfg.max"
-              :step="cfg.step"
-              hide-label
-              :number-type="numberType"
-              :percent="percent"
-              :inert="c < r"
-              :class="{ 'matrix-input__mirror': c < r }"
-              live
-            />
+            <NumberInput :model-value="get(r, c)" @update:model-value="update(r, c, $event)" :min="cfg.min"
+              :max="cfg.max" :step="cfg.step" hide-label :number-type="numberType" :percent="percent" :inert="c < r"
+              :class="{ 'matrix-input__mirror': c < r }" live />
           </td>
         </tr>
       </tbody>
@@ -90,24 +80,29 @@ function update(row: number, col: number, value: number | undefined) {
   flex-direction: column;
   gap: 0.25rem;
 }
+
 .matrix-input__label {
   font-size: 0.875rem;
   opacity: 0.85;
 }
+
 .matrix-input__table {
   border-collapse: collapse;
   font-size: 0.875rem;
 }
+
 .matrix-input__table th,
 .matrix-input__table td {
   padding: 0.25rem;
   text-align: left;
   vertical-align: middle;
 }
+
 .matrix-input__table thead th {
   font-weight: 500;
   opacity: 0.7;
 }
+
 .matrix-input__mirror {
   opacity: 0.4;
   font-variant-numeric: tabular-nums;
