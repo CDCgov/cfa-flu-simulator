@@ -8,8 +8,6 @@ use crate::mitigations::{
     VaccineParams,
 };
 
-static DEFAULT_TOML: &str = include_str!("../default-params.toml");
-
 // Public, flat, TOML/JSON/wasm-serializable parameter struct.
 // Mitigation fields are flattened with prefixes (vaccine_, antivirals_,
 // community_, ttiq_) so the full schema can round-trip through URL query
@@ -25,7 +23,8 @@ pub struct Parameters {
     pub population: f64,
     pub population_fraction_labels: Vec<String>,
     pub population_fractions: Vec<f64>,
-    // column-major flat n*n (nalgebra's native storage order, see default-params.toml)
+    // n*n matrix
+    // Values are stored column-major to match nalgebra's native layout.
     pub contact_matrix: Vec<f64>,
     pub initial_infections: f64,
     pub fraction_initial_immune: f64,
@@ -123,9 +122,15 @@ impl Parameters {
     }
 }
 
+pub(crate) fn test_default_parameters() -> Parameters {
+    toml::from_str(include_str!("../tests/fixtures/default-params.toml"))
+        .expect("test default parameters are malformed")
+}
+
+#[cfg(test)]
 impl Default for Parameters {
     fn default() -> Self {
-        toml::from_str(DEFAULT_TOML).expect("default-params.toml is malformed")
+        test_default_parameters()
     }
 }
 
@@ -320,11 +325,6 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
             ttiq_p_traced_quarantines: t.p_traced_quarantines,
         }
     }
-}
-
-#[wasm_bindgen]
-pub fn get_default_parameters() -> Parameters {
-    Parameters::default()
 }
 
 #[cfg(test)]

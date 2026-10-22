@@ -1,14 +1,33 @@
 # UI parameter config — labels, tooltips, and input ranges for the form.
 # Keyed by the flat `Parameters` field names (e.g. `vaccine_ve_s`).
 #
-# Default values here are informational/mirror-only. The runtime default
-# comes from `get_default_parameters()` (which loads model/default-params.toml).
+# Each parameter table's `default` value is the runtime source of frontend defaults.
 #
-# Every entry MUST declare `section = "<id>"` — this drives both the sidebar
-# grouping and the PDF report's Parameters section. Valid ids: "scenario",
-# "vaccine", "antivirals", "community", "ttiq". Adding a field
+# Every visible entry MUST declare `section = "<id>"` — this drives both the
+# sidebar grouping and the PDF report's Parameters section. Valid ids:
+# "scenario", "vaccine", "antivirals", "community", "ttiq". Adding a field
 # here automatically adds it to the PDF export; no other edits required.
 # For fields only shown when the vaccine is 2-dose, set `show_when_doses_2 = true`.
+
+# Structural and non-editable parameters still live in their own parameter
+# tables so every runtime default has one unambiguous home.
+[n]
+default = 2
+
+[population_fraction_labels]
+default = ["Children", "Adults"]
+
+[population_fractions]
+default = [0.25, 0.75]
+
+[contact_matrix]
+default = [18.0, 9.0, 3.0, 12.0]
+
+[inf_hosp_delay]
+default = 7.0
+
+[inf_death_delay]
+default = 10.0
 
 # ---- SCENARIO ---------------------------------------------------------------
 
@@ -91,7 +110,7 @@ tooltip = "Proportion of infections that would result in symptoms in the absence
 min = 0.3
 max = 0.8
 step = 0.01
-default = 0.5
+default = [0.5, 0.5]
 type = "percent"
 slider = true
 per_group = true
@@ -103,6 +122,7 @@ tooltip = "Proportion of symptomatic infections that would result in hospitaliza
 min = 0.0
 max = 0.1
 step = 0.001
+default = [0.02, 0.2]
 type = "percent"
 per_group = true
 
@@ -113,14 +133,22 @@ tooltip = "Proportion of hospitalizations that would result in death in the abse
 min = 0.0
 max = 0.2
 step = 0.001
+default = [0.05, 0.05]
 type = "percent"
 per_group = true
 
 # ---- VACCINE ---------------------------------------------------------------
 
+[vaccine_enabled]
+default = true
+
+[vaccine_editable]
+default = true
+
 [vaccine_doses]
 section = "vaccine"
 label = "Vaccine type"
+default = 1
 type = "select"
 options = [
     { value = 1, label = "One dose" },
@@ -285,6 +313,12 @@ default = 0.30
 type = "percent"
 slider = true
 
+[antivirals_enabled]
+default = false
+
+[antivirals_editable]
+default = true
+
 [antivirals_ave_p_hosp]
 section = "antivirals"
 label = "Effectiveness for hospitalization"
@@ -382,8 +416,15 @@ tooltip = "Proportional reduction in transmission due to the mitigation, where n
 min = -1
 max = 1
 step = 0.1
+default = [0.5, -0.10, -0.10, 0.0]
 type = "percent"
 matrix = true
+
+[community_enabled]
+default = false
+
+[community_editable]
+default = true
 
 # ---- TTIQ ------------------------------------------------------------------
 
@@ -396,6 +437,12 @@ step = 0.01
 default = 0.15
 type = "percent"
 slider = true
+
+[ttiq_enabled]
+default = false
+
+[ttiq_editable]
+default = true
 
 [ttiq_p_infectious_isolates]
 section = "ttiq"
