@@ -142,7 +142,7 @@ These compartments currently represent the proportion of the total population $N
     - $\mathrm{AVE}_I$: antiviral effectiveness for onward transmission
     - $\mathrm{AVE}_H$: effectiveness for progression to hospitalization given symptomatic infection
     - $\mathrm{AVE}_D$: effectiveness for progression to death given hospitalization
-        - All fatalities are assumed to occur following hospitalization, so the protection against death given symptomatic infection is the combination of these two protections
+        - All deaths are assumed to occur among hospitalized individuals, so the protection against death given symptomatic infection is the combination of these two protections
     - Note that outpatient and inpatient antivirals are considered sufficiently different that individuals can receive both and they have independent effects.
     - In the model, antivirals are not given before exposure, so $\mathrm{AVE}_S$ is undefined.
 - Antiviral usage
@@ -155,8 +155,8 @@ These compartments currently represent the proportion of the total population $N
         - Symptomatic and asymptomatic cases are assumed otherwise equal (e.g., equally infectious) so that this fraction does not affect transmission (except via mitigations that depend on symptoms)
     - $\mathrm{SHR}_i$: symptomatic infection-hospitalization ratio, i.e., proportion of symptomatic infections that result in hospitalization.
       (Note this is not the case-hospitalization ratio, which depends on case ascertainment.)
-    - $\mathrm{HFR}_i$: hospitalization-fatality ratio, i.e., ratio of deaths to hospitalizations.
-      (Note that this is not the proportion of hospitalizations that end in death, since it includes deaths that occur outside the hospital.)
+    - $\mathrm{HFR}_i$: hospitalization-fatality ratio, i.e., proportion of hospitalizations that end in death.
+      All deaths are assumed to occur among hospitalized individuals.
 
 ### Model initialization
 
