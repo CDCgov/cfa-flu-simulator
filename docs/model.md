@@ -15,6 +15,7 @@ Removed individuals cannot be re-infected.
 ### Health outcomes
 
 Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for mitigations like isolation and antiviral usage.
+Symptomatic infections are assumed equally infectious as asymptomatic infections.
 
 Hospitalization and death are included in the model, but only as counting functions.
 Upon infection, some proportion of people will go on to these outcomes at some later time, depending on model parameters and other mitigations.
@@ -232,15 +233,14 @@ $$
     \times (1 - \mathrm{VE}_I) \left[ 1 - \mathrm{FS}_j (1 - \mathrm{VE}_P) A_\mathrm{op} \mathrm{AVE}_I \right]
 $$
 
+Note that symptomatic infections are assumed equally infectious as asymptomatic infections.
 The force of infection on group $i$ (`infection_rate`, modulo a factor of the population fractions) is:
 
 $$
   \phi_i(t) = \frac{\beta}{N} \sum_j C_{ij} I^\mathrm{eff}_j(t)
 $$
 
-Note that $\beta$ is divided by $N$ to convert from numbers of people (in terms of which $R_0$ is defined) to proportions,
-
-So that the fluxes from susceptible to exposed are:
+Note that $\beta$ is divided by $N$ to convert from numbers of people (in terms of which $R_0$ is defined) to proportions so that the fluxes from susceptible to exposed are:
 
 $$
   \begin{align*}
