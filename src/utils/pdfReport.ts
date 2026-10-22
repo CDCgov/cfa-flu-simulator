@@ -338,7 +338,7 @@ const REPORT_SECTIONS: ReportSection[] = [
   },
   {
     id: "community",
-    title: "Community mitigation",
+    title: "Contact-pattern interventions",
     isEnabled: (p) => p.community_enabled,
   },
   {

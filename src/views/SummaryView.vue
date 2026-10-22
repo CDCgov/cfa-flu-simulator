@@ -96,8 +96,8 @@ function formatPct(n: number): string {
           <thead>
             <tr>
               <th class="summary__col-group">Age group</th>
-              <th>Unmitigated</th>
-              <th v-if="t.hasMitigated">Mitigated</th>
+              <th>Without interventions</th>
+              <th v-if="t.hasMitigated">With interventions</th>
               <th v-if="t.hasMitigated">Prevented</th>
               <th v-if="t.hasMitigated">% Prevented</th>
             </tr>
