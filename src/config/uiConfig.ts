@@ -1,5 +1,6 @@
 import { parse } from "smol-toml";
 import rawToml from "./ui-params.toml?raw";
+import type { Parameters } from "../composables/useParams";
 
 export type FieldType = "integer" | "float" | "percent" | "select";
 
@@ -29,7 +30,8 @@ export interface FieldConfig {
   options?: SelectOption[];
 }
 
-// Flatten nested TOML to dotted-path lookup: { "scenario.days": {...}, ... }
+// Flatten parameter tables to dotted-path lookup. Tables without a `label`
+// are retained in the TOML solely as non-visible runtime defaults.
 function flatten(
   obj: Record<string, unknown>,
   prefix = "",
@@ -50,7 +52,34 @@ function flatten(
   return out;
 }
 
-const config = flatten(parse(rawToml) as Record<string, unknown>);
+const parsedToml = parse(rawToml) as Record<string, unknown>;
+const config = flatten(parsedToml);
+
+export async function loadDefaultParameters(): Promise<Parameters> {
+  const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
+  const response = await fetch(`${base}/ui-params.toml`, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Unable to load ui-params.toml (${response.status})`);
+  }
+  const parsed = parse(await response.text()) as Record<string, unknown>;
+  const defaults = Object.fromEntries(
+    Object.entries(parsed).flatMap(([key, value]) => {
+      if (
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        "default" in value
+      ) {
+        return [[key, (value as Record<string, unknown>).default]];
+      }
+      return [];
+    }),
+  );
+  if (Object.keys(defaults).length === 0) {
+    throw new Error("ui-params.toml: no parameter defaults found");
+  }
+  return structuredClone(defaults) as unknown as Parameters;
+}
 
 export function getField(path: string): FieldConfig {
   const entry = config[path];
