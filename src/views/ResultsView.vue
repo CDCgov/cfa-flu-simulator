@@ -74,14 +74,14 @@ function buildChart(
       data: scale(unmitRaw, sc.divisor),
       color: UNMITIGATED_COLOR,
       dashed: true,
-      legend: "Unmitigated",
+      legend: "Without interventions",
     });
     rawBySeries.push(unmitRaw);
     const mitRaw = extract(mitigated);
     series.push({
       data: scale(mitRaw, sc.divisor),
       strokeWidth: 2,
-      legend: "Mitigated",
+      legend: "With interventions",
     });
     rawBySeries.push(mitRaw);
     mitigatedSeriesIndex = 1;
@@ -89,7 +89,7 @@ function buildChart(
     series.push({
       data: scale(primaryData, sc.divisor),
       strokeWidth: 2,
-      legend: "Unmitigated",
+      legend: "Without interventions",
     });
     rawBySeries.push(primaryData);
   }
@@ -167,7 +167,7 @@ function buildAreaSections(
       color: "#f59e0b",
       opacity: 0.15,
       label: `Day ${Math.round(params.community_start)}–${Math.round(end)}`,
-      description: "Community mitigation",
+      description: "Contact-pattern interventions",
       legend,
       inlineLabelStyle: SECTION_LABEL_STYLE,
       inlineDescriptionStyle: SECTION_LABEL_STYLE,
@@ -207,7 +207,7 @@ const subtitle = computed(() => {
   const active: string[] = [];
   if (params.vaccine_enabled) active.push("vaccination");
   if (params.antivirals_enabled) active.push("antivirals");
-  if (params.community_enabled) active.push("community mitigation");
+  if (params.community_enabled) active.push("contact-pattern interventions");
   if (params.ttiq_enabled) active.push("TTIQ");
   const pop = formatDoses(params.population);
   if (active.length === 0) {
@@ -226,8 +226,8 @@ const groupSubtitle = computed(() => {
 
 const headerTitle = computed(() =>
   results.value && results.value.mitigation_types.length > 1
-    ? "Mitigated vs. Unmitigated Scenario"
-    : "Unmitigated Scenario",
+    ? "Scenarios with and without interventions"
+    : "Scenario without interventions",
 );
 </script>
 

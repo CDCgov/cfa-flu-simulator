@@ -12,7 +12,7 @@ The model tracks disease dynamics across age groups and layers public health int
 
 - **Vaccination**, including single- and two-dose campaigns with a dose-to-protection delay and separate effectiveness against infection, onward transmission, and symptoms.
 - **Antivirals**, both outpatient and inpatient, reducing transmission and progression to hospitalization and death.
-- **Community mitigations**, which scale contact rates for a fixed window.
+- **Contact-pattern interventions**, which scale contact rates for a fixed window.
 - **Testing, tracing, isolation, and quarantine (TTIQ)**, approximated as a reduction in the mean infectious period.
 
 Hospitalizations and deaths are counted as outcomes of infection but are assumed not to feed back into transmission.

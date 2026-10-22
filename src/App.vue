@@ -36,7 +36,7 @@ const tab = ref<ResultsTab>("charts");
           <ScenarioSection />
         </section>
         <section class="sidebar-group">
-          <h2>Mitigations</h2>
+          <h2>Interventions</h2>
           <VaccineSection />
           <AntiviralsSection />
           <CommunitySection />

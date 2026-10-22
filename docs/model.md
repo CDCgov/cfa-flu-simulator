@@ -14,13 +14,13 @@ Removed individuals cannot be re-infected.
 
 ### Health outcomes
 
-Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for mitigations like isolation and antiviral usage.
+Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for interventions like isolation and antiviral usage.
 
 Hospitalization and death are included in the model, but only as counting functions.
-Upon infection, some proportion of people will go on to these outcomes at some later time, depending on model parameters and other mitigations.
+Upon infection, some proportion of people will go on to these outcomes at some later time, depending on model parameters and other interventions.
 The model makes the simplifying assumption that hospitalization and death have no impact on disease dynamics.
 
-### Mitigations
+### Interventions
 
 #### Vaccination
 
@@ -62,7 +62,7 @@ Outpatient and inpatient virals are assumed to have independent effects: a perso
 
 Inpatient antivirals have no effect on transmission.
 
-#### Community mitigations
+#### Contact-pattern interventions
 
 The model assumes that an intervention takes effect on some date, immediately changing transmission by some constant factor, and then ends, immediately returning transmission to its pre-intervention status.
 The reduction is a total effect and includes both the reduction in number of contacts and the probability of infection per contact.
@@ -152,7 +152,7 @@ These compartments currently represent the proportion of the total population $N
     - $A_\mathrm{ip}$: proportion of hospitalized ("ip" is for "inpatient") people who receive antivirals
 - Health outcomes
     - $\mathrm{FS}_i$: fraction symptomatic, i.e., proportion of infections that are symptomatic
-        - Symptomatic and asymptomatic cases are assumed otherwise equal (e.g., equally infectious) so that this fraction does not affect transmission (except via mitigations that depend on symptoms)
+        - Symptomatic and asymptomatic cases are assumed otherwise equal (e.g., equally infectious) so that this fraction does not affect transmission (except via interventions that depend on symptoms)
     - $\mathrm{SHR}_i$: symptomatic infection-hospitalization ratio, i.e., proportion of symptomatic infections that result in hospitalization.
       (Note this is not the case-hospitalization ratio, which depends on case ascertainment.)
     - $\mathrm{HFR}_i$: hospitalization-fatality ratio, i.e., proportion of hospitalizations that end in death.
@@ -288,15 +288,15 @@ $$
   \end{align*}
 $$
 
-## Mitigations
+## Interventions
 
-### Community mitigations
+### Contact-pattern interventions
 
 Define the parameters:
 
-- $t_\mathrm{start}$: time that the mitigation starts
-- $\Delta t_\mathrm{duration}$: duration of the mitigation
-- $\mathrm{Eff}$: effectivness of the mitigation (i.e., risk ratio in contact rate), assumed constant over the duration and equal for all age groups
+- $t_\mathrm{start}$: time that the intervention starts
+- $\Delta t_\mathrm{duration}$: duration of the intervention
+- $\mathrm{Eff}$: effectivness of the intervention (i.e., risk ratio in contact rate), assumed constant over the duration and equal for all age groups
 
 During the period from $t_\mathrm{start}$ to $t_\mathrm{start} + \Delta t_\mathrm{duration}$, adjust the contact matrix entries from $C_{ij}$ to $(1 - \mathrm{Eff}) \times C_{ij}$.
 

@@ -87,7 +87,7 @@ slider = true
 [p_symp_given_inf]
 section = "scenario"
 label = "Symptomatic fraction"
-tooltip = "Proportion of infections that would result in symptoms in the absence of mitigations"
+tooltip = "Proportion of infections that would result in symptoms without interventions"
 min = 0.3
 max = 0.8
 step = 0.01
@@ -99,7 +99,7 @@ per_group = true
 [p_hosp_given_symp]
 section = "scenario"
 label = "Symptomatic-hospitalization ratio"
-tooltip = "Proportion of symptomatic infections that would result in hospitalization in the absence of mitigations"
+tooltip = "Proportion of symptomatic infections that would result in hospitalization without interventions"
 min = 0.0
 max = 0.15
 step = 0.001
@@ -111,7 +111,7 @@ per_group = true
 [p_death_given_hosp]
 section = "scenario"
 label = "Hospitalization-fatality ratio"
-tooltip = "Proportion of hospitalized infections that would result in death in the absence of mitigations; all deaths are assumed to occur among hospitalized individuals"
+tooltip = "Proportion of hospitalized infections that would result in death without interventions; all deaths are assumed to occur among hospitalized individuals"
 min = 0.0
 max = 0.15
 step = 0.001
@@ -360,7 +360,7 @@ slider = true
 [community_effectiveness]
 section = "community"
 label = "Effectiveness"
-tooltip = "Proportional reduction in transmission due to the mitigation, where negative values mean an increase in transmission. Effects are symmetric (e.g., child-to-adult and adult-to-child are changed equally)."
+tooltip = "Proportional reduction in transmission due to the intervention, where negative values mean an increase in transmission. Effects are symmetric (e.g., child-to-adult and adult-to-child are changed equally)."
 min = -1
 max = 1
 step = 0.1
