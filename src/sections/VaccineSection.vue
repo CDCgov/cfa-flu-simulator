@@ -66,6 +66,7 @@ const overall = computed(() => {
       <ParamField
         path="vaccine_dose2_delay"
         v-model="params.vaccine_dose2_delay"
+        :min="params.vaccine_ramp_up"
         :max="params.days"
       />
       <ParamField path="vaccine_p_get_2_doses" v-model="params.vaccine_p_get_2_doses" />
