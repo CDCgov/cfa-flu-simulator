@@ -7,7 +7,6 @@ use nalgebra::SMatrix;
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct VaccineParams {
     pub enabled: bool,
-    pub editable: bool,
     pub doses: usize,
     pub start: f64,
     pub dose2_delay: f64,
@@ -26,7 +25,6 @@ pub(crate) struct VaccineParams {
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct AntiviralsParams {
     pub enabled: bool,
-    pub editable: bool,
     pub fraction_outpatient: f64,
     pub fraction_inpatient: f64,
     pub ave_i: f64,
@@ -37,7 +35,6 @@ pub(crate) struct AntiviralsParams {
 #[derive(Debug, Clone)]
 pub(crate) struct CommunityMitigationParamsTyped<const N: usize> {
     pub enabled: bool,
-    pub editable: bool,
     pub start: f64,
     pub duration: f64,
     pub effectiveness: SMatrix<f64, N, N>,
@@ -55,7 +52,6 @@ impl<const N: usize> Default for MitigationParamsTyped<N> {
         MitigationParamsTyped {
             vaccine: VaccineParams {
                 enabled: false,
-                editable: true,
                 doses: 1,
                 dose2_delay: 30.0,
                 start: 50.0,
@@ -72,7 +68,6 @@ impl<const N: usize> Default for MitigationParamsTyped<N> {
             },
             antivirals: AntiviralsParams {
                 enabled: false,
-                editable: true,
                 ave_i: 0.30,
                 ave_p_hosp: 0.20,
                 ave_p_death: 0.1,
@@ -81,7 +76,6 @@ impl<const N: usize> Default for MitigationParamsTyped<N> {
             },
             community: CommunityMitigationParamsTyped {
                 enabled: false,
-                editable: true,
                 start: 60.0,
                 duration: 20.0,
                 effectiveness: SMatrix::from_element(0.25),

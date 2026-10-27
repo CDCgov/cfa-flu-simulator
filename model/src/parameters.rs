@@ -37,7 +37,6 @@ pub struct Parameters {
     pub inf_death_delay: f64,
 
     pub vaccine_enabled: bool,
-    pub vaccine_editable: bool,
     pub vaccine_doses: usize,
     pub vaccine_start: f64,
     pub vaccine_dose2_delay: f64,
@@ -53,7 +52,6 @@ pub struct Parameters {
     pub vaccine_ve_2p: f64,
 
     pub antivirals_enabled: bool,
-    pub antivirals_editable: bool,
     pub antivirals_fraction_outpatient: f64,
     pub antivirals_fraction_inpatient: f64,
     pub antivirals_ave_i: f64,
@@ -61,7 +59,6 @@ pub struct Parameters {
     pub antivirals_ave_p_death: f64,
 
     pub community_enabled: bool,
-    pub community_editable: bool,
     pub community_start: f64,
     pub community_duration: f64,
     pub community_effectiveness: Vec<f64>,
@@ -171,7 +168,6 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
         params.validate()?;
         let vaccine = VaccineParams {
             enabled: params.vaccine_enabled,
-            editable: params.vaccine_editable,
             doses: params.vaccine_doses,
             start: params.vaccine_start,
             dose2_delay: params.vaccine_dose2_delay,
@@ -188,7 +184,6 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
         };
         let antivirals = AntiviralsParams {
             enabled: params.antivirals_enabled,
-            editable: params.antivirals_editable,
             fraction_outpatient: params.antivirals_fraction_outpatient,
             fraction_inpatient: params.antivirals_fraction_inpatient,
             ave_i: params.antivirals_ave_i,
@@ -197,7 +192,6 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
         };
         let community = CommunityMitigationParamsTyped {
             enabled: params.community_enabled,
-            editable: params.community_editable,
             start: params.community_start,
             duration: params.community_duration,
             effectiveness: SMatrix::from_iterator(params.community_effectiveness),
@@ -251,7 +245,6 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
             inf_death_delay: params.inf_death_delay,
 
             vaccine_enabled: v.enabled,
-            vaccine_editable: v.editable,
             vaccine_doses: v.doses,
             vaccine_start: v.start,
             vaccine_dose2_delay: v.dose2_delay,
@@ -267,7 +260,6 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
             vaccine_ve_2p: v.ve_2p,
 
             antivirals_enabled: a.enabled,
-            antivirals_editable: a.editable,
             antivirals_fraction_outpatient: a.fraction_outpatient,
             antivirals_fraction_inpatient: a.fraction_inpatient,
             antivirals_ave_i: a.ave_i,
@@ -275,7 +267,6 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
             antivirals_ave_p_death: a.ave_p_death,
 
             community_enabled: c.enabled,
-            community_editable: c.editable,
             community_start: c.start,
             community_duration: c.duration,
             community_effectiveness: c.effectiveness.data.as_slice().into(),
