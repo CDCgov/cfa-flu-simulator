@@ -3,14 +3,17 @@ import {
   provide,
   reactive,
   ref,
-  shallowRef,
   toRaw,
   watch,
   type InjectionKey,
   type Ref,
 } from "vue";
 import { useUrlParams } from "cfasim-ui/shared";
-import { allFields, loadDefaultParameters, rangePairs } from "../config/uiConfig";
+import {
+  allFields,
+  DEFAULT_PARAMETERS,
+  rangePairs,
+} from "../config/uiConfig";
 
 // Flat schema mirrors the Rust `Parameters` struct (wasm boundary).
 // Mitigation fields are prefixed (vaccine_, antivirals_, community_, ttiq_)
@@ -189,16 +192,12 @@ const TWO_DOSE_ONLY = Object.entries(allFields())
 const DOSE_PAIRS = rangePairs() as [keyof Parameters, keyof Parameters][];
 
 export function createParamsStore(): ParamsStore {
-  const params = reactive<Parameters>({} as Parameters);
+  const params = reactive<Parameters>(structuredClone(DEFAULT_PARAMETERS));
   const ready = ref(false);
-  // shallowRef: defaults are an immutable snapshot. A plain ref() would
-  // deep-proxy the object, and useUrlParams' structuredClone chokes on the
-  // reactive-wrapped nested arrays.
-  const wasmDefaults = shallowRef<Parameters | null>(null);
 
   const { hydrate, reset: resetUrl } = useUrlParams(
     params,
-    () => wasmDefaults.value ?? undefined,
+    DEFAULT_PARAMETERS,
     { ignore: URL_IGNORE },
   );
 
@@ -224,9 +223,8 @@ export function createParamsStore(): ParamsStore {
     if (!stashed) {
       stashed = Object.fromEntries(TWO_DOSE_ONLY.map((k) => [k, params[k]]));
     }
-    const defaults = wasmDefaults.value ?? ({} as Parameters);
     for (const key of TWO_DOSE_ONLY) {
-      write[key as string] = structuredClone(defaults[key]);
+      write[key as string] = structuredClone(DEFAULT_PARAMETERS[key]);
     }
   }
 
@@ -241,11 +239,9 @@ export function createParamsStore(): ParamsStore {
     normalize,
   );
 
-  Promise.all([loadDefaultParameters(), loadWasm()]).then(([defaults]) => {
-    wasmDefaults.value = defaults;
-    Object.assign(params, defaults);
-    hydrate();
-    normalize();
+  hydrate();
+  normalize();
+  loadWasm().then(() => {
     ready.value = true;
   });
 
@@ -254,8 +250,7 @@ export function createParamsStore(): ParamsStore {
   }
 
   function importParams(input: unknown) {
-    const defaults = wasmDefaults.value ?? ({} as Parameters);
-    Object.assign(params, mergeImported(input, defaults));
+    Object.assign(params, mergeImported(input, DEFAULT_PARAMETERS));
   }
 
   return {

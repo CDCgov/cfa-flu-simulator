@@ -55,31 +55,14 @@ function flatten(
 const parsedToml = parse(rawToml) as Record<string, unknown>;
 const config = flatten(parsedToml);
 
-export async function loadDefaultParameters(): Promise<Parameters> {
-  const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
-  const response = await fetch(`${base}/ui-params.toml`, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Unable to load ui-params.toml (${response.status})`);
-  }
-  const parsed = parse(await response.text()) as Record<string, unknown>;
-  const defaults = Object.fromEntries(
-    Object.entries(parsed).flatMap(([key, value]) => {
-      if (
-        value &&
-        typeof value === "object" &&
-        !Array.isArray(value) &&
-        "default" in value
-      ) {
-        return [[key, (value as Record<string, unknown>).default]];
-      }
-      return [];
-    }),
-  );
-  if (Object.keys(defaults).length === 0) {
-    throw new Error("ui-params.toml: no parameter defaults found");
-  }
-  return structuredClone(defaults) as unknown as Parameters;
-}
+// Each table's `default` is the frontend's runtime default for that field.
+export const DEFAULT_PARAMETERS = Object.fromEntries(
+  Object.entries(parsedToml).flatMap(([key, value]) =>
+    value && typeof value === "object" && "default" in value
+      ? [[key, (value as Record<string, unknown>).default]]
+      : [],
+  ),
+) as unknown as Parameters;
 
 export function getField(path: string): FieldConfig {
   const entry = config[path];
