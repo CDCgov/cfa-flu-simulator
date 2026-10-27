@@ -33,11 +33,8 @@ No doses are wasted.
 
 After vaccination, there is a delay from dose to protection.
 If that person is infected during that delay, they never have any protection from vaccination.
-If they complete that delay before being infected, they have three kinds of protection from the vaccine:
-
-- potential protection against being infected,
-- given infection, potential protection against onward transmission, and
-- given infection, potential protection against symptoms.
+If they complete that delay before being infected, they have (partial) protection against infection.
+If they are then infected, they have a reduction in the probability that their infection will progress to symptomatic infection.
 
 Vaccines are assumed to provide no *additional* protection against hospitalization or death; vaccinated people are less likely to be hospitalized or die because they are less likely to progress to symptomatic infection, but the probability of hospitalization or death given symptomatic infection is assumed the same among vaccinated and unvaccinated individuals.
 
@@ -134,9 +131,8 @@ These compartments currently represent the proportion of the total population $N
 - Vaccine effectiveness
     - $\tau_\mathrm{ramp}$: dose-to-protection delay
     - $\mathrm{VE}_S$: effectiveness for susceptibility (i.e., against being infected)
-    - $\mathrm{VE}_I$: effectiveness for onward transmission given infected
     - $\mathrm{VE}_{P,Y|I}$: effectiveness for symptoms given infection.
-        - At this time, vaccines are assumed to have no *additional* protection against hospitalization and death.
+        - Vaccines are assumed to have no *additional* protection against hospitalization and death.
           In future iterations, vaccines might provide further protection against hospitalization given symptomatic $\mathrm{VE}_{P,H|Y}$, or protection against death given hospitalization $\mathrm{VE}_{P,D|H}$.
     - $\mathrm{VE}_{2S}$, etc.: effectiveness of two doses (N.B.: this is not an incremental quantity; we expect $\mathrm{VE}_{2S} \geq \mathrm{VE}_S$)
 - Antiviral effectiveness
@@ -224,13 +220,13 @@ Thus, individuals keep their vaccine protection status (U, V, or 2V) as they tra
 
 #### Transmission
 
-The effective number of infectious people in group $j$ (`i_effective`), accounting for the effects of vaccination and therapeutics on reducing transmission, is:
+Under the default vaccine assumptions, the effective number of infectious people in group $j$ (`i_effective`), accounting for symptom prevention and outpatient antiviral treatment, is:
 
 $$
   I^\mathrm{eff}_j(t)
   = \mathrm{IU}_j(t) \times (1 - \mathrm{FS}_j A_\mathrm{op} \mathrm{AVE}_I)
     + \mathrm{IV}_j(t)
-    \times (1 - \mathrm{VE}_I) \left[ 1 - \mathrm{FS}_j (1 - \mathrm{VE}_P) A_\mathrm{op} \mathrm{AVE}_I \right]
+    \times \left[ 1 - \mathrm{FS}_j (1 - \mathrm{VE}_P) A_\mathrm{op} \mathrm{AVE}_I \right]
 $$
 
 Note that symptomatic infections are assumed equally infectious as asymptomatic infections.

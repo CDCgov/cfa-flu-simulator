@@ -10,7 +10,7 @@ It runs a SEIR compartmental model locally in the browser, so parameters can be 
 
 The model tracks disease dynamics across age groups and layers public health interventions on top of them:
 
-- **Vaccination**, including single- and two-dose campaigns with a dose-to-protection delay and separate effectiveness against infection, onward transmission, and symptoms.
+- **Vaccination**, including single- and two-dose campaigns with a dose-to-protection delay, effectiveness against infection, and effectiveness against progression from infection to symptoms.
 - **Antivirals**, both outpatient and inpatient, reducing transmission and progression to hospitalization and death.
 - **Contact-pattern interventions**, which scale contact rates for a fixed window.
 - **Testing, tracing, isolation, and quarantine (TTIQ)**, approximated as a reduction in the mean infectious period.
