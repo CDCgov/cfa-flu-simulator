@@ -5,7 +5,7 @@
 # matches nalgebra's storage; see reference parameters.rs:121 `SMatrix::from_iterator`).
 #
 # Mitigation fields are flat with prefixes (vaccine_, antivirals_,
-# community_, ttiq_) to round-trip through URL query strings.
+# community_) to round-trip through URL query strings.
 
 n = 2
 days = 200
@@ -58,12 +58,3 @@ community_start = 60.0
 community_duration = 20.0
 # column-major flat of matrix [[0.5, -0.10], [-0.10, 0.0]] (symmetric, so order is identical).
 community_effectiveness = [0.5, -0.10, -0.10, 0.0]
-
-# TTIQ
-ttiq_enabled = false
-ttiq_editable = true
-ttiq_p_id_infectious = 0.15
-ttiq_p_infectious_isolates = 0.75
-ttiq_isolation_reduction = 0.50
-ttiq_p_contact_trace = 0.25
-ttiq_p_traced_quarantines = 0.75

@@ -7,7 +7,6 @@ import ScenarioSection from "./sections/ScenarioSection.vue";
 import VaccineSection from "./sections/VaccineSection.vue";
 import AntiviralsSection from "./sections/AntiviralsSection.vue";
 import CommunitySection from "./sections/CommunitySection.vue";
-import TTIQSection from "./sections/TTIQSection.vue";
 import DownloadReportButton from "./components/DownloadReportButton.vue";
 import ResultsView, { type ResultsTab } from "./views/ResultsView.vue";
 
@@ -40,7 +39,6 @@ const tab = ref<ResultsTab>("charts");
           <VaccineSection />
           <AntiviralsSection />
           <CommunitySection />
-          <TTIQSection />
         </section>
       </template>
       <p v-else class="loading">Loading model…</p>

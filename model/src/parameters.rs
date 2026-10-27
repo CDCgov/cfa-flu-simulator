@@ -4,13 +4,12 @@ use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
 use crate::mitigations::{
-    AntiviralsParams, CommunityMitigationParamsTyped, MitigationParamsTyped, TTIQParams,
-    VaccineParams,
+    AntiviralsParams, CommunityMitigationParamsTyped, MitigationParamsTyped, VaccineParams,
 };
 
 // Public, flat, TOML/JSON/wasm-serializable parameter struct.
 // Mitigation fields are flattened with prefixes (vaccine_, antivirals_,
-// community_, ttiq_) so the full schema can round-trip through URL query
+// community_) so the full schema can round-trip through URL query
 // strings and flat forms. Solver code works on `ParametersTyped<N>`, which
 // keeps the mitigation grouping for readability.
 #[derive(Tsify, Debug, Clone, Serialize, Deserialize)]
@@ -66,22 +65,11 @@ pub struct Parameters {
     pub community_start: f64,
     pub community_duration: f64,
     pub community_effectiveness: Vec<f64>,
-
-    pub ttiq_enabled: bool,
-    pub ttiq_editable: bool,
-    pub ttiq_p_id_infectious: f64,
-    pub ttiq_p_infectious_isolates: f64,
-    pub ttiq_isolation_reduction: f64,
-    pub ttiq_p_contact_trace: f64,
-    pub ttiq_p_traced_quarantines: f64,
 }
 
 impl Parameters {
     pub fn has_mitigations(&self) -> bool {
-        self.vaccine_enabled
-            || self.antivirals_enabled
-            || self.community_enabled
-            || self.ttiq_enabled
+        self.vaccine_enabled || self.antivirals_enabled || self.community_enabled
     }
 
     pub fn without_mitigations(&self) -> Self {
@@ -89,7 +77,6 @@ impl Parameters {
         params.vaccine_enabled = false;
         params.antivirals_enabled = false;
         params.community_enabled = false;
-        params.ttiq_enabled = false;
         params
     }
 
@@ -163,7 +150,6 @@ impl<const N: usize> ParametersTyped<N> {
         self.mitigations.antivirals.enabled
             || self.mitigations.community.enabled
             || self.mitigations.vaccine.enabled
-            || self.mitigations.ttiq.enabled
     }
 
     #[allow(dead_code)]
@@ -172,7 +158,6 @@ impl<const N: usize> ParametersTyped<N> {
         params.mitigations.antivirals.enabled = false;
         params.mitigations.community.enabled = false;
         params.mitigations.vaccine.enabled = false;
-        params.mitigations.ttiq.enabled = false;
         params
     }
 }
@@ -217,15 +202,6 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
             duration: params.community_duration,
             effectiveness: SMatrix::from_iterator(params.community_effectiveness),
         };
-        let ttiq = TTIQParams {
-            enabled: params.ttiq_enabled,
-            editable: params.ttiq_editable,
-            p_id_infectious: params.ttiq_p_id_infectious,
-            p_infectious_isolates: params.ttiq_p_infectious_isolates,
-            isolation_reduction: params.ttiq_isolation_reduction,
-            p_contact_trace: params.ttiq_p_contact_trace,
-            p_traced_quarantines: params.ttiq_p_traced_quarantines,
-        };
         Ok(ParametersTyped {
             days: params.days,
             population: params.population,
@@ -246,7 +222,6 @@ impl<const N: usize> TryFrom<Parameters> for ParametersTyped<N> {
                 vaccine,
                 antivirals,
                 community,
-                ttiq,
             },
         })
     }
@@ -257,7 +232,6 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
         let v = params.mitigations.vaccine;
         let a = params.mitigations.antivirals;
         let c = params.mitigations.community;
-        let t = params.mitigations.ttiq;
         Parameters {
             n: N,
             days: params.days,
@@ -305,14 +279,6 @@ impl<const N: usize> From<ParametersTyped<N>> for Parameters {
             community_start: c.start,
             community_duration: c.duration,
             community_effectiveness: c.effectiveness.data.as_slice().into(),
-
-            ttiq_enabled: t.enabled,
-            ttiq_editable: t.editable,
-            ttiq_p_id_infectious: t.p_id_infectious,
-            ttiq_p_infectious_isolates: t.p_infectious_isolates,
-            ttiq_isolation_reduction: t.isolation_reduction,
-            ttiq_p_contact_trace: t.p_contact_trace,
-            ttiq_p_traced_quarantines: t.p_traced_quarantines,
         }
     }
 }

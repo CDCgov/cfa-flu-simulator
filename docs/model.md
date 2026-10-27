@@ -2,7 +2,7 @@
 
 ## Model overview
 
-This is a Susceptible-Exposed-Infectious-Removed (SEIR) compartmental ordinary differential equations (ODE) model, modified to account for public health interventions including medical countermeasures (vaccination and antivirals) and non-pharmaceutical interventions (testing, tracing, isolation, and quantine).
+This is a Susceptible-Exposed-Infectious-Removed (SEIR) compartmental ordinary differential equations (ODE) model, modified to account for public health interventions including medical countermeasures (vaccination and antivirals) and contact-pattern interventions.
 
 In a compartmental ODE model, individuals move through discrete disease states, with the time spent by individuals in each state exponentially distributed across individuals.
 
@@ -14,7 +14,7 @@ Removed individuals cannot be re-infected.
 
 ### Health outcomes
 
-Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for interventions like isolation and antiviral usage.
+Some infections are "symptomatic," where the symptomatic severity is sufficient to qualify the infection as a case and qualify the infected person for antiviral treatment.
 Symptomatic infections are assumed equally infectious as asymptomatic infections.
 
 Hospitalization and death are included in the model, but only as counting functions.
@@ -69,14 +69,6 @@ The model assumes that an intervention takes effect on some date, immediately ch
 The reduction is a total effect and includes both the reduction in number of contacts and the probability of infection per contact.
 
 This factor can be different for different pairs of populations (e.g., school closures may substantially reduce child-child contacts while increasing child-adult contacts).
-
-#### Testing, tracing, isolation, and quarantine (TTIQ)
-
-Infectious individuals (who are identified via some type of surveillance or testing) may *isolate*, effectively averting part (or all) of their remaining infectious period.
-*Contact tracing* can then identify exposed individuals, who may *quarantine*, averting part or all of their infectious period.
-
-Testing/isolation is assumed to reduce the mean infectious period by some constant factor.
-Contact tracing and quarantine are assumed to eliminate onward transmission from some proportion of otherwise infectious individuals.
 
 ## Detailed model description
 
@@ -303,19 +295,6 @@ During the period from $t_\mathrm{start}$ to $t_\mathrm{start} + \Delta t_\mathr
 ### Vaccination and antivirals
 
 See the base model description above.
-
-### Test, trace, isolation, and quarantine (TTIQ)
-
-This model approximates the different impacts from these policies as a reduction in the mean duration of the infectious period:
-
-$$
-  \begin{equation*}
-    \begin{split}
-      T_I^\mathrm{int} = T_I & \times (1 - \mathbb{P}[\text{infectious is identified}] \times \mathbb{P}[\text{identified infectious isolates}] \times [\text{prop. reduction in } T_I \text{ due to isolation}]) \\
-                             & \times (1 - \mathbb{P}[\text{contact tracing identifies exposed}] \times \mathbb{P}[\text{identified exposed quarantines}] )
-    \end{split}
-  \end{equation*}
-$$
 
 ## References
 

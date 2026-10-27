@@ -9,12 +9,11 @@ use crate::parameters::{Parameters, ParametersTyped, test_default_parameters};
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, path::PathBuf};
 
-const SCENARIOS: [&str; 5] = [
+const SCENARIOS: [&str; 4] = [
     "no_mitigations",
     "vaccine_only",
     "antivirals_only",
     "community_only",
-    "ttiq_only",
 ];
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -63,7 +62,6 @@ fn make_params(scenario: &str) -> Parameters {
         vaccine_enabled: false,
         antivirals_enabled: false,
         community_enabled: false,
-        ttiq_enabled: false,
         ..test_default_parameters()
     };
     match scenario {
@@ -71,7 +69,6 @@ fn make_params(scenario: &str) -> Parameters {
         "vaccine_only" => p.vaccine_enabled = true,
         "antivirals_only" => p.antivirals_enabled = true,
         "community_only" => p.community_enabled = true,
-        "ttiq_only" => p.ttiq_enabled = true,
         other => panic!("unknown scenario {other}"),
     }
     p
@@ -250,10 +247,5 @@ mod test {
     #[test]
     fn snapshot_community_only() {
         check_scenario("community_only");
-    }
-
-    #[test]
-    fn snapshot_ttiq_only() {
-        check_scenario("ttiq_only");
     }
 }

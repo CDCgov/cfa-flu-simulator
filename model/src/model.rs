@@ -350,18 +350,6 @@ impl<const N: usize> System<f64, State<N>> for &SEIRModel<N> {
             self.parameters.contact_matrix / self.contact_matrix_normalization
         };
 
-        let eff_infectious_period = self.parameters.infectious_period
-            * (if params.mitigations.ttiq.enabled {
-                (1.0 - params.mitigations.ttiq.p_id_infectious
-                    * params.mitigations.ttiq.p_infectious_isolates
-                    * params.mitigations.ttiq.isolation_reduction)
-                    * (1.0
-                        - params.mitigations.ttiq.p_contact_trace
-                            * params.mitigations.ttiq.p_traced_quarantines)
-            } else {
-                1.0
-            });
-
         let beta = self.parameters.r0 / self.parameters.infectious_period;
         let ones = SVector::<f64, N>::from_element(1.0);
         let p_symp_given_inf = &self.parameters.p_symp_given_inf;
@@ -387,14 +375,14 @@ impl<const N: usize> System<f64, State<N>> for &SEIRModel<N> {
 
         let ds_to_e = s.component_mul(&infection_rate);
         let de_to_i = e / self.parameters.latent_period;
-        let di_to_r = i / eff_infectious_period;
+        let di_to_r = i / self.parameters.infectious_period;
 
         let dsv_to_ev = sv.component_mul(&((1.0 - vax_params.ve_s) * infection_rate));
         let ds2v_to_e2v = s2v.component_mul(&((1.0 - vax_params.ve_2s) * infection_rate));
         let dev_to_iv = ev / self.parameters.latent_period;
         let de2v_to_i2v = e2v / self.parameters.latent_period;
-        let div_to_rv = iv / eff_infectious_period;
-        let di2v_to_r2v = i2v / eff_infectious_period;
+        let div_to_rv = iv / self.parameters.infectious_period;
+        let di2v_to_r2v = i2v / self.parameters.infectious_period;
 
         let (administration_rate, administration_rate2) =
             if vax_params.enabled && vax_params.doses == 1 {
@@ -489,7 +477,7 @@ mod test {
         _distribute_initials1, distribute_initials, effective_infectious, get_dominant_eigendata,
         vaccine_rates_by_dose,
     };
-    use crate::mitigations::{AntiviralsParams, MitigationParamsTyped, TTIQParams, VaccineParams};
+    use crate::mitigations::{AntiviralsParams, MitigationParamsTyped, VaccineParams};
     use crate::model_unified::{DynodeModel, ModelOutput, OutputType};
     use crate::parameters::{Parameters, ParametersTyped};
     use float_eq::assert_float_eq;
@@ -649,16 +637,6 @@ mod test {
             p_get_2_doses: 0.0,
         };
 
-        let ttiq_params = TTIQParams {
-            enabled: false,
-            editable: true,
-            p_id_infectious: 0.15,
-            p_infectious_isolates: 0.75,
-            isolation_reduction: 0.50,
-            p_contact_trace: 0.25,
-            p_traced_quarantines: 0.75,
-        };
-
         let model = SEIRModel::new(ParametersTyped {
             days: 300,
             population: 330_000_000.0,
@@ -674,7 +652,6 @@ mod test {
                 vaccine: vaccine_params,
                 antivirals: MitigationParamsTyped::<1>::default().antivirals,
                 community: MitigationParamsTyped::<1>::default().community,
-                ttiq: ttiq_params,
             },
             p_symp_given_inf: Vector1::new(0.5),
             p_hosp_given_symp: Vector1::new(0.0),
@@ -685,42 +662,6 @@ mod test {
         let results = TestResults::new(&model.parameters, &model.integrate());
         let expected = 0.7583813;
         assert_float_eq!(results.attack_rate, expected, abs <= 1e-5);
-    }
-
-    #[test]
-    fn test_seir_perfect_isolation() {
-        let mut parameters = default_typed2();
-        parameters.mitigations.ttiq = TTIQParams {
-            enabled: true,
-            editable: true,
-            p_id_infectious: 1.0,
-            p_infectious_isolates: 1.0,
-            isolation_reduction: 1.0,
-            p_contact_trace: 0.0,
-            p_traced_quarantines: 0.0,
-        };
-
-        let model = SEIRModel::new(parameters);
-        let results = TestResults::new(&model.parameters, &model.integrate());
-        assert_float_eq!(results.attack_rate, 0.0, abs <= 1e-10);
-    }
-
-    #[test]
-    fn test_seir_perfect_quarantine() {
-        let mut parameters = default_typed2();
-        parameters.mitigations.ttiq = TTIQParams {
-            enabled: true,
-            editable: true,
-            p_id_infectious: 0.0,
-            p_infectious_isolates: 0.0,
-            isolation_reduction: 0.0,
-            p_contact_trace: 1.0,
-            p_traced_quarantines: 1.0,
-        };
-
-        let model = SEIRModel::new(parameters);
-        let results = TestResults::new(&model.parameters, &model.integrate());
-        assert_float_eq!(results.attack_rate, 0.0, abs <= 1e-10);
     }
 
     #[test]
