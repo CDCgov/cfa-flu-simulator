@@ -229,6 +229,10 @@ export function createParamsStore(): ParamsStore {
         const a = params[first] as number;
         if ((params[second] as number) < a) write[second as string] = a;
       }
+      // The delay slider blocks values below ramp-up, but only for drags.
+      if (params.vaccine_dose2_delay < params.vaccine_ramp_up) {
+        params.vaccine_dose2_delay = params.vaccine_ramp_up;
+      }
       return;
     }
     // Guarded: clearing the fields re-triggers the watcher, which would
@@ -247,6 +251,7 @@ export function createParamsStore(): ParamsStore {
   watch(
     () => [
       params.vaccine_doses,
+      params.vaccine_ramp_up,
       ...TWO_DOSE_ONLY.map((k) => params[k]),
       ...DOSE_PAIRS.flat().map((k) => params[k]),
     ],

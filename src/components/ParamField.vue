@@ -13,6 +13,7 @@ const props = defineProps<{
   // Optional runtime overrides (e.g. community.start max depends on `days`)
   min?: number;
   max?: number;
+  disabledRanges?: [number, number][];
 }>();
 const emit = defineEmits<{
   (e: "update:modelValue", v: number): void;
@@ -69,6 +70,7 @@ const hint = computed(() =>
     :max="max ?? cfg.max"
     :step="cfg.step"
     :slider="cfg.slider"
+    :disabled-ranges="disabledRanges"
     :percent="percent"
     :number-type="numberType"
     live
