@@ -5,7 +5,7 @@
 #
 # Every visible entry MUST declare `section = "<id>"` — this drives both the
 # sidebar grouping and the PDF report's Parameters section. Valid ids:
-# "scenario", "vaccine", "antivirals", "community", "ttiq". Adding a field
+# "scenario", "vaccine", "antivirals", "community". Adding a field
 # here automatically adds it to the PDF export; no other edits required.
 # For fields only shown when the vaccine is 2-dose, set `show_when_doses_2 = true`.
 
@@ -406,65 +406,3 @@ default = false
 
 [community_editable]
 default = true
-
-# ---- TTIQ ------------------------------------------------------------------
-
-[ttiq_p_id_infectious]
-section = "ttiq"
-label = "Probability an infectious person becomes aware of their own infection"
-min = 0
-max = 1
-step = 0.01
-default = 0.15
-type = "percent"
-slider = true
-
-[ttiq_enabled]
-default = false
-
-[ttiq_editable]
-default = true
-
-[ttiq_p_infectious_isolates]
-section = "ttiq"
-label = "Probability of isolation"
-tooltip = "Probability an aware, infectious person will isolate"
-min = 0
-max = 1
-step = 0.01
-default = 0.75
-type = "percent"
-slider = true
-
-[ttiq_isolation_reduction]
-section = "ttiq"
-label = "Isolation effectiveness"
-tooltip = "Proportional reduction in duration of infectious period due to isolation"
-min = 0
-max = 1
-step = 0.01
-default = 0.50
-type = "percent"
-slider = true
-
-[ttiq_p_contact_trace]
-section = "ttiq"
-label = "Probability of contact tracing"
-tooltip = "Probability contact tracing will identify an exposed person"
-min = 0
-max = 1
-step = 0.01
-default = 0.25
-type = "percent"
-slider = true
-
-[ttiq_p_traced_quarantines]
-section = "ttiq"
-label = "Contact tracing effectiveness"
-tooltip = "Probability a traced contact will quarantine and never transmit"
-min = 0
-max = 1
-step = 0.01
-default = 0.75
-type = "percent"
-slider = true

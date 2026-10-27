@@ -43,23 +43,11 @@ pub(crate) struct CommunityMitigationParamsTyped<const N: usize> {
     pub effectiveness: SMatrix<f64, N, N>,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub(crate) struct TTIQParams {
-    pub enabled: bool,
-    pub editable: bool,
-    pub p_id_infectious: f64,
-    pub p_infectious_isolates: f64,
-    pub isolation_reduction: f64,
-    pub p_contact_trace: f64,
-    pub p_traced_quarantines: f64,
-}
-
 #[derive(Debug, Clone)]
 pub(crate) struct MitigationParamsTyped<const N: usize> {
     pub vaccine: VaccineParams,
     pub antivirals: AntiviralsParams,
     pub community: CommunityMitigationParamsTyped<N>,
-    pub ttiq: TTIQParams,
 }
 
 impl<const N: usize> Default for MitigationParamsTyped<N> {
@@ -97,15 +85,6 @@ impl<const N: usize> Default for MitigationParamsTyped<N> {
                 start: 60.0,
                 duration: 20.0,
                 effectiveness: SMatrix::from_element(0.25),
-            },
-            ttiq: TTIQParams {
-                enabled: false,
-                editable: true,
-                p_id_infectious: 0.15,
-                p_infectious_isolates: 0.75,
-                isolation_reduction: 0.50,
-                p_contact_trace: 0.25,
-                p_traced_quarantines: 0.75,
             },
         }
     }

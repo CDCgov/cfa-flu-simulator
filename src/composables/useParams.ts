@@ -16,7 +16,7 @@ import {
 } from "../config/uiConfig";
 
 // Flat schema mirrors the Rust `Parameters` struct (wasm boundary).
-// Mitigation fields are prefixed (vaccine_, antivirals_, community_, ttiq_)
+// Mitigation fields are prefixed (vaccine_, antivirals_, community_)
 // so the whole object round-trips through URL query strings.
 export interface Parameters {
   n: number;
@@ -65,14 +65,6 @@ export interface Parameters {
   community_start: number;
   community_duration: number;
   community_effectiveness: number[];
-
-  ttiq_enabled: boolean;
-  ttiq_editable: boolean;
-  ttiq_p_id_infectious: number;
-  ttiq_p_infectious_isolates: number;
-  ttiq_isolation_reduction: number;
-  ttiq_p_contact_trace: number;
-  ttiq_p_traced_quarantines: number;
 }
 
 export type MitigationLabel = "Unmitigated" | "Mitigated";
@@ -177,7 +169,6 @@ const URL_IGNORE: (keyof Parameters)[] = [
   "vaccine_editable",
   "antivirals_editable",
   "community_editable",
-  "ttiq_editable",
 ];
 
 // Only exposed for a 2-dose vaccine; held at defaults otherwise so a

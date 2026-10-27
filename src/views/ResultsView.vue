@@ -208,7 +208,6 @@ const subtitle = computed(() => {
   if (params.vaccine_enabled) active.push("vaccination");
   if (params.antivirals_enabled) active.push("antivirals");
   if (params.community_enabled) active.push("contact-pattern interventions");
-  if (params.ttiq_enabled) active.push("TTIQ");
   const pop = formatDoses(params.population);
   if (active.length === 0) {
     return `Baseline scenario: population ${pop} over ${params.days} days`;

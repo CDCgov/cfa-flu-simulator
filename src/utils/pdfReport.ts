@@ -341,11 +341,6 @@ const REPORT_SECTIONS: ReportSection[] = [
     title: "Contact-pattern interventions",
     isEnabled: (p) => p.community_enabled,
   },
-  {
-    id: "ttiq",
-    title: "TTIQ",
-    isEnabled: (p) => p.ttiq_enabled,
-  },
 ];
 
 const intFmt = new Intl.NumberFormat("en-US");
