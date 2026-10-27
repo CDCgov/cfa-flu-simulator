@@ -9,11 +9,7 @@ import {
   type Ref,
 } from "vue";
 import { useUrlParams } from "cfasim-ui/shared";
-import {
-  allFields,
-  DEFAULT_PARAMETERS,
-  rangePairs,
-} from "../config/uiConfig";
+import { allFields, DEFAULT_PARAMETERS, rangePairs } from "../config/uiConfig";
 
 // Flat schema mirrors the Rust `Parameters` struct (wasm boundary).
 // Mitigation fields are prefixed (vaccine_, antivirals_, community_)
@@ -37,7 +33,6 @@ export interface Parameters {
   inf_death_delay: number;
 
   vaccine_enabled: boolean;
-  vaccine_editable: boolean;
   vaccine_doses: number;
   vaccine_start: number;
   vaccine_dose2_delay: number;
@@ -53,7 +48,6 @@ export interface Parameters {
   vaccine_ve_2p: number;
 
   antivirals_enabled: boolean;
-  antivirals_editable: boolean;
   antivirals_fraction_outpatient: number;
   antivirals_fraction_inpatient: number;
   antivirals_ave_i: number;
@@ -61,7 +55,6 @@ export interface Parameters {
   antivirals_ave_p_death: number;
 
   community_enabled: boolean;
-  community_editable: boolean;
   community_start: number;
   community_duration: number;
   community_effectiveness: number[];
@@ -163,13 +156,7 @@ export function mergeImported(
 }
 
 // Keys omitted from URL sync: structural/UI-only fields the user never edits.
-const URL_IGNORE: (keyof Parameters)[] = [
-  "n",
-  "population_fraction_labels",
-  "vaccine_editable",
-  "antivirals_editable",
-  "community_editable",
-];
+const URL_IGNORE: (keyof Parameters)[] = ["n", "population_fraction_labels"];
 
 // Only exposed for a 2-dose vaccine; held at defaults otherwise so a
 // single-dose link doesn't carry inert query params.

@@ -27,7 +27,6 @@ inf_death_delay = 10.0
 
 # Vaccine
 vaccine_enabled = true
-vaccine_editable = true
 vaccine_doses = 1
 vaccine_start = 50.0
 vaccine_dose2_delay = 30.0
@@ -44,7 +43,6 @@ vaccine_ve_2p = 0.75
 
 # Antivirals
 antivirals_enabled = false
-antivirals_editable = true
 antivirals_fraction_outpatient = 0.10
 antivirals_fraction_inpatient = 1.0
 antivirals_ave_i = 0.30
@@ -53,7 +51,6 @@ antivirals_ave_p_death = 0.1
 
 # Contact-pattern mitigations (aka "Community")
 community_enabled = false
-community_editable = true
 community_start = 60.0
 community_duration = 20.0
 # column-major flat of matrix [[0.5, -0.10], [-0.10, 0.0]] (symmetric, so order is identical).

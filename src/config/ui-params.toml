@@ -145,9 +145,6 @@ per_group = true
 [vaccine_enabled]
 default = true
 
-[vaccine_editable]
-default = true
-
 [vaccine_doses]
 section = "vaccine"
 label = "Number of doses"
@@ -319,9 +316,6 @@ slider = true
 [antivirals_enabled]
 default = false
 
-[antivirals_editable]
-default = true
-
 [antivirals_ave_p_hosp]
 section = "antivirals"
 label = "Antiviral effectiveness against hospitalization"
@@ -403,6 +397,3 @@ matrix = true
 
 [community_enabled]
 default = false
-
-[community_editable]
-default = true

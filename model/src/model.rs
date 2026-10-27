@@ -621,7 +621,6 @@ mod test {
     fn test_seir_vaccine() {
         let vaccine_params = VaccineParams {
             enabled: true,
-            editable: true,
             doses: 1,
             start: 0.0,
             administration_rate: 1_000_000.0,
@@ -760,7 +759,6 @@ mod test {
         };
         params.mitigations.antivirals = AntiviralsParams {
             enabled: true,
-            editable: true,
             ave_i: 0.5,
             ave_p_hosp: 0.5,
             ave_p_death: 0.0,
@@ -880,7 +878,6 @@ mod test {
         };
         params.mitigations.vaccine = VaccineParams {
             enabled: true,
-            editable: true,
             doses: 2,
             start: 0.0,
             dose2_delay: 0.0,
@@ -923,7 +920,6 @@ mod test {
         };
         let vax_params1 = VaccineParams {
             enabled: true,
-            editable: true,
             doses: 2,
             start: 0.0,
             dose2_delay: 0.0,
