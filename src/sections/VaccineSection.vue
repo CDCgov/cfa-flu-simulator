@@ -102,12 +102,6 @@ const overall = computed(() => {
         :paired="twoDose"
         v-model:upper-value="params.vaccine_ve_2p"
       />
-      <ParamField
-        path="vaccine_ve_i"
-        v-model="params.vaccine_ve_i"
-        :paired="twoDose"
-        v-model:upper-value="params.vaccine_ve_2i"
-      />
     </div>
   </MitigationSection>
 </template>
