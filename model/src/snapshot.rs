@@ -5,7 +5,7 @@
 
 use crate::model::SEIRModel;
 use crate::model_unified::{DynodeModel, OutputItemGrouped, OutputType};
-use crate::parameters::{Parameters, ParametersTyped};
+use crate::parameters::{Parameters, ParametersTyped, test_default_parameters};
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, path::PathBuf};
 
@@ -64,7 +64,7 @@ fn make_params(scenario: &str) -> Parameters {
         antivirals_enabled: false,
         community_enabled: false,
         ttiq_enabled: false,
-        ..Default::default()
+        ..test_default_parameters()
     };
     match scenario {
         "no_mitigations" => {}

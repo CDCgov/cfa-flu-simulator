@@ -1,5 +1,6 @@
 import { parse } from "smol-toml";
 import rawToml from "./ui-params.toml?raw";
+import type { Parameters } from "../composables/useParams";
 
 export type FieldType = "integer" | "float" | "percent" | "select";
 
@@ -29,7 +30,8 @@ export interface FieldConfig {
   options?: SelectOption[];
 }
 
-// Flatten nested TOML to dotted-path lookup: { "scenario.days": {...}, ... }
+// Flatten parameter tables to dotted-path lookup. Tables without a `label`
+// are retained in the TOML solely as non-visible runtime defaults.
 function flatten(
   obj: Record<string, unknown>,
   prefix = "",
@@ -50,7 +52,17 @@ function flatten(
   return out;
 }
 
-const config = flatten(parse(rawToml) as Record<string, unknown>);
+const parsedToml = parse(rawToml) as Record<string, unknown>;
+const config = flatten(parsedToml);
+
+// Each table's `default` is the frontend's runtime default for that field.
+export const DEFAULT_PARAMETERS = Object.fromEntries(
+  Object.entries(parsedToml).flatMap(([key, value]) =>
+    value && typeof value === "object" && "default" in value
+      ? [[key, (value as Record<string, unknown>).default]]
+      : [],
+  ),
+) as unknown as Parameters;
 
 export function getField(path: string): FieldConfig {
   const entry = config[path];
