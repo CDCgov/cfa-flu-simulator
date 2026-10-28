@@ -1,6 +1,4 @@
 allowBuilds:
-  # esbuild ships a platform binary that vitepress's bundled vite needs.
-  esbuild: true
   core-js: false
   vue-demi: false
 minimumReleaseAgeExclude:

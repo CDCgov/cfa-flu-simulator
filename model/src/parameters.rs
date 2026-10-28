@@ -13,7 +13,6 @@ use crate::mitigations::{
 // strings and flat forms. Solver code works on `ParametersTyped<N>`, which
 // keeps the mitigation grouping for readability.
 #[derive(Tsify, Debug, Clone, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct Parameters {
     pub n: usize,
     // Integration horizon passed to `SEIRModelUnified::run`. Not part of

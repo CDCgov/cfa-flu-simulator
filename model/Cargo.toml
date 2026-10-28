@@ -12,12 +12,12 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 ode_solvers = "=0.6.1" # 0.6.2 moved to nalgebra 0.34
 serde-wasm-bindgen = "0.6.5"
 serde = { version = "1.0.219", features = ["derive"] }
-tsify = "0.4.5"
+tsify = "0.5.8"
 nalgebra = { version = "0.33.2", features = ["serde-serialize"] }
 paste = "1.0.15"
-strum = "0.27.1"
-strum_macros = "0.27.1"
-toml = "0.8"
+strum = "0.28.0"
+strum_macros = "0.28.0"
+toml = "1.1"
 cfasim-model = "0.3.6"
 serde_json = "1.0"
 
