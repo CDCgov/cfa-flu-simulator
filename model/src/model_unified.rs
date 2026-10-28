@@ -5,18 +5,16 @@ use serde_wasm_bindgen::from_value;
 use std::{any::Any, collections::HashMap};
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use tsify::Tsify;
+use tsify::{Ts, Tsify};
 use wasm_bindgen::prelude::*;
 
 #[derive(Tsify, Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq, EnumIter)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
 pub enum MitigationType {
     Unmitigated,
     Mitigated,
 }
 
 #[derive(Tsify, Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq, EnumIter)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
 // The shared `Incidence` suffix is part of the wasm-facing API.
 #[allow(clippy::enum_variant_names)]
 pub enum OutputType {
@@ -27,7 +25,6 @@ pub enum OutputType {
 }
 
 #[derive(Tsify, Debug, Clone, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct OutputItemGrouped {
     pub(crate) time: f64,
     pub(crate) grouped_values: Vec<f64>,
@@ -81,7 +78,6 @@ impl Default for ModelOutput {
 }
 
 #[derive(Tsify, Debug, Clone, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct ModelOutputExport {
     pub(crate) output: HashMap<MitigationType, HashMap<OutputType, Vec<OutputItemGrouped>>>,
     pub(crate) mitigation_types: Vec<MitigationType>,
@@ -136,7 +132,13 @@ impl SEIRModelUnified {
         }
     }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_name = run)]
+    pub fn run_js(&self) -> Result<Ts<ModelOutputExport>, JsError> {
+        Ok(self.run().into_ts()?)
+    }
+}
+
+impl SEIRModelUnified {
     pub fn run(&self) -> ModelOutputExport {
         let mut runs: Vec<(MitigationType, ModelOutput)> = Vec::new();
 

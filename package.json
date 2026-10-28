@@ -6,16 +6,16 @@
     "@fontsource/ibm-plex-sans": "^5.3.0",
     "cfasim-ui": "^0.13.0",
     "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.8",
+    "jspdf-autotable": "^5.0.9",
     "smol-toml": "^1.9.1",
-    "vue": "^3.5.43"
+    "vue": "^3.5.44"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.10",
     "markdown-it-mathjax3": "^4.3.2",
     "typescript": "^5.9.3",
-    "vite": "^8.3.4",
-    "vitepress": "^1.6.4",
+    "vite": "^8.3.5",
+    "vitepress": "2.0.0-alpha.21",
     "vue-tsc": "^3.3.13"
   }
 }
