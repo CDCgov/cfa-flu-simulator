@@ -62,8 +62,9 @@ Inpatient antivirals have no effect on transmission.
 
 #### Contact-pattern interventions
 
-The model assumes that an intervention takes effect on some date, immediately changing transmission by some constant factor, and then ends, immediately returning transmission to its pre-intervention status.
-The reduction is a total effect and includes both the reduction in number of contacts and the probability of infection per contact.
+The model assumes that an intervention takes effect on some date, immediately multiplying the absolute contact rate for each pair of groups by a constant factor, and then ends, immediately returning contact rates to their pre-intervention values.
+Each adjustment is a proportional reduction relative to that pair's contact rate without the intervention: 50% halves the rate, -10% increases it by 10%, and 0% leaves it unchanged.
+These adjustments change absolute contact rates, rather than specifying the relative proportions of contacts allocated to different groups; reducing one rate does not redistribute contacts to other groups.
 
 This factor can be different for different pairs of populations (e.g., school closures may substantially reduce child-child contacts while increasing child-adult contacts).
 
@@ -284,9 +285,9 @@ Define the parameters:
 
 - $t_\mathrm{start}$: time that the intervention starts
 - $\Delta t_\mathrm{duration}$: duration of the intervention
-- $\mathrm{Eff}$: effectivness of the intervention (i.e., risk ratio in contact rate), assumed constant over the duration and equal for all age groups
+- $\mathrm{Eff}_{ij}$: proportional reduction in the absolute contact rate between groups $i$ and $j$, assumed constant over the duration, with $\mathrm{Eff}_{ij} = \mathrm{Eff}_{ji}$
 
-During the period from $t_\mathrm{start}$ to $t_\mathrm{start} + \Delta t_\mathrm{duration}$, adjust the contact matrix entries from $C_{ij}$ to $(1 - \mathrm{Eff}) \times C_{ij}$.
+During the period $t_\mathrm{start} \leq t < t_\mathrm{start} + \Delta t_\mathrm{duration}$, adjust the contact matrix entries from $C_{ij}$ to $(1 - \mathrm{Eff}_{ij}) C_{ij}$.
 
 ### Vaccination and antivirals
 
