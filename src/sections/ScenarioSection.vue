@@ -31,6 +31,6 @@ const { params } = useParams();
 .section {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 </style>

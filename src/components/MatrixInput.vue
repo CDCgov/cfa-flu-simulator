@@ -82,13 +82,13 @@ function update(row: number, col: number, value: number | undefined) {
 }
 
 .matrix-input__label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   opacity: 0.85;
 }
 
 .matrix-input__table {
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .matrix-input__table th,

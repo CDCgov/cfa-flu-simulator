@@ -294,7 +294,7 @@ const headerTitle = computed(() =>
                 <ChartPanel
                   v-if="g.data"
                   :data="g.data"
-                  :y-label="gi === 0 && g.data.scale.unit ? `(${g.data.scale.unit})` : ''"
+                  :y-label="gi === 0 ? `Incidence${g.data.scale.unit ? ` (${g.data.scale.unit})` : ''}` : ''"
                   :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
                   :height="220"
                 />
@@ -340,9 +340,11 @@ const headerTitle = computed(() =>
   height: 0;
   overflow: hidden;
 }
-.results :deep(h1) { font-size: 1.5rem; margin: 0 0 0.5rem; }
-.results :deep(h2) { font-size: 1rem; margin: 0 0 0.5rem; }
-.results :deep(h3) { font-size: 1rem; margin: 0 0 0.25rem; }
+h1 { font-size: 1.5rem; margin: 0 0 0.5rem; }
+/* Chart titles sit tight to the chart: LineChart already reserves an empty
+   10px band above its legend row, so pull the chart up into part of it. */
+h2, h3 { font-size: 1rem; margin: 0; }
+.results :deep(.line-chart-wrapper) { margin-top: -4px; }
 .results__subtitle { margin: 0.25rem 0 0; opacity: 0.65; }
 /* A header inside a section gets the same gap below it as the page header
    gets from the flex column, so the two title blocks read the same. */
@@ -350,7 +352,7 @@ const headerTitle = computed(() =>
 /* The theme's base `section` margin stacks on the flex gap. Drop it so the
    overall chart sits closer to the small charts that continue it. */
 .results__section--flush { margin-bottom: 0; }
-.results__error { color: #ef4444; }
+.results__error { color: var(--color-error); }
 .results__loading { opacity: 0.7; }
 .results__grid-3 {
   display: grid;
@@ -368,7 +370,7 @@ const headerTitle = computed(() =>
     padding-inline-start: 0.75rem;
     --results-gap: 1rem;
   }
-  .results :deep(h1) { font-size: 1.25rem; }
+  h1 { font-size: 1.25rem; }
   .results__grid-3 {
     grid-template-columns: 1fr;
   }

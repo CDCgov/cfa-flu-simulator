@@ -26,7 +26,7 @@ const tab = ref<ResultsTab>("charts");
 </script>
 
 <template>
-  <SidebarLayout v-model:tab="tab" :tabs="tabs">
+  <SidebarLayout v-model:tab="tab" :tabs="tabs" :max-width="1600">
     <template #sidebar-header-start>
       <FileMenu v-if="ready" @error="importError = $event" />
     </template>
@@ -90,10 +90,6 @@ const tab = ref<ResultsTab>("charts");
 .SidebarLayout .SidebarRail .SidebarScroll {
   border-right-color: light-dark(#c5e4ec, #264349);
 }
-
-.input-label {
-  font-size: var(--font-size-sm);
-}
 </style>
 
 <style scoped>
@@ -135,21 +131,5 @@ const tab = ref<ResultsTab>("charts");
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-border);
   font-size: var(--font-size-sm);
-}
-
-:deep(.SidebarScroll) {
-  padding-top: calc(var(--space-4) + var(--space-2));
-}
-
-:deep(.MainContent) {
-  max-width: 1600px;
-}
-
-/* Three tabs plus the two bar buttons overflow the narrowest phones. */
-@media (max-width: 389px) {
-  :deep(.TabsBar),
-  :deep(.TabsTrigger) {
-    padding-inline: var(--space-2);
-  }
 }
 </style>
