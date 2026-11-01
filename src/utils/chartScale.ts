@@ -30,6 +30,8 @@ export const Y_LABEL_CHART_PADDING = { left: -6 };
 
 export const TICK_LABEL_STYLE = { fontSize: 12 };
 
+export const LEGEND_STYLE = { fontSize: 13 };
+
 // Matches dynode-web's grid: a 2px dash, 2px gap, #ddd on white. Expressed
 // as currentColor at low opacity so it also reads on the dark theme.
 export const Y_GRID_STYLE: GridStyle = { lineDash: "2 2", opacity: 0.15 };

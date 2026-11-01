@@ -162,35 +162,23 @@ function formatPct(n: number): string {
   white-space: nowrap;
   opacity: 0.55;
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+  border-bottom: 1px solid var(--color-border);
 }
 .summary__col-group {
   width: 200px;
   max-width: 200px;
 }
-.summary__table th:not(.summary__col-group) {
-  width: auto;
-}
 .summary__table td {
   padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.12);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
 }
 .summary__label {
   font-weight: 500;
 }
-.summary__num {
-  font-feature-settings: "tnum";
-}
-.summary__prevented {
-  position: relative;
-}
-.summary__prevented-value {
-  font-feature-settings: "tnum";
-}
 .summary__bar-track {
   margin-top: 0.25rem;
   height: 3px;
-  background: rgba(128, 128, 128, 0.2);
+  background: var(--color-border);
   border-radius: 2px;
   overflow: hidden;
 }

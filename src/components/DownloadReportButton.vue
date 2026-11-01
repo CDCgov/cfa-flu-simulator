@@ -44,8 +44,7 @@ async function handleDownload() {
    label, so collapse to an icon the size of the theme toggle beside it. */
 @media (max-width: 767px) {
   .download {
-    width: 32px;
-    min-height: 32px;
+    width: var(--bar-control-size);
     padding: 0;
   }
   .download__label {
