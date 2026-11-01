@@ -12,6 +12,7 @@ import {
 defineProps<{
   data: ChartData;
   filename: string;
+  width?: number;
   height?: number;
   yLabel?: string;
 }>();
@@ -28,6 +29,7 @@ defineProps<{
     :tick-label-style="TICK_LABEL_STYLE"
     :legend-style="LEGEND_STYLE"
     :filename="filename"
+    :width="width"
     :height="height ?? 200"
     :y-min="0"
     :x-min="0"

@@ -10,6 +10,7 @@ import SummaryView from "./SummaryView.vue";
 import { useParams, type ModelOutputExport, type OutputItemGrouped, type OutputTypeLabel } from "../composables/useParams";
 import { useModelRun } from "../composables/useModelRun";
 import { pickScale, scale, type ChartData } from "../utils/chartScale";
+import { REPORT_CHART_WIDTH, reportChartsVisible } from "../utils/pdfReport";
 
 const { params } = useParams();
 const { results, running, error } = useModelRun();
@@ -223,6 +224,27 @@ const groupSubtitle = computed(() => {
   return `Daily new infections among ${parts.join(" and ")}`;
 });
 
+function incidenceLabel(data: ChartData): string {
+  return `Incidence${data.scale.unit ? ` (${data.scale.unit})` : ""}`;
+}
+
+// Off-screen copies for the PDF report, one per row there, so every chart
+// gets its own y label.
+const reportCharts = computed(() => {
+  const charts: { heading: string; data: ChartData | null; height: number }[] = [
+    { heading: "Overall Infection Incidence", data: overallChart.value, height: 300 },
+    { heading: "Deaths", data: deathChart.value, height: 220 },
+    { heading: "Hospitalizations", data: hospChart.value, height: 220 },
+    { heading: "Symptomatic Infections", data: symptomaticChart.value, height: 220 },
+    ...groupCharts.value.map((g) => ({
+      heading: `Infection Incidence: ${g.label}`,
+      data: g.data,
+      height: 220,
+    })),
+  ];
+  return charts.filter((c): c is typeof c & { data: ChartData } => !!c.data);
+});
+
 const headerTitle = computed(() =>
   results.value && results.value.mitigation_types.length > 1
     ? "Scenarios with and without interventions"
@@ -242,14 +264,14 @@ const headerTitle = computed(() =>
       <p v-else-if="!results && running" class="results__loading">Running model…</p>
 
       <!-- Inactive panels are clipped, not removed: the PDF report reads
-           charts and tables from the DOM. -->
+           summary tables from the DOM. -->
       <div v-if="overallChart" class="results__panels">
         <div class="results__panel" :inert="tab !== 'charts'">
           <section class="results__section results__section--flush" id="charts">
             <h2>Overall Infection Incidence</h2>
             <ChartPanel
               :data="overallChart"
-              :y-label="`Incidence${overallChart.scale.unit ? ` (${overallChart.scale.unit})` : ''}`"
+              :y-label="incidenceLabel(overallChart)"
               filename="overall-infection-incidence"
               :height="320"
             />
@@ -260,7 +282,7 @@ const headerTitle = computed(() =>
               <h3>Deaths</h3>
               <ChartPanel
                 :data="deathChart"
-                :y-label="`Incidence${deathChart.scale.unit ? ` (${deathChart.scale.unit})` : ''}`"
+                :y-label="incidenceLabel(deathChart)"
                 filename="death-incidence"
                 :height="220"
               />
@@ -294,7 +316,7 @@ const headerTitle = computed(() =>
                 <ChartPanel
                   v-if="g.data"
                   :data="g.data"
-                  :y-label="gi === 0 ? `Incidence${g.data.scale.unit ? ` (${g.data.scale.unit})` : ''}` : ''"
+                  :y-label="gi === 0 ? incidenceLabel(g.data) : ''"
                   :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
                   :height="220"
                 />
@@ -307,6 +329,23 @@ const headerTitle = computed(() =>
           <section class="results__section" id="summary">
             <SummaryView />
           </section>
+        </div>
+      </div>
+
+      <div v-if="reportChartsVisible" class="results__report-charts" aria-hidden="true" inert>
+        <div
+          v-for="c in reportCharts"
+          :key="c.heading"
+          data-report-chart
+          :data-heading="c.heading"
+        >
+          <ChartPanel
+            :data="c.data"
+            :y-label="incidenceLabel(c.data)"
+            :width="REPORT_CHART_WIDTH"
+            :height="c.height"
+            filename="report"
+          />
         </div>
       </div>
     </div>
@@ -334,8 +373,8 @@ const headerTitle = computed(() =>
   gap: var(--results-gap);
   min-width: 0;
 }
-/* Not display: none or visibility: hidden. Charts need a real width to
-   render, and the report bakes computed visibility into each chart image. */
+/* Not display: none or visibility: hidden: charts need a real width to
+   render, so they are ready when their tab is shown. */
 .results__panel[inert] {
   height: 0;
   overflow: hidden;
@@ -353,6 +392,15 @@ h2, h3 { font-size: 1rem; margin: 0; }
    overall chart sits closer to the small charts that continue it. */
 .results__section--flush { margin-bottom: 0; }
 .results__error { color: var(--color-error); }
+/* Light scheme, and colour re-resolved under it, so a dark-mode screen
+   still yields dark text on the white PDF page. */
+.results__report-charts {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  color-scheme: light;
+  color: var(--color-text);
+}
 .results__loading { opacity: 0.7; }
 .results__grid-3 {
   display: grid;
