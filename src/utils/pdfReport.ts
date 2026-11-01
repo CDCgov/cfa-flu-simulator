@@ -1,3 +1,4 @@
+import { nextTick, ref } from "vue";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { fieldsInSection, type FieldConfig } from "../config/uiConfig";
@@ -22,10 +23,14 @@ const GAP_AFTER_TABLE = 20;
 // PDF units are points (72/inch), so 300 DPI = 300/72 px/pt.
 const DPI = 300;
 const PX_PER_PT = DPI / 72;
-// One chart per row, full content width, uniform height.
 const CHART_GAP_Y = 20;
 const CHART_HEADING_H = 16;
-const CHART_H_PT = 300;
+
+// ResultsView renders a fixed-size copy of every chart while this is set, so
+// the report's proportions and text size don't depend on the window width.
+// 720px across the 532pt content width puts 12px tick labels at about 9pt.
+export const reportChartsVisible = ref(false);
+export const REPORT_CHART_WIDTH = 720;
 const PARAM_TABLE_HEAD: string[] = ["Parameter", "Value"];
 
 export async function generateReport(
@@ -59,8 +64,15 @@ export async function generateReport(
   }
   y += 12;
 
-  for (const block of collectCharts(container)) {
-    y = await drawChart(pdf, block, y, pageHeight, contentWidth);
+  reportChartsVisible.value = true;
+  try {
+    await nextTick();
+    await new Promise(requestAnimationFrame);
+    for (const block of collectCharts(container)) {
+      y = await drawChart(pdf, block, y, pageHeight, contentWidth);
+    }
+  } finally {
+    reportChartsVisible.value = false;
   }
 
   const summaryTables = collectSummaryTables(container);
@@ -99,7 +111,7 @@ async function drawChart(
   if (rect.width === 0 || rect.height === 0) return y;
 
   const drawW = contentWidth;
-  const drawH = CHART_H_PT;
+  const drawH = (drawW * rect.height) / rect.width;
   const rowH = CHART_HEADING_H + drawH;
 
   if (y + rowH > pageHeight - MARGIN) {
@@ -266,27 +278,12 @@ function findChartSvg(host: HTMLElement): SVGSVGElement | null {
 
 function collectCharts(container: HTMLElement): ChartBlock[] {
   const blocks: ChartBlock[] = [];
-  const sections = container.querySelectorAll<HTMLElement>("section");
-  sections.forEach((section) => {
-    const id = section.getAttribute("id");
-    if (id === "summary") return;
-
-    const cards = section.querySelectorAll<HTMLElement>(".results__small");
-    if (cards.length) {
-      cards.forEach((card) => {
-        const svg = findChartSvg(card);
-        if (!svg) return;
-        const heading = card.querySelector("h3")?.textContent?.trim() ?? "";
-        blocks.push({ heading, svg });
-      });
-    } else {
-      const svg = findChartSvg(section);
-      if (!svg) return;
-      const heading =
-        section.querySelector("h1, h2, h3")?.textContent?.trim() ?? "";
-      blocks.push({ heading, svg });
-    }
-  });
+  container
+    .querySelectorAll<HTMLElement>("[data-report-chart]")
+    .forEach((el) => {
+      const svg = findChartSvg(el);
+      if (svg) blocks.push({ heading: el.dataset.heading ?? "", svg });
+    });
   return blocks;
 }
 
