@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { SidebarLayout } from "cfasim-ui/components";
+import { Button, SidebarLayout } from "cfasim-ui/components";
 import { provideParams } from "./composables/useParams";
-import ParamsMenu from "./components/ParamsMenu.vue";
+import FileMenu from "./components/FileMenu.vue";
 import ScenarioSection from "./sections/ScenarioSection.vue";
 import VaccineSection from "./sections/VaccineSection.vue";
 import AntiviralsSection from "./sections/AntiviralsSection.vue";
@@ -10,8 +10,13 @@ import CommunitySection from "./sections/CommunitySection.vue";
 import DownloadReportButton from "./components/DownloadReportButton.vue";
 import ResultsView, { type ResultsTab } from "./views/ResultsView.vue";
 
-const { ready } = provideParams();
+const { ready, reset } = provideParams();
 const importError = ref<string | null>(null);
+
+function handleReset() {
+  importError.value = null;
+  reset();
+}
 
 const tabs: { value: ResultsTab; label: string }[] = [
   { value: "charts", label: "Charts" },
@@ -22,11 +27,14 @@ const tab = ref<ResultsTab>("charts");
 
 <template>
   <SidebarLayout v-model:tab="tab" :tabs="tabs">
+    <template #sidebar-header-start>
+      <FileMenu v-if="ready" @error="importError = $event" />
+    </template>
+    <template #sidebar-header-end>
+      <Button v-if="ready" variant="neutral" @click="handleReset">Reset</Button>
+    </template>
     <template #sidebar>
       <template v-if="ready">
-        <div class="toolbar">
-          <ParamsMenu @error="importError = $event" />
-        </div>
         <p v-if="importError" class="import-error" role="alert">
           {{ importError }}
         </p>
@@ -51,7 +59,7 @@ const tab = ref<ResultsTab>("charts");
         >
       </footer>
     </template>
-    <template #topbar>
+    <template #topbar-end>
       <DownloadReportButton v-if="ready" />
     </template>
     <ResultsView v-if="ready" :tab="tab" />
@@ -92,17 +100,6 @@ const tab = ref<ResultsTab>("charts");
 .loading {
   padding: 1rem;
   opacity: 0.7;
-}
-
-/* Shares the row with the sidebar toggle in the top-right corner. */
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-  height: var(--toggle-size);
-  margin-top: calc(-1 * var(--toggle-size));
-  margin-right: var(--toggle-size);
 }
 
 /* Heading plus its content share one column so the spacing inside a group
