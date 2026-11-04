@@ -83,6 +83,7 @@ const percent = computed(() => cfg.value.type === "percent");
           :min="cfg.min"
           :max="cfg.max"
           :step="cfg.step"
+          :slider="cfg.slider"
           :percent="percent"
           :number-type="numberType"
           live
