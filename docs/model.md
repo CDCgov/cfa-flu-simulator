@@ -62,11 +62,16 @@ Inpatient antivirals have no effect on transmission.
 
 #### Contact-pattern interventions
 
-The model assumes that an intervention takes effect on some date, immediately multiplying the absolute contact rate for each pair of groups by a constant factor, and then ends, immediately returning contact rates to their pre-intervention values.
-Each adjustment is a proportional reduction relative to that pair's contact rate without the intervention: 50% halves the rate, -10% increases it by 10%, and 0% leaves it unchanged.
-These adjustments change absolute contact rates, rather than specifying the relative proportions of contacts allocated to different groups; reducing one rate does not redistribute contacts to other groups.
+The model assumes that an intervention takes effect on some date, immediately adjusting the contact rate for each pair of groups, and then ends, immediately returning contact rates to their pre-intervention values.
 
-This factor can be different for different pairs of populations (e.g., school closures may substantially reduce child-child contacts while increasing child-adult contacts).
+This factor can be different for different pairs of populations.
+For example, school closures may substantially reduce child-child contacts while increasing child-adult contacts.
+
+Each adjustment is a proportional reduction relative to that pair's contact rate without the intervention.
+For example, a 50% reduction halves the contact rate, a 0% reduction leaves the rate unchanged, and -10% reduction *increases* the rate by 10%.
+
+The adjustments operate on the contact rate between each pair of groups separately.
+Reducing one rate does not redistribute contacts to other groups.
 
 ## Detailed model description
 
@@ -106,8 +111,12 @@ These compartments currently represent the proportion of the total population $N
     - $\mathrm{RU}_\bullet(0)$: number of people initially immune, assumed distributed proportionally across groups
 - Transmission
     - $R_0$: basic reproduction number
-    - Derive: $\beta = R_0 / T_I$ (note that this is a population-wide, average scalar)
-    - $C_{ij}$: contact matrix, normalized so that dominant eigenvector is 1
+    - Derive the population-wide average effective contact rate $\beta = R_0 / T_I$ (i.e., the number of onward infections a single infectious person would cause per unit time in a fully susceptible population)
+    - $C_{ij}$: relative contact rate matrix in the absence of any contact-pattern intervention
+        - The effective contact rate between groups $i$ and $j$ is $\beta C_{ij}$ (i.e., each person in group $i$ would cause $\beta C_{ij}$ infections in group $j$ per unit time if all members of $j$ were fully susceptible)
+        - The user-input matrix is normalized so that dominant eigenvector of $C_{ij}$ is 1.
+          This ensures that the population-wide average effective contact rate is $\beta$.
+          The model requires the *effective* contact rate $\beta$ and the *relative* rates $C_{ij}$ of contact between members of the groups, but not the absolute contact rates between groups.
 - Times & delays
     - $T_E$: mean duration of latent period
     - $T_I$: mean duration of infectious period
@@ -285,9 +294,9 @@ Define the parameters:
 
 - $t_\mathrm{start}$: time that the intervention starts
 - $\Delta t_\mathrm{duration}$: duration of the intervention
-- $\mathrm{Eff}_{ij}$: proportional reduction in the absolute contact rate between groups $i$ and $j$, assumed constant over the duration, with $\mathrm{Eff}_{ij} = \mathrm{Eff}_{ji}$
+- $\mathrm{Eff}_{ij}$: proportional reduction in the contact rate between groups $i$ and $j$, assumed constant over the duration, with $\mathrm{Eff}_{ij} = \mathrm{Eff}_{ji}$
 
-During the period $t_\mathrm{start} \leq t < t_\mathrm{start} + \Delta t_\mathrm{duration}$, adjust the contact matrix entries from $C_{ij}$ to $(1 - \mathrm{Eff}_{ij}) C_{ij}$.
+During the period $t_\mathrm{start} \leq t < t_\mathrm{start} + \Delta t_\mathrm{duration}$, the effective contact rate between groups $i$ and $j$ changed from $\beta C_{ij}$ to $(1 - \mathrm{Eff}_{ij}) \beta C_{ij}$.
 
 ### Vaccination and antivirals
 
