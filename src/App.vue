@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { defineAsyncComponent, ref } from "vue";
 import { Button, SidebarLayout } from "cfasim-ui/components";
 import { provideParams } from "./composables/useParams";
 import FileMenu from "./components/FileMenu.vue";
@@ -9,6 +9,11 @@ import AntiviralsSection from "./sections/AntiviralsSection.vue";
 import CommunitySection from "./sections/CommunitySection.vue";
 import DownloadReportButton from "./components/DownloadReportButton.vue";
 import ResultsView, { type ResultsTab } from "./views/ResultsView.vue";
+
+// Lazy: the rendered docs are a sizeable chunk only the docs tab needs.
+const ModelDocsView = defineAsyncComponent(
+  () => import("./views/ModelDocsView.vue"),
+);
 
 const { ready, reset } = provideParams();
 const importError = ref<string | null>(null);
@@ -21,6 +26,7 @@ function handleReset() {
 const tabs: { value: ResultsTab; label: string }[] = [
   { value: "charts", label: "Charts" },
   { value: "summary", label: "Summary" },
+  { value: "model", label: "Model description" },
 ];
 const tab = ref<ResultsTab>("charts");
 </script>
@@ -62,7 +68,14 @@ const tab = ref<ResultsTab>("charts");
     <template #topbar-end>
       <DownloadReportButton v-if="ready" />
     </template>
-    <ResultsView v-if="ready" :tab="tab" />
+    <template v-if="ready">
+      <!-- Results stay mounted under the docs tab (clipped, not removed):
+           the PDF report reads its header and tables from the DOM. -->
+      <div class="results-host" :inert="tab === 'model'">
+        <ResultsView :tab="tab" />
+      </div>
+      <ModelDocsView v-if="tab === 'model'" />
+    </template>
   </SidebarLayout>
 </template>
 
@@ -90,9 +103,48 @@ const tab = ref<ResultsTab>("charts");
 .SidebarLayout .SidebarRail .SidebarScroll {
   border-right-color: light-dark(#c5e4ec, #264349);
 }
+
+/* Print the active tab as one flowing document: the layout's viewport-high
+   scroll pane would otherwise clip it to the first page. Light scheme so a
+   dark-mode screen still prints dark text on white. The #app prefix outranks
+   the layout's scoped rules, including the mobile-breakpoint transform that
+   applies at Letter width. */
+@media print {
+  :root,
+  :root.dark {
+    color-scheme: light;
+  }
+
+  #app .SidebarLayout,
+  #app .Main,
+  #app .TabsLayout,
+  #app .MainScroll {
+    display: block;
+    height: auto;
+    min-width: 0;
+    overflow: visible;
+    transform: none;
+  }
+
+  #app .SidebarRail,
+  #app .TabsBar {
+    display: none;
+  }
+
+  #app .MainScroll,
+  #app .MainContent {
+    padding: 0;
+    max-width: none;
+  }
+}
 </style>
 
 <style scoped>
+.results-host[inert] {
+  height: 0;
+  overflow: hidden;
+}
+
 .loading {
   padding: 1rem;
   opacity: 0.7;
