@@ -8,3 +8,8 @@ declare module "*.toml?raw" {
   const content: string;
   export default content;
 }
+
+declare module "*.md" {
+  const html: string;
+  export default html;
+}
