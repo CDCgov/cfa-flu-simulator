@@ -1,5 +1,5 @@
 <script lang="ts">
-export type ResultsTab = "charts" | "summary";
+export type ResultsTab = "charts" | "summary" | "model";
 </script>
 
 <script setup lang="ts">
