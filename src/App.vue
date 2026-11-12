@@ -103,40 +103,6 @@ const tab = ref<ResultsTab>("charts");
 .SidebarLayout .SidebarRail .SidebarScroll {
   border-right-color: light-dark(#c5e4ec, #264349);
 }
-
-/* Print the active tab as one flowing document: the layout's viewport-high
-   scroll pane would otherwise clip it to the first page. Light scheme so a
-   dark-mode screen still prints dark text on white. The #app prefix outranks
-   the layout's scoped rules, including the mobile-breakpoint transform that
-   applies at Letter width. */
-@media print {
-  :root,
-  :root.dark {
-    color-scheme: light;
-  }
-
-  #app .SidebarLayout,
-  #app .Main,
-  #app .TabsLayout,
-  #app .MainScroll {
-    display: block;
-    height: auto;
-    min-width: 0;
-    overflow: visible;
-    transform: none;
-  }
-
-  #app .SidebarRail,
-  #app .TabsBar {
-    display: none;
-  }
-
-  #app .MainScroll,
-  #app .MainContent {
-    padding: 0;
-    max-width: none;
-  }
-}
 </style>
 
 <style scoped>

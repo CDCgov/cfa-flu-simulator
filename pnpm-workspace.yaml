@@ -2,13 +2,13 @@ allowBuilds:
   core-js: false
   vue-demi: false
 minimumReleaseAgeExclude:
-  - '@cfasim-ui/charts@0.14.1'
-  - '@cfasim-ui/components@0.14.1'
-  - '@cfasim-ui/pyodide@0.14.1'
-  - '@cfasim-ui/server@0.14.1'
-  - '@cfasim-ui/shared@0.14.1'
-  - '@cfasim-ui/theme@0.14.1'
-  - '@cfasim-ui/wasm@0.14.1'
-  - cfasim-ui@0.14.1
+  - '@cfasim-ui/charts@0.15.4'
+  - '@cfasim-ui/components@0.15.4'
+  - '@cfasim-ui/pyodide@0.15.4'
+  - '@cfasim-ui/server@0.15.4'
+  - '@cfasim-ui/shared@0.15.4'
+  - '@cfasim-ui/theme@0.15.4'
+  - '@cfasim-ui/wasm@0.15.4'
+  - cfasim-ui@0.15.4
 overrides:
   '@xmldom/xmldom': '>=0.9.12'
