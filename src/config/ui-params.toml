@@ -63,7 +63,7 @@ type = "float"
 [fraction_initial_immune]
 section = "scenario"
 label = "Prior immunity"
-tooltip = "Proportion of the population that is immune (i.e., cannot be infected during the outbreak) at the start of the simulation"
+tooltip = "Proportion of the population that is immune at the start of the simulation and therefore unable to become infected during the simulated outbreak"
 min = 0
 max = 1
 step = 0.01
@@ -84,8 +84,8 @@ slider = true
 
 [latent_period]
 section = "scenario"
-label = "Latent period"
-tooltip = "Average time from infection to becoming infectious (days)"
+label = "Latent period (days)"
+tooltip = "Average time from infection to becoming infectious"
 min = 0.5
 max = 2.5
 step = 0.1
@@ -95,8 +95,8 @@ slider = true
 
 [infectious_period]
 section = "scenario"
-label = "Infectious period"
-tooltip = "Average time an infected person can transmit influenza (days)"
+label = "Infectious period (days)"
+tooltip = "Average time an infected person can transmit influenza"
 min = 1
 max = 4.5
 step = 0.1
@@ -107,7 +107,7 @@ slider = true
 [p_symp_given_inf]
 section = "scenario"
 label = "Symptomatic fraction"
-tooltip = "Proportion of infections that develop symptoms in the absence of interventions. Symptomatic and asymptomatic infections are assumed to be equally infectious unless an intervention depends on symptoms."
+tooltip = "Proportion of infections that develop symptoms in the absence of interventions. Symptomatic and asymptomatic infections are assumed to be equally infectious in the absence of interventions."
 min = 0.3
 max = 0.8
 step = 0.01
@@ -119,7 +119,7 @@ per_group = true
 [p_hosp_given_symp]
 section = "scenario"
 label = "Symptomatic-hospitalization ratio"
-tooltip = "Proportion of symptomatic infections that result in hospitalization in the absence of interventions"
+tooltip = "Proportion of symptomatic illnesses that result in hospitalization in the absence of interventions"
 min = 0.0
 max = 0.3
 step = 0.001
@@ -131,7 +131,7 @@ per_group = true
 [p_death_given_hosp]
 section = "scenario"
 label = "Hospitalization-fatality ratio"
-tooltip = "Proportion of hospitalized infections that would result in death without interventions; all deaths are assumed to occur among hospitalized individuals"
+tooltip = "Proportion of hospitalizations that result in death in the absence of interventions"
 min = 0.0
 max = 0.15
 step = 0.001
@@ -148,6 +148,7 @@ default = true
 [vaccine_doses]
 section = "vaccine"
 label = "Number of doses"
+tooltip = "Choose a one-dose or two-dose vaccination schedule"
 default = 1
 type = "select"
 options = [
@@ -160,7 +161,7 @@ section = "vaccine"
 label = "Start of vaccination campaign"
 tooltip = "Simulation day on which vaccine administration begins"
 min = 0
-max = 200                                                         # clamped to days at runtime
+max = 200 # clamped to days at runtime
 step = 1
 default = 100
 type = "integer"
@@ -169,7 +170,7 @@ slider = true
 [vaccine_doses_available]
 section = "vaccine"
 label = "Total doses available"
-tooltip = "Total number of vaccine doses available during the simulation. Together with the administration rate, this limits how many doses can be given"
+tooltip = "Total number of vaccine doses available during the simulation"
 min = 0
 step = 1_000_000
 default = 165_000_000
@@ -193,7 +194,7 @@ show_when_doses_2 = true
 label = "Delay between doses"
 tooltip = "Time that a person must wait before receiving their second dose, in days"
 min = 14
-max = 200                                                                            # clamped to days at runtime
+max = 200 # clamped to days at runtime
 step = 1
 default = 30
 type = "integer"
@@ -241,10 +242,10 @@ slider = true
 
 [vaccine_ve_p]
 section = "vaccine"
-label = "Vaccine effectiveness against symptomatic disease"
+label = "Vaccine effectiveness against symptomatic illness"
 tooltip = "Proportional reduction in the probability of developing symptoms among people who become infected after vaccine protection develops"
 range_with = "vaccine_ve_2p"
-range_label = "Vaccine effectiveness against symptomatic disease (1st and 2nd dose)"
+range_label = "Vaccine effectiveness against symptomatic illness (1st and 2nd dose)"
 range_tooltip = "Proportional reduction in the probability of developing symptoms among people who become infected after vaccine protection develops. The left handle is the effect after the first dose, the right handle after the second."
 min = 0
 max = 1
@@ -256,7 +257,7 @@ slider = true
 [vaccine_ve_2s]
 section = "vaccine"
 show_when_doses_2 = true
-label = "Effectiveness for susceptibility (2nd dose)"
+label = "Vaccine effectiveness for susceptibility (2nd dose)"
 tooltip = "Proportion of potential infections among the vaccine-protected that are averted, after the second dose"
 min = 0
 max = 1
@@ -268,7 +269,7 @@ slider = true
 [vaccine_ve_2i]
 section = "vaccine"
 show_when_doses_2 = true
-label = "Effectiveness for onward transmission (2nd dose)"
+label = "Vaccine effectiveness for onward transmission (2nd dose)"
 tooltip = "Proportion of onward transmissions among the vaccine-protected that are averted, after the second dose"
 min = 0
 max = 1
@@ -280,8 +281,8 @@ slider = true
 [vaccine_ve_2p]
 section = "vaccine"
 show_when_doses_2 = true
-label = "Effectiveness for symptomatic disease (2nd dose)"
-tooltip = "Proportion of symptomatic disease among the vaccine-protected that is averted, after the second dose"
+label = "Effectiveness for symptomatic illness (2nd dose)"
+tooltip = "Proportion of symptomatic illness among the vaccine-protected that is averted, after the second dose"
 min = 0
 max = 1
 step = 0.01
@@ -292,7 +293,7 @@ slider = true
 [vaccine_ramp_up]
 section = "vaccine"
 label = "Delay from dose to protection (days)"
-tooltip = "Time from vaccination to achieving protection from vaccination. Individuals infected before the delay is complete have no protection from vaccination."
+tooltip = "Time from vaccination until protection (for both one-dose or two-dose schedule). Individuals infected before the delay is complete have no protection from vaccination."
 min = 0
 max = 30
 step = 1
@@ -305,7 +306,7 @@ slider = true
 [antivirals_ave_i]
 section = "antivirals"
 label = "Antiviral effectiveness against onward transmission"
-tooltip = "Proportional reduction in infectiousness among symptomatic people who receive outpatient antivirals"
+tooltip = "Proportional reduction in infectiousness among symptomatic people who receive outpatient antivirals and complete treatment. The model does not explicitly incorporate the timing of antiviral treatment."
 min = 0
 max = 0.5
 step = 0.01
@@ -319,7 +320,7 @@ default = false
 [antivirals_ave_p_hosp]
 section = "antivirals"
 label = "Antiviral effectiveness against hospitalization"
-tooltip = "Proportional reduction in hospitalization risk among symptomatic people who receive outpatient antivirals"
+tooltip = "Proportional reduction in hospitalization risk among symptomatic people who receive outpatient antivirals and complete treatment. The model does not explicitly incorporate the timing of antiviral treatment."
 min = 0
 max = 0.5
 step = 0.01
@@ -340,8 +341,8 @@ slider = true
 
 [antivirals_fraction_outpatient]
 section = "antivirals"
-label = "Fraction of symptomatic infections that receive outpatient antivirals"
-tooltip = "Fraction that seek care, are prescribed outpatient antivirals, and adhere to the regimen"
+label = "Fraction of symptomatic illnesses that receive outpatient antivirals"
+tooltip = "Proportion of symptomatic illnesses that seek care, are prescribed outpatient antivirals, and complete the full treatment course"
 min = 0
 max = 1
 step = 0.01
@@ -351,8 +352,8 @@ slider = true
 
 [antivirals_fraction_inpatient]
 section = "antivirals"
-label = "Fraction of hospitalized cases that receive inpatient antivirals"
-tooltip = "Proportion of hospitalized infections that are prescribed inpatient antivirals"
+label = "Fraction of hospitalized patients that receive inpatient antivirals"
+tooltip = "Proportion of hospitalized patients that are prescribed inpatient antivirals and complete the full treatment course"
 min = 0
 max = 1
 step = 0.01
@@ -365,9 +366,9 @@ slider = true
 [community_start]
 section = "community"
 label = "Start day"
-tooltip = "First day that the intervention has its effect"
+tooltip = "First simulation day on which the change in contact rates takes effect"
 min = 0
-max = 200                                                  # clamped to days at runtime
+max = 200 # clamped to days at runtime
 step = 1
 default = 60
 type = "integer"
@@ -376,9 +377,9 @@ slider = true
 [community_duration]
 section = "community"
 label = "Duration (days)"
-tooltip = "Time over which the intervention has its effect"
+tooltip = "Number of days the change in contact rates remains in effect"
 min = 1
-max = 140                                                   # clamped to days-start at runtime
+max = 140 # clamped to days-start at runtime
 step = 1
 default = 20
 type = "integer"
@@ -387,7 +388,7 @@ slider = true
 [community_effectiveness]
 section = "community"
 label = "Reduction in absolute contact rate"
-tooltip = "Proportional reduction in the absolute contact rate within or between the indicated groups, relative to that pair's rate without the intervention. A value of 50% halves that rate; -10% increases it by 10%; 0% leaves it unchanged. Rates are not renormalized to preserve the total. The same proportional change applies in both directions (e.g., child-to-adult and adult-to-child)."
+tooltip = "Proportional reduction in the absolute contact rate within or between the indicated age groups, relative to that pair's rate without the intervention. A value of 50% halves that rate; -10% increases it by 10%; 0% leaves it unchanged. Rates are not renormalized to preserve the total. The same proportional change applies in both directions (e.g., child-to-adult and adult-to-child)."
 min = -1
 max = 1
 step = 0.1

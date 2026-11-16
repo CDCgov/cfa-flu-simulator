@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from "vue";
-import { Button, SidebarLayout } from "cfasim-ui/components";
+import { Button, Hint, SidebarLayout } from "cfasim-ui/components";
 import { provideParams } from "./composables/useParams";
 import FileMenu from "./components/FileMenu.vue";
 import ScenarioSection from "./sections/ScenarioSection.vue";
@@ -24,8 +24,8 @@ function handleReset() {
 }
 
 const tabs: { value: ResultsTab; label: string }[] = [
-  { value: "charts", label: "Charts" },
-  { value: "summary", label: "Summary" },
+  { value: "charts", label: "Incidence charts" },
+  { value: "summary", label: "Summary tables" },
   { value: "model", label: "Model description" },
 ];
 const tab = ref<ResultsTab>("charts");
@@ -40,12 +40,26 @@ const tab = ref<ResultsTab>("charts");
       <Button v-if="ready" variant="neutral" @click="handleReset">Reset</Button>
     </template>
     <template #sidebar>
+      <p class="sidebar-intro">
+        This simulator is designed to support preparedness by exploring how vaccination,
+        antiviral treatment, and changes in social contact may affect the magnitude and timing of an influenza pandemic.
+        It is most applicable for simulating large populations, in the tens of thousands or more. Results are
+        illustrative scenario comparisons and are not exact forecasts for any community.
+
+        Hover over the
+        <Hint text="" /> icons for more information about each parameter, and read our
+        <a href="https://example.com">Behind the Model</a> to learn more
+        about the modeling methods.
+      </p>
       <template v-if="ready">
         <p v-if="importError" class="import-error" role="alert">
           {{ importError }}
         </p>
         <section class="sidebar-group">
-          <h2>Scenario</h2>
+          <h2>Population and influenza characteristics</h2>
+          <p>
+            Set the population size, initial infections, and assumptions about influenza transmission and severity.
+          </p>
           <ScenarioSection />
         </section>
         <section class="sidebar-group">
@@ -57,17 +71,20 @@ const tab = ref<ResultsTab>("charts");
       </template>
       <p v-else class="loading">Loading model…</p>
       <footer class="sidebar-footer">
-        <a
-          href="https://www.cdc.gov/other/privacy.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Privacy Policy</a
-        >
+        <a href="https://www.cdc.gov/other/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
       </footer>
     </template>
     <template #topbar-end>
       <DownloadReportButton v-if="ready" />
     </template>
+    <header class="main-intro">
+      <h1>CDC Pandemic Influenza Simulator</h1>
+      <p>
+        This interactive tool is designed to help public health decision-makers explore the potential impacts of
+        vaccination, antiviral treatment, and changes in social contact during a potential influenza pandemic. Results
+        are illustrative scenario comparisons and are not forecasts for any specific community.
+      </p>
+    </header>
     <template v-if="ready">
       <!-- Results stay mounted under the docs tab (clipped, not removed):
            the PDF report reads its header and tables from the DOM. -->
@@ -125,7 +142,7 @@ const tab = ref<ResultsTab>("charts");
   margin: 0;
 }
 
-.sidebar-group + .sidebar-group {
+.sidebar-group+.sidebar-group {
   margin-top: var(--space-3);
 }
 

@@ -48,15 +48,15 @@ In the model, people with symptomatic infections can receive outpatient antivira
 Outpatient antivirals prevent transmission with effectiveness $\mathrm{AVE}_I$.
 The model applies this reduction to the proportion of infections that are symptomatic that receive and adhere to antivirals.
 In the current implementation, there is no delay between onset of infectiousness and onset of the reduction in infectiousness due to antiviral.
-Thus, $\mathrm{AVE}_I$ should be selected to accounts for delays in treatment.
+Thus, $\mathrm{AVE}_I$ should be selected to account for delays in treatment.
 For example, if all individuals received antivirals halfway through their infectious period, then $\mathrm{AVE}_I$ will almost certainly be less than 50%.
 
 Outpatient antivirals prevent progression from symptomatic infection to hospitalization with effectiveness $\mathrm{AVE}_H$.
 
-Outpatient antivirals are not used prophylatically.
+Outpatient antivirals are not used prophylactically.
 
-Inpatient antivirlas prevent progression from hospitalization to death with effectiveness $\mathrm{AVE}_D$.
-Outpatient and inpatient virals are assumed to have independent effects: a person can receive outpatient antivirals, lowering their risk of hospitalization (and, by extension death), and also inpatient antivirals, specifically lowering their risk of death.
+Inpatient antivirals prevent progression from hospitalization to death with effectiveness $\mathrm{AVE}_D$.
+Outpatient and inpatient antivirals are assumed to have independent effects: a person can receive outpatient antivirals, lowering their risk of hospitalization (and, by extension, death), and also inpatient antivirals, specifically lowering their risk of death.
 
 Inpatient antivirals have no effect on transmission.
 
@@ -92,7 +92,7 @@ The key dynamical compartments are:
 - $\mathrm{S2V}_i$: susceptible individuals who have received 2 vaccine doses and completed their second dose-to-protection delay before exposure
 - $\mathrm{E2V}_i$, $\mathrm{I2V}_i$, $\mathrm{R2V}_i$: as above
 
-There are other compartments, that reflect real epidemiological processes, that do not affect transmission:
+There are other compartments that reflect real epidemiological processes but do not affect transmission:
 
 - $Y^\mathrm{cum}$: cumulative number of symptomatic infections
 - $H^\mathrm{pre}$: current number of infected individuals who will become hospitalized
@@ -114,7 +114,7 @@ These compartments currently represent the proportion of the total population $N
     - Derive the population-wide average effective contact rate $\beta = R_0 / T_I$ (i.e., the number of onward infections a single infectious person would cause per unit time in a fully susceptible population)
     - $C_{ij}$: relative contact rate matrix in the absence of any contact-pattern intervention
         - The effective contact rate between groups $i$ and $j$ is $\beta C_{ij}$ (i.e., each person in group $i$ would cause $\beta C_{ij}$ infections in group $j$ per unit time if all members of $j$ were fully susceptible)
-        - The user-input matrix is normalized so that dominant eigenvector of $C_{ij}$ is 1.
+        - The user-input matrix is normalized so that the dominant eigenvector of $C_{ij}$ is 1.
           This ensures that the population-wide average effective contact rate is $\beta$.
           The model requires the *effective* contact rate $\beta$ and the *relative* rates $C_{ij}$ of contact between members of the groups, but not the absolute contact rates between groups.
 - Times & delays
@@ -208,7 +208,7 @@ $$
                  \end{cases}
 $$
 
-The flux into the vaccine-protected compartments are:
+The fluxes into the vaccine-protected compartments are:
 
 $$
   \begin{align*}
@@ -296,7 +296,7 @@ Define the parameters:
 - $\Delta t_\mathrm{duration}$: duration of the intervention
 - $\mathrm{Eff}_{ij}$: proportional reduction in the contact rate between groups $i$ and $j$, assumed constant over the duration, with $\mathrm{Eff}_{ij} = \mathrm{Eff}_{ji}$
 
-During the period $t_\mathrm{start} \leq t < t_\mathrm{start} + \Delta t_\mathrm{duration}$, the effective contact rate between groups $i$ and $j$ changed from $\beta C_{ij}$ to $(1 - \mathrm{Eff}_{ij}) \beta C_{ij}$.
+During the period $t_\mathrm{start} \leq t < t_\mathrm{start} + \Delta t_\mathrm{duration}$, the effective contact rate between groups $i$ and $j$ changes from $\beta C_{ij}$ to $(1 - \mathrm{Eff}_{ij}) \beta C_{ij}$.
 
 ### Vaccination and antivirals
 
@@ -304,22 +304,33 @@ See the base model description above.
 
 ## References
 
+**PLACEHOLDER**: *This list of references will likely be replaced with a table of parameters.*
+
 - Basic reproduction number
     - [Biggerstaff et al. 2014](https://pmc.ncbi.nlm.nih.gov/articles/PMC4169819/)
 - Latent period and infectious period
     - [Chan et al. 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC11986874/)
     - [Corie et al. 2012](https://pubmed.ncbi.nlm.nih.gov/22939310/)
+    - [Prasad et al. 2023](https://doi.org/10.1073/pnas.2300590120)
     - [Suess et al. 2012](https://pmc.ncbi.nlm.nih.gov/articles/PMC3519848/)
     - [Tuite et al. 2010](https://pmc.ncbi.nlm.nih.gov/articles/PMC2817319/)
-- Symptomatic fraction
+- Symptomatic fraction and severity
     - [Biddle et al. 2024](https://pubmed.ncbi.nlm.nih.gov/39602819/)
+    - [Prasad et al. 2023](https://doi.org/10.1073/pnas.2300590120)
+    - [Reed et al. 2015](https://doi.org/10.1371/journal.pone.0118369), which estimated hospitalization-fatality ratios of 0.5% to 6.8% for various age groups for the 2010/2011 through 2012/2013 seasons
+    - [Reed et al. 2009](https://doi.org/10.3201/eid1512.091413), which estimated a symptomatic-hospitalization ratio of 0.45% (0.16% to 1.2%) for the 2009 pandemic
+    - [Rolfes et al. 2018](https://doi.org/10.1111/irv.12486), which references Reed et al. 2009
+- Vaccination
+    - [Belongia et al. 2016](https://doi.org/10.1016/s1473-3099(16)00129-8)
+    - [Grijalva et al. 2024](https://doi.org/10.1001/jamanetworkopen.2024.46814)
 - Antiviral uptake and effectiveness
     - [Biggerstaff et al. 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4610008/)
     - [Frutos et al. 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11576051/)
     - [Mellis et al. 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10678642/)
+    - [Morris et al. 2026](https://doi.org/10.64898/2026.09.10.26362674)
+    - [Muthuri et al. 2014](https://doi.org/10.1016/s2213-2600(14)70041-4)
     - [Ng et al. 2010](https://pmc.ncbi.nlm.nih.gov/articles/PMC2840043/)
+    - [Prasad et al. 2023](https://doi.org/10.1073/pnas.2300590120)
     - [Uyeki et al. 2024](https://pubmed.ncbi.nlm.nih.gov/37983025/)
-- Severity
-    - [Reed et al. 2015](https://doi.org/10.1371/journal.pone.0118369), which estimated hospitalization-fatality ratios of 0.5% to 6.8% for various age groups for the 2010/2011 through 2012/2013 seasons
-    - [Reed et al. 2009](https://doi.org/10.3201/eid1512.091413), which estimated a symptomatic-hospitalization ratio of 0.45% (0.16% to 1.2%) for the 2009 pandemic
-    - [Rolfes et al. 2018](https://doi.org/10.1111/irv.12486), which references Reed et al. 2009
+- Changes in social contact
+    - [Qualls et al. 2017](http://dx.doi.org/10.15585/mmwr.rr6601a1)
