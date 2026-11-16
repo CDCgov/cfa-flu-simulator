@@ -23,7 +23,7 @@ defineProps<{
     :series="data.series"
     :x-labels="data.xLabels"
     :area-sections="data.areaSections"
-    x-label="Days"
+    x-label="Simulation day"
     :y-label="yLabel"
     :chart-padding="yLabel ? Y_LABEL_CHART_PADDING : undefined"
     :tick-label-style="TICK_LABEL_STYLE"

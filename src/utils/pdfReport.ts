@@ -322,20 +322,20 @@ interface ReportSection {
 }
 
 const REPORT_SECTIONS: ReportSection[] = [
-  { id: "scenario", title: "Scenario" },
+  { id: "scenario", title: "Population and influenza characteristics" },
   {
     id: "vaccine",
-    title: "Vaccine",
+    title: "Vaccination",
     isEnabled: (p) => p.vaccine_enabled,
   },
   {
     id: "antivirals",
-    title: "Antivirals",
+    title: "Antiviral treatment",
     isEnabled: (p) => p.antivirals_enabled,
   },
   {
     id: "community",
-    title: "Contact-pattern interventions",
+    title: "Changes in social contact",
     isEnabled: (p) => p.community_enabled,
   },
 ];

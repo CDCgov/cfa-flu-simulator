@@ -225,7 +225,8 @@ const groupSubtitle = computed(() => {
 });
 
 function incidenceLabel(data: ChartData): string {
-  return `Incidence${data.scale.unit ? ` (${data.scale.unit})` : ""}`;
+  const unit = data.scale.unit.toLowerCase();
+  return `Daily incidence${unit ? ` (${unit})` : ""}`;
 }
 
 // Off-screen copies for the PDF report, one per row there, so every chart
@@ -235,7 +236,7 @@ const reportCharts = computed(() => {
     { heading: "Overall Infection Incidence", data: overallChart.value, height: 300 },
     { heading: "Deaths", data: deathChart.value, height: 220 },
     { heading: "Hospitalizations", data: hospChart.value, height: 220 },
-    { heading: "Symptomatic Infections", data: symptomaticChart.value, height: 220 },
+    { heading: "Symptomatic Illnesses", data: symptomaticChart.value, height: 220 },
     ...groupCharts.value.map((g) => ({
       heading: `Infection Incidence: ${g.label}`,
       data: g.data,
@@ -291,14 +292,16 @@ const headerTitle = computed(() =>
               <h3>Hospitalizations</h3>
               <ChartPanel
                 :data="hospChart"
+                :y-label="incidenceLabel(hospChart)"
                 filename="hospital-incidence"
                 :height="220"
               />
             </div>
             <div v-if="symptomaticChart" class="results__small">
-              <h3>Symptomatic Infections</h3>
+              <h3>Symptomatic Illnesses</h3>
               <ChartPanel
                 :data="symptomaticChart"
+                :y-label="incidenceLabel(symptomaticChart)"
                 filename="symptomatic-incidence"
                 :height="220"
               />
@@ -323,6 +326,7 @@ const headerTitle = computed(() =>
               </div>
             </div>
           </section>
+          <p><b>PLACEHOLDER</b>: <i>Other outcomes by age group</i></p>
         </div>
 
         <div class="results__panel" :inert="tab !== 'summary'">

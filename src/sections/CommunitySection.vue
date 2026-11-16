@@ -13,7 +13,7 @@ const durationMax = computed(() =>
 
 <template>
   <MitigationSection
-    label="Contact-pattern interventions"
+    label="Changes in social contact"
     :enabled="params.community_enabled"
     @update:enabled="params.community_enabled = $event"
   >

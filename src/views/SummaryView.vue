@@ -64,7 +64,7 @@ const tables = computed<Table[]>(() => {
   if (!r) return [];
   return [
     buildTable("Infections", "InfectionIncidence", r),
-    buildTable("Symptomatic Infections", "SymptomaticIncidence", r),
+    buildTable("Symptomatic Illnesses", "SymptomaticIncidence", r),
     buildTable("Hospitalizations", "HospitalIncidence", r),
     buildTable("Deaths", "DeathIncidence", r),
   ];
@@ -117,11 +117,8 @@ function formatPct(n: number): string {
                   {{ row.preventedPct !== null ? formatPct(row.preventedPct) : "—" }}
                 </div>
                 <div v-if="row.preventedPct !== null" class="summary__bar-track">
-                  <div
-                    v-if="row.preventedPct > 0"
-                    class="summary__bar"
-                    :style="{ width: `${Math.min(100, row.preventedPct * 100)}%` }"
-                  />
+                  <div v-if="row.preventedPct > 0" class="summary__bar"
+                    :style="{ width: `${Math.min(100, row.preventedPct * 100)}%` }" />
                 </div>
               </td>
             </tr>
@@ -138,21 +135,25 @@ function formatPct(n: number): string {
   flex-direction: column;
   gap: 2rem;
 }
+
 .summary__title {
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
 }
+
 .summary__scroll {
   overflow-x: auto;
   scrollbar-width: thin;
 }
+
 .summary__table {
   width: 100%;
   min-width: 480px;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
 }
+
 .summary__table th {
   text-align: left;
   font-size: 0.7rem;
@@ -164,17 +165,21 @@ function formatPct(n: number): string {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--color-border);
 }
+
 .summary__col-group {
   width: 200px;
   max-width: 200px;
 }
+
 .summary__table td {
   padding: 0.6rem 0.75rem;
   border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
 }
+
 .summary__label {
   font-weight: 500;
 }
+
 .summary__bar-track {
   margin-top: 0.25rem;
   height: 3px;
@@ -182,6 +187,7 @@ function formatPct(n: number): string {
   border-radius: 2px;
   overflow: hidden;
 }
+
 .summary__bar {
   height: 100%;
   background: var(--accent);

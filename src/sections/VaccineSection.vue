@@ -43,7 +43,7 @@ const overall = computed(() => {
 
 <template>
   <MitigationSection
-    label="Vaccine"
+    label="Vaccination"
     :enabled="params.vaccine_enabled"
     @update:enabled="params.vaccine_enabled = $event"
   >
@@ -78,9 +78,9 @@ const overall = computed(() => {
       <span class="ve__title">Effectiveness</span>
       <div class="ve__derived">
         <span class="ve__derived-label">
-          Effectiveness against symptomatic disease
+          Vaccine effectiveness against symptomatic illness
           <Hint
-            text="Total protection against symptomatic disease (not conditioned on infection)"
+            text="Proportional reduction in the probability of developing symptoms (not conditioned on infection)"
           />
         </span>
         <output class="ve__derived-value">

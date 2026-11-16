@@ -7,7 +7,7 @@ const { params } = useParams();
 </script>
 
 <template>
-  <MitigationSection label="Antivirals" :enabled="params.antivirals_enabled"
+  <MitigationSection label="Antiviral treatment" :enabled="params.antivirals_enabled"
     @update:enabled="params.antivirals_enabled = $event">
     <ParamField path="antivirals_fraction_outpatient" v-model="params.antivirals_fraction_outpatient" />
     <ParamField path="antivirals_ave_i" v-model="params.antivirals_ave_i" />
