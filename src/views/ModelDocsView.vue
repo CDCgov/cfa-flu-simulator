@@ -10,7 +10,7 @@ import modelDocs from "../../docs/model.md";
 <style scoped>
 .model-docs {
   max-width: 48rem;
-  padding: 1rem 0 2rem 1.5rem;
+  padding: 1rem 0 2rem;
 }
 
 /* The theme gives headings a bottom margin only; running text needs space

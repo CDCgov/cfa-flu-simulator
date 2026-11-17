@@ -36,9 +36,6 @@ const tab = ref<ResultsTab>("charts");
     <template #sidebar-header-start>
       <FileMenu v-if="ready" @error="importError = $event" />
     </template>
-    <template #sidebar-header-end>
-      <Button v-if="ready" variant="neutral" @click="handleReset">Reset</Button>
-    </template>
     <template #sidebar>
       <p class="sidebar-intro">
         This simulator is designed to support preparedness by exploring how vaccination,
@@ -52,14 +49,17 @@ const tab = ref<ResultsTab>("charts");
         about the modeling methods.
       </p>
       <template v-if="ready">
+        <Button class="sidebar-reset" variant="neutral" @click="handleReset">Reset</Button>
         <p v-if="importError" class="import-error" role="alert">
           {{ importError }}
         </p>
         <section class="sidebar-group">
-          <h2>Population and influenza characteristics</h2>
-          <p>
-            Set the population size, initial infections, and assumptions about influenza transmission and severity.
-          </p>
+          <header class="sidebar-group__header">
+            <h2>Population and influenza characteristics</h2>
+            <p class="sidebar-group__subheading">
+              Set the population size, initial infections, and assumptions about influenza transmission and severity.
+            </p>
+          </header>
           <ScenarioSection />
         </section>
         <section class="sidebar-group">
@@ -133,6 +133,15 @@ const tab = ref<ResultsTab>("charts");
   opacity: 0.7;
 }
 
+/* The pane's flex gap already separates the intro from its neighbours. */
+.sidebar-intro {
+  margin: 0;
+}
+
+.sidebar-reset {
+  align-self: flex-start;
+}
+
 /* Heading plus its content share one column so the spacing inside a group
    (12px) is tighter than the spacing between groups (24px). */
 .sidebar-group {
@@ -148,6 +157,18 @@ const tab = ref<ResultsTab>("charts");
 
 .sidebar-group:last-of-type {
   padding-bottom: var(--space-3);
+}
+
+.sidebar-group__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sidebar-group__subheading {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
 /* .Sidebar prefix outranks the library's own h2 margin rule. */

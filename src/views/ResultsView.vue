@@ -366,7 +366,7 @@ const headerTitle = computed(() =>
   display: flex;
   flex-direction: column;
   gap: var(--results-gap);
-  padding: 1rem 0 1rem 1.5rem;
+  padding: 1rem 0;
   min-width: 0;
   /* The scroll container's top padding, so scrollIntoView lands at the top. */
   scroll-margin-top: var(--space-6);
@@ -419,7 +419,6 @@ h2, h3 { font-size: 1rem; margin: 0; }
 @container results (max-width: 900px) {
   .results {
     padding-block: 0.5rem;
-    padding-inline-start: 0.75rem;
     --results-gap: 1rem;
   }
   h1 { font-size: 1.25rem; }
