@@ -314,12 +314,12 @@ const headerTitle = computed(() =>
               <p class="results__subtitle">{{ groupSubtitle }}</p>
             </header>
             <div class="results__grid-n">
-              <div v-for="(g, gi) in groupCharts" :key="g.label" class="results__small">
+              <div v-for="g in groupCharts" :key="g.label" class="results__small">
                 <h3>{{ g.label }}</h3>
                 <ChartPanel
                   v-if="g.data"
                   :data="g.data"
-                  :y-label="gi === 0 ? incidenceLabel(g.data) : ''"
+                  :y-label="incidenceLabel(g.data)"
                   :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
                   :height="220"
                 />
