@@ -10,7 +10,6 @@ export interface ChartData {
   xLabels: string[];
   scale: Scale;
   areaSections: AreaSection[];
-  rawBySeries: number[][];
 }
 
 export function pickScale(maxValue: number): Scale {
@@ -19,8 +18,9 @@ export function pickScale(maxValue: number): Scale {
   return { divisor: 1, unit: "" };
 }
 
-export function scale(data: number[], divisor: number): number[] {
-  return divisor === 1 ? data : data.map((v) => v / divisor);
+// The chart plots raw counts, only the tick labels are divided by the scale.
+export function scaledTickFormat(divisor: number): (value: number) => string {
+  return (value) => String(value / divisor);
 }
 
 // cfasim-ui pins the y label to the left edge and reserves a fixed 56px
