@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import type { Series } from "cfasim-ui/charts";
 
-const props = defineProps<{
+defineProps<{
   index: number;
   values: { value: number; color: string; seriesIndex: number }[];
   xLabels: string[];
   series: Series[];
-  // Raw (unscaled) per-series data. If provided, each value is formatted
-  // with its own scale. Otherwise we fall back to the displayed value.
-  rawBySeries?: number[][];
-  // Optional unit suffix for values that aren't auto-scaled (e.g. "%").
-  unit?: string;
 }>();
 
 function formatScaled(v: number): string {
@@ -26,13 +21,6 @@ function formatScaled(v: number): string {
   }
   return Math.round(v).toLocaleString();
 }
-
-function formatValue(displayed: number, seriesIdx: number): string {
-  const raw = props.rawBySeries?.[seriesIdx]?.[props.index];
-  if (raw !== undefined) return formatScaled(raw);
-  if (props.unit) return `${displayed.toFixed(2)}${props.unit}`;
-  return displayed.toFixed(2);
-}
 </script>
 
 <template>
@@ -43,7 +31,7 @@ function formatValue(displayed: number, seriesIdx: number): string {
         <span class="tt__swatch" :style="{ background: v.color }" />
         <span class="tt__label">{{ series[v.seriesIndex].legend }}</span>
       </template>
-      <span class="tt__value">{{ formatValue(v.value, v.seriesIndex) }}</span>
+      <span class="tt__value">{{ formatScaled(v.value) }}</span>
     </div>
   </div>
 </template>

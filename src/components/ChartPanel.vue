@@ -6,6 +6,7 @@ import {
   LEGEND_STYLE,
   Y_GRID_STYLE,
   Y_LABEL_CHART_PADDING,
+  scaledTickFormat,
   type ChartData,
 } from "../utils/chartScale";
 
@@ -32,6 +33,7 @@ defineProps<{
     :width="width"
     :height="height ?? 200"
     :y-min="0"
+    :y-tick-format="scaledTickFormat(data.scale.divisor)"
     :x-min="0"
     :y-grid="Y_GRID_STYLE"
     tooltip-trigger="hover"
@@ -43,7 +45,6 @@ defineProps<{
         :values="values"
         :x-labels="data.xLabels"
         :series="data.series"
-        :raw-by-series="data.rawBySeries"
       />
     </template>
   </LineChart>

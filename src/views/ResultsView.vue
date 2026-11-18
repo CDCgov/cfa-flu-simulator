@@ -9,7 +9,7 @@ import ChartPanel from "../components/ChartPanel.vue";
 import SummaryView from "./SummaryView.vue";
 import { useParams, type ModelOutputExport, type OutputItemGrouped, type OutputTypeLabel } from "../composables/useParams";
 import { useModelRun } from "../composables/useModelRun";
-import { pickScale, scale, type ChartData } from "../utils/chartScale";
+import { pickScale, type ChartData } from "../utils/chartScale";
 import { REPORT_CHART_WIDTH, reportChartsVisible } from "../utils/pdfReport";
 
 const { params } = useParams();
@@ -67,32 +67,26 @@ function buildChart(
   const sc = pickScale(max);
 
   const series: Series[] = [];
-  const rawBySeries: number[][] = [];
   let mitigatedSeriesIndex = 0;
   if (hasBoth) {
-    const unmitRaw = extract(unmitigated);
     series.push({
-      data: scale(unmitRaw, sc.divisor),
+      data: extract(unmitigated),
       color: UNMITIGATED_COLOR,
       dashed: true,
       legend: "Without interventions",
     });
-    rawBySeries.push(unmitRaw);
-    const mitRaw = extract(mitigated);
     series.push({
-      data: scale(mitRaw, sc.divisor),
+      data: extract(mitigated),
       strokeWidth: 2,
       legend: "With interventions",
     });
-    rawBySeries.push(mitRaw);
     mitigatedSeriesIndex = 1;
   } else {
     series.push({
-      data: scale(primaryData, sc.divisor),
+      data: primaryData,
       strokeWidth: 2,
       legend: "Without interventions",
     });
-    rawBySeries.push(primaryData);
   }
 
   return {
@@ -100,7 +94,6 @@ function buildChart(
     xLabels: xLabels(primary),
     scale: sc,
     areaSections: buildAreaSections(primary, mitigatedSeriesIndex, showAreaLegend),
-    rawBySeries,
   };
 }
 
