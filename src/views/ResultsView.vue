@@ -11,6 +11,8 @@ import { useParams, type ModelOutputExport, type OutputItemGrouped, type OutputT
 import { useModelRun } from "../composables/useModelRun";
 import { pickScale, type ChartData } from "../utils/chartScale";
 import { REPORT_CHART_WIDTH, reportChartsVisible } from "../utils/pdfReport";
+import { slugify } from "../utils/slugify";
+
 
 const { params } = useParams();
 const { results, running, error } = useModelRun();
@@ -196,6 +198,22 @@ const groupCharts = computed(() => {
   }));
 });
 
+const ageGroupOutcomeCharts = computed(() => {
+  const outcomes: { heading: string; kind: OutputTypeLabel }[] = [
+    { heading: "Daily new infections", kind: "InfectionIncidence" },
+    { heading: "Daily deaths", kind: "DeathIncidence" },
+    { heading: "Daily hospitalizations", kind: "HospitalIncidence" },
+    { heading: "Daily new symptomatic illnesses", kind: "SymptomaticIncidence" },
+  ];
+  return outcomes.map((outcome) => ({
+    ...outcome,
+    charts: params.population_fraction_labels.map((label, i) => ({
+      label,
+      data: buildChart(outcome.kind, (rows) => groupSeries(rows, i)),
+    })),
+  }));
+});
+
 // Subtitle based on active mitigations
 const subtitle = computed(() => {
   const active: string[] = [];
@@ -209,13 +227,10 @@ const subtitle = computed(() => {
   return `Impact of ${active.join(" + ")} on a population of ${pop} over ${params.days} days`;
 });
 
-const groupSubtitle = computed(() => {
-  const parts = params.population_fraction_labels.map((label, i) => {
-    const pct = Math.round((params.population_fractions[i] ?? 0) * 100);
-    return i === 0 ? `${label} (${pct}% of the population)` : `${label} (${pct}%)`;
-  });
-  return `Daily new infections among ${parts.join(" and ")}`;
-});
+function groupOutcomeTitle(outcome: string, label: string, index: number): string {
+  const pct = Math.round((params.population_fractions[index] ?? 0) * 100);
+  return `${outcome} among ${label} (${pct}% of the population)`;
+}
 
 function incidenceLabel(data: ChartData): string {
   const unit = data.scale.unit.toLowerCase();
@@ -263,63 +278,40 @@ const headerTitle = computed(() =>
         <div class="results__panel" :inert="tab !== 'charts'">
           <section class="results__section results__section--flush" id="charts">
             <h2>Overall Infection Incidence</h2>
-            <ChartPanel
-              :data="overallChart"
-              :y-label="incidenceLabel(overallChart)"
-              filename="overall-infection-incidence"
-              :height="320"
-            />
+            <ChartPanel :data="overallChart" :y-label="incidenceLabel(overallChart)"
+              filename="overall-infection-incidence" :height="320" />
           </section>
 
           <section class="results__grid-3">
             <div v-if="deathChart" class="results__small">
               <h3>Deaths</h3>
-              <ChartPanel
-                :data="deathChart"
-                :y-label="incidenceLabel(deathChart)"
-                filename="death-incidence"
-                :height="220"
-              />
+              <ChartPanel :data="deathChart" :y-label="incidenceLabel(deathChart)" filename="death-incidence"
+                :height="220" />
             </div>
             <div v-if="hospChart" class="results__small">
               <h3>Hospitalizations</h3>
-              <ChartPanel
-                :data="hospChart"
-                :y-label="incidenceLabel(hospChart)"
-                filename="hospital-incidence"
-                :height="220"
-              />
+              <ChartPanel :data="hospChart" :y-label="incidenceLabel(hospChart)" filename="hospital-incidence"
+                :height="220" />
             </div>
             <div v-if="symptomaticChart" class="results__small">
               <h3>Symptomatic Illnesses</h3>
-              <ChartPanel
-                :data="symptomaticChart"
-                :y-label="incidenceLabel(symptomaticChart)"
-                filename="symptomatic-incidence"
-                :height="220"
-              />
+              <ChartPanel :data="symptomaticChart" :y-label="incidenceLabel(symptomaticChart)"
+                filename="symptomatic-incidence" :height="220" />
             </div>
           </section>
 
           <section class="results__section" id="by-age-group">
-            <header class="results__header">
-              <h1>Infection Incidence by Age Group</h1>
-              <p class="results__subtitle">{{ groupSubtitle }}</p>
-            </header>
-            <div class="results__grid-n">
-              <div v-for="g in groupCharts" :key="g.label" class="results__small">
-                <h3>{{ g.label }}</h3>
-                <ChartPanel
-                  v-if="g.data"
-                  :data="g.data"
-                  :y-label="incidenceLabel(g.data)"
-                  :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
-                  :height="220"
-                />
+            <h1>Outcomes by Age Group</h1>
+            <section v-for="outcome in ageGroupOutcomeCharts" :key="outcome.kind">
+              <div class="results__grid-n">
+                <div v-for="(g, gi) in outcome.charts" :key="g.label" class="results__small">
+                  <h2>{{ groupOutcomeTitle(outcome.heading, g.label, gi) }}</h2>
+                  <ChartPanel v-if="g.data" :data="g.data" :y-label="incidenceLabel(g.data)"
+                    :filename="`${slugify(outcome.heading)}-${slugify(g.label)}`" :height="220" />
+                </div>
               </div>
-            </div>
+            </section>
           </section>
-          <p><b>PLACEHOLDER</b>: <i>Other outcomes by age group</i></p>
         </div>
 
         <div class="results__panel" :inert="tab !== 'summary'">
@@ -330,19 +322,9 @@ const headerTitle = computed(() =>
       </div>
 
       <div v-if="reportChartsVisible" class="results__report-charts" aria-hidden="true" inert>
-        <div
-          v-for="c in reportCharts"
-          :key="c.heading"
-          data-report-chart
-          :data-heading="c.heading"
-        >
-          <ChartPanel
-            :data="c.data"
-            :y-label="incidenceLabel(c.data)"
-            :width="REPORT_CHART_WIDTH"
-            :height="c.height"
-            filename="report"
-          />
+        <div v-for="c in reportCharts" :key="c.heading" data-report-chart :data-heading="c.heading">
+          <ChartPanel :data="c.data" :y-label="incidenceLabel(c.data)" :width="REPORT_CHART_WIDTH" :height="c.height"
+            filename="report" />
         </div>
       </div>
     </div>
@@ -354,6 +336,7 @@ const headerTitle = computed(() =>
   container-type: inline-size;
   container-name: results;
 }
+
 .results {
   --results-gap: 1.5rem;
   display: flex;
@@ -364,31 +347,59 @@ const headerTitle = computed(() =>
   /* The scroll container's top padding, so scrollIntoView lands at the top. */
   scroll-margin-top: var(--space-6);
 }
+
 .results__panel {
   display: flex;
   flex-direction: column;
   gap: var(--results-gap);
   min-width: 0;
 }
+
 /* Not display: none or visibility: hidden: charts need a real width to
    render, so they are ready when their tab is shown. */
 .results__panel[inert] {
   height: 0;
   overflow: hidden;
 }
-h1 { font-size: 1.5rem; margin: 0 0 0.5rem; }
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+}
+
 /* Chart titles sit tight to the chart: LineChart already reserves an empty
    10px band above its legend row, so pull the chart up into part of it. */
-h2, h3 { font-size: 1rem; margin: 0; }
-.results :deep(.line-chart-wrapper) { margin-top: -4px; }
-.results__subtitle { margin: 0.25rem 0 0; opacity: 0.65; }
+h2,
+h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.results :deep(.line-chart-wrapper) {
+  margin-top: -4px;
+}
+
+.results__subtitle {
+  margin: 0.25rem 0 0;
+  opacity: 0.65;
+}
+
 /* A header inside a section gets the same gap below it as the page header
    gets from the flex column, so the two title blocks read the same. */
-.results__section > .results__header { margin-bottom: var(--results-gap); }
+.results__section>.results__header {
+  margin-bottom: var(--results-gap);
+}
+
 /* The theme's base `section` margin stacks on the flex gap. Drop it so the
    overall chart sits closer to the small charts that continue it. */
-.results__section--flush { margin-bottom: 0; }
-.results__error { color: var(--color-error); }
+.results__section--flush {
+  margin-bottom: 0;
+}
+
+.results__error {
+  color: var(--color-error);
+}
+
 /* Light scheme, and colour re-resolved under it, so a dark-mode screen
    still yields dark text on the white PDF page. */
 .results__report-charts {
@@ -398,30 +409,42 @@ h2, h3 { font-size: 1rem; margin: 0; }
   color-scheme: light;
   color: var(--color-text);
 }
-.results__loading { opacity: 0.7; }
+
+.results__loading {
+  opacity: 0.7;
+}
+
 .results__grid-3 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
+
 .results__grid-n {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1rem;
 }
+
 @container results (max-width: 900px) {
   .results {
     padding-block: 0.5rem;
     --results-gap: 1rem;
   }
-  h1 { font-size: 1.25rem; }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
   .results__grid-3 {
     grid-template-columns: 1fr;
   }
+
   .results__grid-n {
     grid-template-columns: 1fr;
   }
 }
+
 @container results (min-width: 901px) and (max-width: 1099px) {
   .results__grid-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
