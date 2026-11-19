@@ -203,6 +203,22 @@ const groupCharts = computed(() => {
   }));
 });
 
+const ageGroupOutcomeCharts = computed(() => {
+  const outcomes: { heading: string; kind: OutputTypeLabel }[] = [
+    { heading: "Daily new infections", kind: "InfectionIncidence" },
+    { heading: "Daily deaths", kind: "DeathIncidence" },
+    { heading: "Daily hospitalizations", kind: "HospitalIncidence" },
+    { heading: "Daily new symptomatic illnesses", kind: "SymptomaticIncidence" },
+  ];
+  return outcomes.map((outcome) => ({
+    ...outcome,
+    charts: params.population_fraction_labels.map((label, i) => ({
+      label,
+      data: buildChart(outcome.kind, (rows) => groupSeries(rows, i)),
+    })),
+  }));
+});
+
 // Subtitle based on active mitigations
 const subtitle = computed(() => {
   const active: string[] = [];
@@ -216,13 +232,10 @@ const subtitle = computed(() => {
   return `Impact of ${active.join(" + ")} on a population of ${pop} over ${params.days} days`;
 });
 
-const groupSubtitle = computed(() => {
-  const parts = params.population_fraction_labels.map((label, i) => {
-    const pct = Math.round((params.population_fractions[i] ?? 0) * 100);
-    return i === 0 ? `${label} (${pct}% of the population)` : `${label} (${pct}%)`;
-  });
-  return `Daily new infections among ${parts.join(" and ")}`;
-});
+function groupOutcomeTitle(outcome: string, label: string, index: number): string {
+  const pct = Math.round((params.population_fractions[index] ?? 0) * 100);
+  return `${outcome} among ${label} (${pct}% of the population)`;
+}
 
 function incidenceLabel(data: ChartData): string {
   const unit = data.scale.unit.toLowerCase();
@@ -309,24 +322,22 @@ const headerTitle = computed(() =>
           </section>
 
           <section class="results__section" id="by-age-group">
-            <header class="results__header">
-              <h1>Infection Incidence by Age Group</h1>
-              <p class="results__subtitle">{{ groupSubtitle }}</p>
-            </header>
-            <div class="results__grid-n">
-              <div v-for="(g, gi) in groupCharts" :key="g.label" class="results__small">
-                <h3>{{ g.label }}</h3>
-                <ChartPanel
-                  v-if="g.data"
-                  :data="g.data"
-                  :y-label="gi === 0 ? incidenceLabel(g.data) : ''"
-                  :filename="`infection-incidence-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
-                  :height="220"
-                />
+            <h1>Outcomes by Age Group</h1>
+            <section v-for="outcome in ageGroupOutcomeCharts" :key="outcome.kind">
+              <div class="results__grid-n">
+                <div v-for="(g, gi) in outcome.charts" :key="g.label" class="results__small">
+                  <h2>{{ groupOutcomeTitle(outcome.heading, g.label, gi) }}</h2>
+                  <ChartPanel
+                    v-if="g.data"
+                    :data="g.data"
+                    :y-label="incidenceLabel(g.data)"
+                    :filename="`${outcome.heading.toLowerCase().replace(/\\s+/g, '-')}-${g.label.toLowerCase().replace(/\\s+/g, '-')}`"
+                    :height="220"
+                  />
+                </div>
               </div>
-            </div>
+            </section>
           </section>
-          <p><b>PLACEHOLDER</b>: <i>Other outcomes by age group</i></p>
         </div>
 
         <div class="results__panel" :inert="tab !== 'summary'">
