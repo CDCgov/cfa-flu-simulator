@@ -15,8 +15,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       cfasim-ui:
-        specifier: ^0.15.4
-        version: 0.15.4(vue@3.5.45(typescript@5.9.3))
+        specifier: ^0.15.7
+        version: 0.15.7(vue@3.5.45(typescript@5.9.3))
       jspdf:
         specifier: ^4.2.1
         version: 4.2.1
@@ -81,36 +81,36 @@ packages:
     resolution: {integrity: sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ==}
     engines: {node: '>=6.9.0'}
 
-  '@cfasim-ui/charts@0.15.4':
-    resolution: {integrity: sha512-M04Odf3mMPkxANgCVhYZ2nZiklHwcfSTU7cPVt3tPt4BMzovjDyKza576c1t4kULR7vGAlp4aPhYIdaiN6JrpA==}
+  '@cfasim-ui/charts@0.15.7':
+    resolution: {integrity: sha512-RDh9J70Bb1Db7Q1NxXO6djOVjvb6NHRlp63ELsrCB+u0493+Fqfp6jhJlkvdGjc0mYbtSQ9ufLm3myFdcw3CTA==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/components@0.15.4':
-    resolution: {integrity: sha512-msXBzw5nsft0woDkqIT1w/tPdvTBxLk+RjMZSuNcUPjmb1WsWrZdgyVqqnr94W6zKwLfYEQpkExluT/RwErQgg==}
+  '@cfasim-ui/components@0.15.7':
+    resolution: {integrity: sha512-Z1Av6SIgK7+i42eS5dlh+53uKhsexvxtxCA0n0WjwWHpORKkGTYIsVw3jrAvL+cJ5d+Of76drLzNf/xi00O/Gg==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/pyodide@0.15.4':
-    resolution: {integrity: sha512-D0Dd7KQdtopRAZdvJoULHG2ZoTfDXMgPFAqmBUiIAUQH4nw/50K4FitwsEApL7GgVJzgyUx5DqCpzJCqn+8IBQ==}
+  '@cfasim-ui/pyodide@0.15.7':
+    resolution: {integrity: sha512-5kBUWnOlO4kFKFIME5SEO0V0QplX9vWvRZJ8pLYHTgDQOwsX/jRoStDt+f1bMsAQMIP2/0/lHTI6eSaDVcwtlw==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/server@0.15.4':
-    resolution: {integrity: sha512-wUgSo77iFcj0q88Rn0sxwMMqLM6JhXU2mPac0q0pN92t+n3iZup8VCu1ggx/AxwK0J3CzQaBIA8mFv/EWd78QQ==}
+  '@cfasim-ui/server@0.15.7':
+    resolution: {integrity: sha512-WYZLGbRDiCH3GRbBoGPJmb0JFpTYank+IRpvqoBLdc3LwgmMqVEUAnQmc0fdgJkMNsgwozYFTAnJP3dDOAj07g==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/shared@0.15.4':
-    resolution: {integrity: sha512-sltjUg4Mpw/wTae54ICevKhQ+GTGHVOXTEnNE8UxQ5PdRQoLZxzKjQbcGekkqlzDf2wge6LqJPQYoO4RacIBbQ==}
+  '@cfasim-ui/shared@0.15.7':
+    resolution: {integrity: sha512-simL5PV2OCLHNE7UximE8qhQ80ePxOhDhWRJYf8oNfbkyjs/Yq+La/cVFpTn3ejEi7FxR4Nd3wHCVY4Lobb7Jg==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@cfasim-ui/theme@0.15.4':
-    resolution: {integrity: sha512-3rbG2dcioPwjsk/DKcBzAfSx1qXL/f7kbjVDc+kYq3uhI2GpoFwn59Kic+bACJ/60QH+whY8CU5qCQHdWsii7A==}
+  '@cfasim-ui/theme@0.15.7':
+    resolution: {integrity: sha512-kWAEkauNikMNrC2f+vRBBh14mNXmYs36yNt5a8AggnVEPL7jO73er8FJfKpXya9chN/kLsRrBGjIdGeoU7ZeBg==}
 
-  '@cfasim-ui/wasm@0.15.4':
-    resolution: {integrity: sha512-cQauClz+p1Jct3zGYFkkcrLgwZJoe/IxbJQ0fA9suuITIgIKODl4PDBYZq97kmNvJNfrm8qHdqwugxhappRM5A==}
+  '@cfasim-ui/wasm@0.15.7':
+    resolution: {integrity: sha512-SPtFCA+oZm11UGovGgF9/GrLTW0H0O2pdZdxY6enXkDWzVl0Ao0zlBsm7+Gkrg8OD5TiUaABZpP9zP40BQrFRg==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -590,8 +590,8 @@ packages:
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
 
-  cfasim-ui@0.15.4:
-    resolution: {integrity: sha512-GQ8XHbyEGBoGN4Bd9/acL1GLKzIBlRlXE+fNSyXwKmuQWUFqNJs31lG9eKi5EIj+NV/Kl06gf7nmH4aLegAzDQ==}
+  cfasim-ui@0.15.7:
+    resolution: {integrity: sha512-Zx1y2CvPvMjljxqVi9GMyU6fGOh/taGk49S8b2k/mU0q4bCfkoxc5VlULEMV1hjyeIhmLXNLvypK6uqyNSS8VQ==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -1278,9 +1278,9 @@ snapshots:
       '@babel/helper-string-parser': 7.29.13
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@cfasim-ui/charts@0.15.4(vue@3.5.45(typescript@5.9.3))':
+  '@cfasim-ui/charts@0.15.7(vue@3.5.45(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.15.4(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.15.7(vue@3.5.45(typescript@5.9.3))
       d3-geo: 3.1.1
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
@@ -1291,9 +1291,9 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  '@cfasim-ui/components@0.15.4(vue@3.5.45(typescript@5.9.3))':
+  '@cfasim-ui/components@0.15.7(vue@3.5.45(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.15.4(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.15.7(vue@3.5.45(typescript@5.9.3))
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/commands': 6.10.4
       '@codemirror/lang-json': 6.0.2
@@ -1310,31 +1310,32 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  '@cfasim-ui/pyodide@0.15.4(vue@3.5.45(typescript@5.9.3))':
+  '@cfasim-ui/pyodide@0.15.7(vue@3.5.45(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.15.4(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.15.7(vue@3.5.45(typescript@5.9.3))
       vue: 3.5.45(typescript@5.9.3)
 
-  '@cfasim-ui/server@0.15.4(vue@3.5.45(typescript@5.9.3))':
+  '@cfasim-ui/server@0.15.7(vue@3.5.45(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.15.4(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.15.7(vue@3.5.45(typescript@5.9.3))
       vue: 3.5.45(typescript@5.9.3)
 
-  '@cfasim-ui/shared@0.15.4(vue@3.5.45(typescript@5.9.3))':
+  '@cfasim-ui/shared@0.15.7(vue@3.5.45(typescript@5.9.3))':
     dependencies:
       vue: 3.5.45(typescript@5.9.3)
 
-  '@cfasim-ui/theme@0.15.4(vue@3.5.45(typescript@5.9.3))':
+  '@cfasim-ui/theme@0.15.7(vue@3.5.45(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/charts': 0.15.4(vue@3.5.45(typescript@5.9.3))
-      '@cfasim-ui/components': 0.15.4(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/charts': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/components': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.15.7(vue@3.5.45(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
-  '@cfasim-ui/wasm@0.15.4(vue@3.5.45(typescript@5.9.3))':
+  '@cfasim-ui/wasm@0.15.7(vue@3.5.45(typescript@5.9.3))':
     dependencies:
-      '@cfasim-ui/shared': 0.15.4(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.15.7(vue@3.5.45(typescript@5.9.3))
       vue: 3.5.45(typescript@5.9.3)
 
   '@codemirror/autocomplete@6.20.3':
@@ -1803,15 +1804,15 @@ snapshots:
 
   ccount@2.0.1: {}
 
-  cfasim-ui@0.15.4(vue@3.5.45(typescript@5.9.3)):
+  cfasim-ui@0.15.7(vue@3.5.45(typescript@5.9.3)):
     dependencies:
-      '@cfasim-ui/charts': 0.15.4(vue@3.5.45(typescript@5.9.3))
-      '@cfasim-ui/components': 0.15.4(vue@3.5.45(typescript@5.9.3))
-      '@cfasim-ui/pyodide': 0.15.4(vue@3.5.45(typescript@5.9.3))
-      '@cfasim-ui/server': 0.15.4(vue@3.5.45(typescript@5.9.3))
-      '@cfasim-ui/shared': 0.15.4(vue@3.5.45(typescript@5.9.3))
-      '@cfasim-ui/theme': 0.15.4(vue@3.5.45(typescript@5.9.3))
-      '@cfasim-ui/wasm': 0.15.4(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/charts': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/components': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/pyodide': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/server': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/shared': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/theme': 0.15.7(vue@3.5.45(typescript@5.9.3))
+      '@cfasim-ui/wasm': 0.15.7(vue@3.5.45(typescript@5.9.3))
       vue: 3.5.45(typescript@5.9.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
