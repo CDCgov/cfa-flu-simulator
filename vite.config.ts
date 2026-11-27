@@ -5,6 +5,7 @@ import { defineConfig, type Plugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 import MarkdownIt from "markdown-it";
 import { katex } from "@mdit/plugin-katex";
+import { slugify } from "./src/utils/slugify";
 
 function cfasimWasm(modelDir = "model"): Plugin {
   return {
@@ -20,16 +21,6 @@ function cfasimWasm(modelDir = "model"): Plugin {
   };
 }
 
-// Heading ids as the VitePress site makes them, so the doc's in-page links
-// resolve to the same anchors in both.
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9 _-]+/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
-}
-
 // Imports a Markdown file as a rendered HTML string. Math is rendered to
 // KaTeX markup at build time, so the browser only needs katex's stylesheet.
 function markdownHtml(): Plugin {
@@ -43,7 +34,9 @@ function markdownHtml(): Plugin {
       if (token.type !== "heading_open") continue;
       const inline = state.tokens[i + 1];
       const text = inline.children
-        ?.filter((child) => child.type === "text" || child.type === "code_inline")
+        ?.filter(
+          (child) => child.type === "text" || child.type === "code_inline",
+        )
         .map((child) => child.content)
         .join("");
       token.attrSet("id", slugify(text ?? ""));
