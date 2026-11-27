@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { useParams } from "../composables/useParams";
+import { VIRAL_PRESETS } from "../config/presets";
 import ParamField from "../components/ParamField.vue";
 import GroupEditor from "../components/GroupEditor.vue";
+import PresetGroup from "../components/PresetGroup.vue";
 
 const { params } = useParams();
 </script>
 
 <template>
-  <div class="section">
-    <ParamField path="days" v-model="params.days" />
-    <ParamField path="population" v-model="params.population" />
-    <ParamField path="initial_infections" v-model="params.initial_infections" />
-    <ParamField
-      path="fraction_initial_immune"
-      v-model="params.fraction_initial_immune"
-    />
+  <PresetGroup
+    :presets="VIRAL_PRESETS"
+    hint="Sets the transmission and severity assumptions to values resembling a past influenza pandemic. Each value can be adjusted under Advanced settings, which switches the preset to Custom."
+  >
     <ParamField path="r0" v-model="params.r0" />
     <ParamField path="latent_period" v-model="params.latent_period" />
     <ParamField path="infectious_period" v-model="params.infectious_period" />
@@ -24,13 +22,5 @@ const { params } = useParams();
       path="p_death_given_hosp"
       v-model="params.p_death_given_hosp"
     />
-  </div>
+  </PresetGroup>
 </template>
-
-<style scoped>
-.section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-</style>

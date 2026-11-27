@@ -41,6 +41,17 @@ watch(allMode, (on) => {
   }
 });
 
+// Values set from outside (a preset, an import, a reset) can differ by
+// group, which the single "All Ages" input would hide and then overwrite.
+watch(
+  () => props.modelValue,
+  (values) => {
+    if (allMode.value && values.some((v) => v !== values[0])) {
+      allMode.value = false;
+    }
+  },
+);
+
 const numberType = computed<"integer" | "float">(() =>
   cfg.value.type === "integer" ? "integer" : "float",
 );

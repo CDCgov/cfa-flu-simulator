@@ -1,0 +1,26 @@
+# Presets for the "Population" dropdown, in display order. `params` sets
+# fields from that group's "Advanced settings" by their ui-params.toml name;
+# any field left out is held at its default there.
+#
+# Initial infections scale with the population, keeping the default's
+# proportion (1,000 in 330 million, about 3 per million).
+
+[pop_330m]
+label = "330 million"
+
+[pop_330m.params]
+population = 330_000_000
+
+[pop_10m]
+label = "10 million"
+
+[pop_10m.params]
+population = 10_000_000
+initial_infections = 30
+
+[pop_1m]
+label = "1 million"
+
+[pop_1m.params]
+population = 1_000_000
+initial_infections = 3
