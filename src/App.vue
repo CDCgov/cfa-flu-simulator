@@ -2,6 +2,7 @@
 import { defineAsyncComponent, ref } from "vue";
 import { Button, Hint, SidebarLayout } from "cfasim-ui/components";
 import { provideParams } from "./composables/useParams";
+import { useHashRoute } from "./composables/useHashRoute";
 import FileMenu from "./components/FileMenu.vue";
 import ScenarioSection from "./sections/ScenarioSection.vue";
 import VaccineSection from "./sections/VaccineSection.vue";
@@ -28,11 +29,16 @@ const tabs: { value: ResultsTab; label: string }[] = [
   { value: "summary", label: "Summary tables" },
   { value: "model", label: "Model description" },
 ];
-const tab = ref<ResultsTab>("charts");
+const { tab, section, selectTab, selectSection } = useHashRoute();
+
+function handleTabChange(value: string | undefined) {
+  const match = tabs.find((candidate) => candidate.value === value);
+  if (match) selectTab(match.value);
+}
 </script>
 
 <template>
-  <SidebarLayout v-model:tab="tab" :tabs="tabs" :max-width="1600">
+  <SidebarLayout :tab="tab" :tabs="tabs" :max-width="1600" @update:tab="handleTabChange">
     <template #sidebar-header-start>
       <FileMenu v-if="ready" @error="importError = $event" />
     </template>
@@ -91,7 +97,7 @@ const tab = ref<ResultsTab>("charts");
       <div class="results-host" :inert="tab === 'model'">
         <ResultsView :tab="tab" />
       </div>
-      <ModelDocsView v-if="tab === 'model'" />
+      <ModelDocsView v-if="tab === 'model'" :section="section" @navigate="selectSection" />
     </template>
   </SidebarLayout>
 </template>

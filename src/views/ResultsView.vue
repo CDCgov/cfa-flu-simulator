@@ -1,5 +1,6 @@
 <script lang="ts">
-export type ResultsTab = "charts" | "summary" | "model";
+export const RESULTS_TABS = ["charts", "summary", "model"] as const;
+export type ResultsTab = (typeof RESULTS_TABS)[number];
 </script>
 
 <script setup lang="ts">
@@ -18,10 +19,12 @@ const { results, running, error } = useModelRun();
 const props = defineProps<{ tab: ResultsTab }>();
 
 // The tabs share one scroll container, so start each panel from the top.
+// The model description tab places itself: it may open at a section.
 const root = ref<HTMLElement | null>(null);
 watch(
   () => props.tab,
-  async () => {
+  async (tab) => {
+    if (tab === "model") return;
     await nextTick();
     root.value?.scrollIntoView({ block: "start" });
   },

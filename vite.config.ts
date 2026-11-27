@@ -37,16 +37,36 @@ function markdownHtml(): Plugin {
     throwOnError: true,
   });
 
+  // Repeated headings get -1, -2 suffixes (as markdown-it-anchor does), and
+  // every heading below the title ends with a link to itself.
   md.core.ruler.push("heading_ids", (state) => {
+    const usedIds = new Set<string>();
     for (let i = 0; i < state.tokens.length; i++) {
       const token = state.tokens[i];
       if (token.type !== "heading_open") continue;
       const inline = state.tokens[i + 1];
-      const text = inline.children
-        ?.filter((child) => child.type === "text" || child.type === "code_inline")
-        .map((child) => child.content)
-        .join("");
-      token.attrSet("id", slugify(text ?? ""));
+      const text =
+        inline.children
+          ?.filter((child) => child.type === "text" || child.type === "code_inline")
+          .map((child) => child.content)
+          .join("") ?? "";
+      const slug = slugify(text);
+      let id = slug;
+      for (let suffix = 1; usedIds.has(id); suffix++) {
+        id = `${slug}-${suffix}`;
+      }
+      usedIds.add(id);
+      token.attrSet("id", id);
+      // Focusable from script, so following a link moves keyboard focus too.
+      token.attrSet("tabindex", "-1");
+
+      if (token.tag === "h1") continue;
+      const anchorOpen = new state.Token("link_open", "a", 1);
+      anchorOpen.attrSet("class", "header-anchor");
+      anchorOpen.attrSet("href", `#${id}`);
+      anchorOpen.attrSet("aria-label", `Link to "${text}"`);
+      const anchorClose = new state.Token("link_close", "a", -1);
+      inline.children?.push(anchorOpen, anchorClose);
     }
   });
 
