@@ -3,7 +3,9 @@ import { defineAsyncComponent, ref } from "vue";
 import { Button, Hint, SidebarLayout } from "cfasim-ui/components";
 import { provideParams } from "./composables/useParams";
 import FileMenu from "./components/FileMenu.vue";
-import ScenarioSection from "./sections/ScenarioSection.vue";
+import ParamField from "./components/ParamField.vue";
+import PopulationSection from "./sections/PopulationSection.vue";
+import ViralSection from "./sections/ViralSection.vue";
 import VaccineSection from "./sections/VaccineSection.vue";
 import AntiviralsSection from "./sections/AntiviralsSection.vue";
 import CommunitySection from "./sections/CommunitySection.vue";
@@ -15,7 +17,7 @@ const ModelDocsView = defineAsyncComponent(
   () => import("./views/ModelDocsView.vue"),
 );
 
-const { ready, reset } = provideParams();
+const { params, ready, reset } = provideParams();
 const importError = ref<string | null>(null);
 
 function handleReset() {
@@ -53,14 +55,14 @@ const tab = ref<ResultsTab>("charts");
         <p v-if="importError" class="import-error" role="alert">
           {{ importError }}
         </p>
-        <section class="sidebar-group">
-          <header class="sidebar-group__header">
-            <h2>Population and influenza characteristics</h2>
-            <p class="sidebar-group__subheading">
-              Set the population size, initial infections, and assumptions about influenza transmission and severity.
-            </p>
-          </header>
-          <ScenarioSection />
+        <ParamField path="days" v-model="params.days" />
+        <section class="sidebar-group" aria-labelledby="population-heading">
+          <h2 id="population-heading">Population</h2>
+          <PopulationSection />
+        </section>
+        <section class="sidebar-group" aria-labelledby="viral-heading">
+          <h2 id="viral-heading">Viral characteristics</h2>
+          <ViralSection />
         </section>
         <section class="sidebar-group">
           <h2>Interventions</h2>
@@ -157,18 +159,6 @@ const tab = ref<ResultsTab>("charts");
 
 .sidebar-group:last-of-type {
   padding-bottom: var(--space-3);
-}
-
-.sidebar-group__header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.sidebar-group__subheading {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
 }
 
 /* .Sidebar prefix outranks the library's own h2 margin rule. */

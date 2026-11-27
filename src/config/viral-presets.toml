@@ -1,0 +1,48 @@
+# Presets for the "Viral characteristics" dropdown, in display order.
+# `params` sets fields from that group's "Advanced settings" by their
+# ui-params.toml name; any field left out is held at its default there.
+# Per-group fields take one value per age group (children, adults). Keep
+# values inside the field's min/max so its slider can show them.
+#
+# Sources for the 2009-, 1968- and 1957-like presets:
+# - Severity: Table 9 of Qualls et al. 2017, "Community Mitigation
+#   Guidelines to Prevent Pandemic Influenza, United States, 2017" (MMWR
+#   Recomm Rep 2017;66(RR-1):1-34,
+#   https://doi.org/10.15585/mmwr.rr6601a1), which gives an overall attack
+#   rate plus unmitigated hospitalizations and deaths by age group (0-18,
+#   18-64, 65+) for the 2010 U.S. population. With 18-64 and 65+ summed into
+#   "adults", and the attack rate assumed equal across age groups:
+#     p_hosp_given_symp  = hospitalizations / (attack rate * 2010 population)
+#     p_death_given_hosp = deaths / hospitalizations
+# - r0: median reproduction number in Biggerstaff et al. 2014
+#   (https://doi.org/10.1186/1471-2334-14-480): 1.46 (2009), 1.80 (1968),
+#   1.65 (1957), rounded to the slider's 0.1 step.
+
+[low_2009]
+label = "Low severity (2009-like)"
+
+[low_2009.params]
+r0 = 1.5
+p_hosp_given_symp = [0.004, 0.007]
+p_death_given_hosp = [0.020, 0.055]
+
+[moderate_1968]
+label = "Moderate severity (1968-like)"
+
+[moderate_1968.params]
+r0 = 1.8
+p_hosp_given_symp = [0.005, 0.009]
+p_death_given_hosp = [0.031, 0.068]
+
+[high_1957]
+label = "High severity (1957-like)"
+
+[high_1957.params]
+r0 = 1.7
+p_hosp_given_symp = [0.007, 0.014]
+p_death_given_hosp = [0.040, 0.084]
+
+# No params: this preset is the ui-params.toml defaults, so a fresh load
+# starts on a preset. It is not derived from the sources above.
+[very_high_1918]
+label = "Very high severity (1918-like)"

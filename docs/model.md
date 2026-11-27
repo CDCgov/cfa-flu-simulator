@@ -310,7 +310,7 @@ See the base model description above.
     - [Biggerstaff et al. 2014](https://pmc.ncbi.nlm.nih.gov/articles/PMC4169819/)
 - Latent period and infectious period
     - [Chan et al. 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC11986874/)
-    - [Corie et al. 2012](https://pubmed.ncbi.nlm.nih.gov/22939310/)
+    - [Cori et al. 2012](https://pubmed.ncbi.nlm.nih.gov/22939310/)
     - [Prasad et al. 2023](https://doi.org/10.1073/pnas.2300590120)
     - [Suess et al. 2012](https://pmc.ncbi.nlm.nih.gov/articles/PMC3519848/)
     - [Tuite et al. 2010](https://pmc.ncbi.nlm.nih.gov/articles/PMC2817319/)
@@ -324,7 +324,7 @@ See the base model description above.
     - [Belongia et al. 2016](https://doi.org/10.1016/s1473-3099(16)00129-8)
     - [Grijalva et al. 2024](https://doi.org/10.1001/jamanetworkopen.2024.46814)
 - Antiviral uptake and effectiveness
-    - [Biggerstaff et al. 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4610008/)
+    - [Biggerstaff et al. 2014](https://pmc.ncbi.nlm.nih.gov/articles/PMC4610008/)
     - [Frutos et al. 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11576051/)
     - [Mellis et al. 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10678642/)
     - [Morris et al. 2026](https://doi.org/10.64898/2026.09.10.26362674)
@@ -334,3 +334,7 @@ See the base model description above.
     - [Uyeki et al. 2024](https://pubmed.ncbi.nlm.nih.gov/37983025/)
 - Changes in social contact
     - [Qualls et al. 2017](http://dx.doi.org/10.15585/mmwr.rr6601a1)
+- Viral characteristics presets
+    - [Qualls et al. 2017](http://dx.doi.org/10.15585/mmwr.rr6601a1), Table 9: the 2009-like, 1968-like and 1957-like prepandemic planning scenarios, whose hospitalizations and deaths by age group give those presets' symptomatic-hospitalization and hospitalization-fatality ratios
+    - [Biggerstaff et al. 2014](https://pmc.ncbi.nlm.nih.gov/articles/PMC4169819/), for the median reproduction number of those three pandemics
+    - The 1918-like preset is the simulator's default parameter set, which draws on the references listed above
